@@ -1,7 +1,7 @@
 import axios, { InternalAxiosRequestConfig } from "axios";
 type IMethod = "GET" | "POST" | "PATCH" | "DELETE" | "PUT";
 
-import { useToken } from "@/src/providers/AuthProvider";
+import { useToken } from "@/providers/AuthProvider";
 
 interface iResponse {
   status: boolean;

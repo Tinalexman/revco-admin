@@ -2,7 +2,6 @@ import type { Config } from "tailwindcss";
 
 const config: Config = {
   content: [
-    "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
   ],
@@ -14,6 +13,8 @@ const config: Config = {
         background: "#EEEEEE",
         "gray-1": "#8E8E93",
         "gray-2": "#4F4F4F",
+        "gray-3": "#828282",
+        "gray-6": "#F2F2F2",
       },
       screens: {
         xs: "320px", // Small mobile devices
