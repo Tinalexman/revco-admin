@@ -17,7 +17,7 @@
     "iconsax-react": "^0.0.8",
     "js-cookie": "^3.0.5",
     "jwt-decode": "^4.0.0",
-    "next": "14.2.10",
+    "next": "14.2.4",
     "react": "^18",
     "react-dom": "^18",
     "react-hot-toast": "^2.4.1",

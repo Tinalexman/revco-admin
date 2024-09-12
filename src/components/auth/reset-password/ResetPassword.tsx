@@ -11,13 +11,14 @@ import { Loader } from "@mantine/core";
 import { MdVisibilityOff, MdVisibility } from "react-icons/md";
 import { ArrowLeft, ArrowRight } from "iconsax-react";
 import CustomCheckbox from "@/components/reusable/CustomCheckbox";
-
+import { LuMail } from "react-icons/lu";
 interface iManualLoginPayload {
-  username: string;
   email: string;
 }
 
-const Register = () => {
+const ResetPassword = () => {
+  const [sent, hasSent] = useState<boolean>(false);
+
   return (
     <div className="h-fit w-[27.5rem] flex flex-col items-center justify-center gap-10">
       <Image
@@ -28,17 +29,15 @@ const Register = () => {
         height={25}
       />
       <div className="flex flex-col gap-5 w-full px-6 py-8">
-        <h1 className="text-med-h5 text-gray-2">User Registration</h1>
+        <h1 className="text-med-h5 text-gray-2">
+          {sent ? "Reset Link Sent" : "Reset Password"}
+        </h1>
         <Formik
           initialValues={{
-            username: "",
             email: "",
           }}
           validate={(values) => {
             const errors: Partial<iManualLoginPayload> = {};
-            if (!values.username) {
-              errors.username = "Required";
-            }
 
             if (!values.email) {
               errors.email = "Required";
@@ -59,6 +58,7 @@ const Register = () => {
             //     }, 500);
             //   }
             // });
+            hasSent(true);
           }}
         >
           {({
@@ -79,21 +79,6 @@ const Register = () => {
               method="POST"
             >
               <div className="flex flex-col gap-2 w-full">
-                <h3 className="text-reg-caption text-gray-2">Username</h3>
-                <input
-                  type="text"
-                  name="username"
-                  placeholder="e.g admin"
-                  value={values.username}
-                  onChange={handleChange}
-                  className="w-full auth-input"
-                />
-                {errors.username && touched.username && (
-                  <p className="text-err">{errors.username}</p>
-                )}
-              </div>
-
-              <div className="flex flex-col gap-2 w-full">
                 <h3 className="text-reg-caption text-gray-2">Email</h3>
                 <input
                   type="email"
@@ -101,6 +86,7 @@ const Register = () => {
                   placeholder="e.g test@mail.com"
                   value={values.email}
                   onChange={handleChange}
+                  readOnly={sent}
                   className="w-full auth-input"
                 />
                 {errors.email && touched.email && (
@@ -112,8 +98,17 @@ const Register = () => {
                 type="submit"
                 className={`bg-primary rounded-lg w-full  h-10 flex justify-center items-center gap-2 text-med-button text-white `}
               >
-                <p>Continue</p>
-                <ArrowRight size="26" color="#FFFFFF" variant="Broken" />
+                {sent ? (
+                  <>
+                    <p>Check Mailbox</p>
+                    <LuMail size="26" color="#FFFFFF" />
+                  </>
+                ) : (
+                  <>
+                    <p>Send Reset Link</p>
+                    <ArrowRight size="26" color="#FFFFFF" variant="Broken" />
+                  </>
+                )}
               </button>
             </Form>
           )}
@@ -127,4 +122,4 @@ const Register = () => {
   );
 };
 
-export default Register;
+export default ResetPassword;

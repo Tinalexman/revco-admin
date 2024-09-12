@@ -19,7 +19,7 @@
 }
 
 .auth-input {
-  @apply bg-gray-6 outline-none focus:ring-2 focus:ring-purple-300 placeholder:text-gray-6 placeholder:text-[0.875rem] text-[0.875rem] text-black leading-[1.5rem] rounded-lg h-10 px-4 py-3;
+  @apply bg-gray-6 outline-none focus:ring-2 focus:ring-purple-300 placeholder:text-gray-3 font-medium placeholder:text-[0.875rem] text-[0.875rem] text-black leading-[1.5rem] rounded-lg h-10 px-4 py-3;
 }
 
 ::selection {

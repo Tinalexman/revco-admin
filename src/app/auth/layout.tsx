@@ -10,7 +10,7 @@ const AuthLayout: FC<{ children: React.ReactNode }> = ({ children }) => {
         alt="vector"
         className="w-full h-full object-cover absolute top-0 left-0 right-0 bottom-0"
       />
-      {children}
+      <div className="z-10">{children}</div>
     </div>
   );
 };

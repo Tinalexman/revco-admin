@@ -9,17 +9,18 @@ import { Form, Formik } from "formik";
 import { Loader } from "@mantine/core";
 
 import { MdVisibilityOff, MdVisibility } from "react-icons/md";
-import { ArrowRight } from "iconsax-react";
+import { ArrowLeft, ArrowRight } from "iconsax-react";
 import CustomCheckbox from "@/components/reusable/CustomCheckbox";
 
 interface iManualLoginPayload {
-  username: string;
+  confirmPassword: string;
   password: string;
 }
 
-const Login = () => {
+const SetPassword = () => {
   const [showPassword, setShowPassword] = useState<boolean>(false);
-  const [remember, setRemember] = useState<boolean>(false);
+  const [showConfirmPassword, setConfirmShowPassword] =
+    useState<boolean>(false);
 
   return (
     <div className="h-fit w-[27.5rem] flex flex-col items-center justify-center gap-10">
@@ -31,17 +32,14 @@ const Login = () => {
         height={25}
       />
       <div className="flex flex-col gap-5 w-full px-6 py-8">
-        <h1 className="text-med-h5 text-gray-2">Welcome Back,</h1>
+        <h1 className="text-med-h5 text-gray-2">User Registration</h1>
         <Formik
           initialValues={{
-            username: "",
+            confirmPassword: "",
             password: "",
           }}
           validate={(values) => {
             const errors: Partial<iManualLoginPayload> = {};
-            if (!values.username) {
-              errors.username = "Required";
-            }
 
             if (!values.password) {
               errors.password = "Required";
@@ -59,6 +57,12 @@ const Login = () => {
               !/[!@#$%^&*()_+\-=\[\]{}|;':"\\/?]/.test(values.password)
             ) {
               errors.password = "Password must contain at least one symbol";
+            }
+
+            if (!values.confirmPassword) {
+              errors.confirmPassword = "Required";
+            } else if (values.confirmPassword !== values.password) {
+              errors.confirmPassword = "Passwords do not match";
             }
 
             return errors;
@@ -92,21 +96,6 @@ const Login = () => {
               method="POST"
             >
               <div className="flex flex-col gap-2 w-full">
-                <h3 className="text-reg-caption text-gray-2">Username</h3>
-                <input
-                  type="text"
-                  name="username"
-                  placeholder="e.g admin"
-                  value={values.username}
-                  onChange={handleChange}
-                  className="w-full auth-input"
-                />
-                {errors.username && touched.username && (
-                  <p className="text-err">{errors.username}</p>
-                )}
-              </div>
-
-              <div className="flex flex-col gap-2 w-full">
                 <h3 className="text-reg-caption text-gray-2">Password</h3>
                 <div className="w-full relative">
                   <input
@@ -135,12 +124,39 @@ const Login = () => {
                   <p className="text-s-4 text-error">{errors.password}</p>
                 )}
               </div>
-              <div className="flex w-fit gap-2 items-center">
-                <CustomCheckbox
-                  value={remember}
-                  onChange={() => setRemember(!remember)}
-                />
-                <h3 className="text-reg-caption text-gray-2">Remember Me</h3>
+
+              <div className="flex flex-col gap-2 w-full">
+                <h3 className="text-reg-caption text-gray-2">
+                  Confirm Password
+                </h3>
+                <div className="w-full relative">
+                  <input
+                    type={showConfirmPassword ? "text" : "password"}
+                    name="confirmPassword"
+                    placeholder="********"
+                    value={values.confirmPassword}
+                    onChange={handleChange}
+                    className="w-full auth-input"
+                  />
+                  <div
+                    className="absolute text-neutral-2 top-1/2 -translate-y-1/2 right-4 flex items-center cursor-pointer"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setConfirmShowPassword(!showConfirmPassword);
+                    }}
+                  >
+                    {showConfirmPassword ? (
+                      <MdVisibilityOff className="text-gray-3" size={20} />
+                    ) : (
+                      <MdVisibility className="text-gray-3" size={20} />
+                    )}
+                  </div>
+                </div>
+                {errors.confirmPassword && touched.confirmPassword && (
+                  <p className="text-s-4 text-error">
+                    {errors.confirmPassword}
+                  </p>
+                )}
               </div>
 
               <button
@@ -148,21 +164,19 @@ const Login = () => {
                 type="submit"
                 className={`bg-primary rounded-lg w-full  h-10 flex justify-center items-center gap-2 text-med-button text-white `}
               >
-                <p>Log in</p>
+                <p>Continue</p>
                 <ArrowRight size="26" color="#FFFFFF" variant="Broken" />
               </button>
             </Form>
           )}
         </Formik>
       </div>
-      <Link
-        href={"/auth/reset-password"}
-        className="text-reg-caption text-gray-2"
-      >
-        Lost Password?
-      </Link>
+      <div className="flex gap-2 items-center">
+        <ArrowLeft size="30" color="#4F4F4F" variant="Broken" />
+        <p className="text-reg-caption text-gray-2">Go Back</p>
+      </div>
     </div>
   );
 };
 
-export default Login;
+export default SetPassword;
