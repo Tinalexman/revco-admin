@@ -12,6 +12,8 @@ import { MdVisibilityOff, MdVisibility } from "react-icons/md";
 import { ArrowRight } from "iconsax-react";
 import CustomCheckbox from "@/components/reusable/CustomCheckbox";
 
+import { useRouter } from "next/navigation";
+
 interface iManualLoginPayload {
   username: string;
   password: string;
@@ -20,6 +22,7 @@ interface iManualLoginPayload {
 const Login = () => {
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [remember, setRemember] = useState<boolean>(false);
+  const router = useRouter();
 
   return (
     <div className="h-fit w-[27.5rem] flex flex-col items-center justify-center gap-10">
@@ -64,6 +67,7 @@ const Login = () => {
             return errors;
           }}
           onSubmit={async (values, { setSubmitting }) => {
+            router.replace("/dashboard");
             // fn(values, (val: any) => {
             //   setSubmitting(false);
             //   if (val) {
