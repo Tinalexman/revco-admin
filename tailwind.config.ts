@@ -16,7 +16,9 @@ const config: Config = {
         "gray-1": "#8E8E93",
         "gray-2": "#4F4F4F",
         "gray-3": "#828282",
+        "gray-4": "#DBDCDE",
         "gray-6": "#F2F2F2",
+        monokai: "#202224",
       },
       screens: {
         xs: "320px", // Small mobile devices

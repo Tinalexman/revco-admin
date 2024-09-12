@@ -18,6 +18,10 @@
   @apply text-[0.815rem] leading-[1.5rem] text-gray-2;
 }
 
+.text-dash-intro-header {
+  @apply text-[1.5rem] leading-[1.75rem];
+}
+
 .text-med-button {
   @apply text-[0.875rem] leading-[1.4rem] font-medium;
 }
@@ -31,7 +35,7 @@
 }
 
 .main-input {
-  @apply bg-white w-full outline-none focus:ring-2 focus:ring-purple-300 border border-[#DBDCDE] rounded-full h-10 placeholder:text-[#89868D] text-black text-[0.75rem] leading-[1.125rem];
+  @apply bg-white w-full outline-none focus:ring-2 focus:ring-purple-300 border border-gray-4 rounded-full h-10 placeholder:text-[#89868D] text-black text-[0.75rem] leading-[1.125rem];
 }
 
 ::selection {
