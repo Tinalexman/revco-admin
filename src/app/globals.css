@@ -26,6 +26,14 @@
   @apply text-[0.875rem] leading-[1.4rem] font-medium;
 }
 
+.text-filter-select {
+  @apply text-[0.875rem] leading-[0.875rem] text-gray-3;
+}
+
+.text-dash-header {
+  @apply text-[1.25rem] leading-[1.25rem];
+}
+
 .text-err {
   @apply text-red-500 text-[0.75rem] leading-[1rem];
 }

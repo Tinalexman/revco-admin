@@ -1,29 +1,77 @@
-import React, { FC } from "react";
+import React, { useState, useRef, useEffect, FC } from "react";
+import { IoMdArrowDropdown } from "react-icons/io";
+
+interface iMenuItem {
+  name: string;
+  onClick: () => void;
+}
 
 const Dropdown: FC<{
-  visible: boolean;
-  menus: {
-    name: string;
-    onClick: () => void;
-  }[];
-}> = ({ visible, menus }) => {
+  menus: iMenuItem[];
+  value: string;
+  hint: string;
+}> = ({ menus, value, hint }) => {
+  const [open, setOpen] = useState<boolean>(false);
+  const dropdownRef = useRef<HTMLDivElement | null>(null);
+
+  const handleOutsideClick = (event: MouseEvent) => {
+    if (
+      dropdownRef.current &&
+      !dropdownRef.current.contains(event.target as Node)
+    ) {
+      setOpen(false);
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener("mousedown", handleOutsideClick);
+
+    return () => {
+      document.removeEventListener("mousedown", handleOutsideClick);
+    };
+  }, []);
+
   return (
-    <div
-      className={`flex flex-col gap-2 w-[200px] px-3 py-2 bg-white dark:bg-monokai shadow-custom-black dark:shadow-custom-white absolute -bottom-5 z-10 ${
-        visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-20"
-      }`}
-    >
-      {menus.map((menu, index) => {
-        return (
+    <div ref={dropdownRef} className="relative w-full">
+      <div
+        onClick={() => setOpen(!open)}
+        className={`${
+          open ? "ring-2 ring-purple-300" : "border border-gray-3"
+        } rounded px-2 py-1.5 w-full cursor-pointer text-filter-select`}
+      >
+        <div className={`relative flex items-center justify-start w-full`}>
+          {value === "" && <p className="text-neutral-3">{hint}</p>}
+          <p className="line-clamp-1">{value}</p>
+          <IoMdArrowDropdown
+            size={16}
+            className={`${
+              open ? "text-purple-300" : "text-gray-2"
+            } absolute top-1/2 -translate-y-1/2 right-0`}
+          />
+        </div>
+      </div>
+      {open && (
+        <div
+          className={`flex justify-start items-center bg-white absolute z-5 p-2 w-fit left-0 right-0 rounded-lg top-8 shadow-custom`}
+        >
           <div
-            className="cursor-pointer transition-all ease-out duration-200 px-2 py-1 rounded hover:bg-neutral-light dark:hover:bg-neutral-dark hover:text-monokai dark:hover:text-white text-lg"
-            key={index}
-            onClick={menu.onClick}
+            className={`w-full flex flex-col overflow-y-auto gap-1 scrollbar-thin scrollbar-webkit `}
           >
-            {menu.name}
+            {menus.map((menu, i) => (
+              <div
+                key={i}
+                className="w-full cursor-pointer hover:bg-secondary-accent p-1.5 rounded text-filter-select"
+                onClick={() => {
+                  menu.onClick();
+                  setOpen(false);
+                }}
+              >
+                {menu.name}
+              </div>
+            ))}
           </div>
-        );
-      })}
+        </div>
+      )}
     </div>
   );
 };

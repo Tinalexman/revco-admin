@@ -17,6 +17,7 @@ const config: Config = {
         "gray-2": "#4F4F4F",
         "gray-3": "#828282",
         "gray-4": "#DBDCDE",
+        "gray-5": "#333333",
         "gray-6": "#F2F2F2",
         monokai: "#202224",
       },
