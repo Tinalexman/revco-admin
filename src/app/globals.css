@@ -15,7 +15,7 @@
 }
 
 .text-dash-slider {
-  @apply text-[0.815rem] leading-[1.5rem] text-gray-2;
+  @apply text-[0.815rem] leading-[1.5rem];
 }
 
 .text-dash-intro-header {

@@ -11,9 +11,9 @@ const DashboardSizerIcon: React.FC<{ expanded: boolean }> = ({ expanded }) => {
           viewBox="0 0 24 24"
           fill="none"
           stroke="#6500E0"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
         >
           <path stroke="none" d="M0 0h24v24H0z" fill="none" />
           <path d="M14 12l-10 0" />
@@ -29,9 +29,9 @@ const DashboardSizerIcon: React.FC<{ expanded: boolean }> = ({ expanded }) => {
           viewBox="0 0 24 24"
           fill="none"
           stroke="#6500E0"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
         >
           <path stroke="none" d="M0 0h24v24H0z" fill="none" />
           <path d="M10 12l10 0" />
