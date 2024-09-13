@@ -8,16 +8,21 @@ import { IoIosArrowDown } from "react-icons/io";
 
 const Layout: FC<{ children: ReactNode }> = ({ children }) => {
   const search = useDashboardData((state) => state.searchFilter);
+  const expanded = useDashboardData((state) => state.expanded);
 
   return (
-    <div className="w-[100vw] h-[100vh] flex ">
+    <div className="w-[100vw] h-[100vh] flex">
       <DashboardNavigation />
       <div
-        className={`flex flex-col bg-white duration-300 transition-all ease-in w-full h-[100vh] overflow-y-scroll`}
+        className={`${
+          expanded ? "w-[calc(100vw-17rem)]" : "w-[calc(100vw-5rem)]"
+        } flex flex-col bg-white duration-300 transition-all ease-in h-[100vh] overflow-y-scroll relative`}
       >
         <div
           className={`h-[4.5rem]  
-          w-full z-50 py-5 px-8 shadow-custom-black flex items-center justify-between`}
+           z-50 py-5 pr-8 bg-white shadow-custom-black duration-300 transition-all ease-in flex items-center justify-between fixed ${
+             expanded ? "left-[18.5rem]" : "left-[8rem]"
+           } top-0 right-0`}
         >
           <div className="w-[290px] relative">
             <input
@@ -48,9 +53,7 @@ const Layout: FC<{ children: ReactNode }> = ({ children }) => {
             </div>
           </div>
         </div>
-        <div className="bg-background w-full h-[calc(100vh-3rem)] overflow-y-auto">
-          {children}
-        </div>
+        <div className="bg-background w-full mt-[4.5rem]">{children}</div>
       </div>
     </div>
   );

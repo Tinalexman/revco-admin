@@ -186,7 +186,7 @@ const DashboardNavigation = () => {
         onClick={() => {
           useDashboardData.setState({ expanded: !expanded });
         }}
-        className={`cursor-pointer absolute -right-[1.125rem] top-8 shadow-md bg-primary-accent size-9 rounded-full grid place-content-center`}
+        className={`cursor-pointer absolute -right-[1.125rem] z-50 top-8 shadow-md bg-primary-accent size-9 rounded-full grid place-content-center`}
       >
         <DashboardSizerIcon expanded={expanded} />
       </div>
