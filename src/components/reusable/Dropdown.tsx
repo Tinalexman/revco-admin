@@ -10,7 +10,8 @@ const Dropdown: FC<{
   menus: iMenuItem[];
   value: string;
   hint: string;
-}> = ({ menus, value, hint }) => {
+  bare?: boolean;
+}> = ({ menus, value, hint, bare }) => {
   const [open, setOpen] = useState<boolean>(false);
   const dropdownRef = useRef<HTMLDivElement | null>(null);
 
@@ -35,13 +36,19 @@ const Dropdown: FC<{
     <div ref={dropdownRef} className="relative w-full">
       <div
         onClick={() => setOpen(!open)}
-        className={`${
-          open ? "ring-2 ring-purple-300" : "border border-gray-4"
-        } rounded-lg p-2 w-full cursor-pointer text-filter-select`}
+        className={`
+          ${
+            bare && bare
+              ? ""
+              : open
+              ? "ring-2 ring-purple-300"
+              : "border border-gray-4"
+          } 
+        rounded-lg p-2 w-full cursor-pointer text-filter-select`}
       >
         <div className={`relative flex items-center justify-start w-full `}>
           {value === "" && <p className="text-gray-3">{hint}</p>}
-          <p className="line-clamp-1 text-gray-2">{value}</p>
+          <p className="line-clamp-1 text-gray-2 font-medium">{value}</p>
           <IoMdArrowDropdown
             size={16}
             className={`${

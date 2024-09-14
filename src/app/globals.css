@@ -53,3 +53,7 @@
 ::-moz-selection {
   @apply bg-purple-500 text-white;
 }
+
+tbody > tr > td {
+  @apply p-4;
+}

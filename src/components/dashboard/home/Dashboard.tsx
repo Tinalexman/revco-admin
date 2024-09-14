@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 
 import Details from "./Details";
-import Activity from "./Activity";
+import Activity from "./activity/Activity";
 import Statistics from "./statistics/Statistics";
 
 const Dashboard = () => {
@@ -25,7 +25,6 @@ const Dashboard = () => {
         <Details />
         <Statistics />
         <Activity />
-        <div className="h-40 bg-primary"></div>
       </div>
     </div>
   );

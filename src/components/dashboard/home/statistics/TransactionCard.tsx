@@ -42,7 +42,7 @@ const TransactionCard: FC<{ data: iTransactionData }> = ({
   };
 
   return (
-    <div className="bg-white w-full rounded-2xl p-5 h-[400px] gap-5 flex flex-col items-center">
+    <div className="bg-white w-full rounded-xl p-5 h-[400px] gap-5 flex flex-col items-center">
       <div className="w-full flex justify-between items-center pb-2 border-b border-[#E5E5EF]">
         <div className="flex flex-col">
           <p className="text-[0.625rem] leading-[0.69rem] text-[#9291A5]">

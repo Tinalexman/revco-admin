@@ -95,7 +95,7 @@ const Statistics = () => {
 
   return (
     <div className="w-full flex flex-col gap-2.5">
-      <div className="bg-white w-full rounded-2xl px-9 py-6 h-[500px] gap-5 flex flex-col items-center">
+      <div className="bg-white w-full rounded-xl px-9 py-6 h-[500px] gap-5 flex flex-col items-center">
         <div className="w-full flex justify-between items-center">
           <div className="flex flex-col gap-0.5">
             <h5 className="text-[0.975rem] text-[#9291A5] leading-[1.1rem]">

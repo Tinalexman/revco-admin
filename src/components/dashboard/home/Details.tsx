@@ -94,7 +94,7 @@ const Details = () => {
       <div className="w-full grid grid-cols-4 gap-2.5">
         {revenueItems.map((it, i) => (
           <div
-            className="bg-white w-full rounded-2xl px-6 py-3 gap-6 h-44 flex flex-col justify-end items-start"
+            className="bg-white w-full rounded-xl px-6 py-3 gap-6 h-44 flex flex-col justify-end items-start"
             key={i}
           >
             <div className="bg-primary-accent rounded-full p-2">{it.icon}</div>
@@ -113,7 +113,7 @@ const Details = () => {
       <div className="w-full grid grid-cols-2 gap-2.5">
         {personItems.map((pt, i) => (
           <div
-            className="relative overflow-hidden bg-white w-full rounded-2xl px-6 py-3 gap-6 h-44 flex flex-col justify-end items-start"
+            className="relative overflow-hidden bg-white w-full rounded-xl px-6 py-3 gap-6 h-44 flex flex-col justify-end items-start"
             key={i}
           >
             <div className="bg-primary-accent rounded-full p-2">{pt.icon}</div>
