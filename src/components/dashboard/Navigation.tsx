@@ -180,16 +180,8 @@ const DashboardNavigation = () => {
     <div
       className={`${
         expanded ? "w-[17rem] pr-4" : "w-[5rem] pl-3 pr-4"
-      } h-[100vh] relative z-10 pt-6 duration-300 transition-all ease-in flex shadow-custom flex-col gap-10 items-center bg-white`}
+      } h-[100vh] pt-6 duration-300 transition-all ease-in flex shadow-custom flex-col gap-10 items-center bg-white`}
     >
-      <div
-        onClick={() => {
-          useDashboardData.setState({ expanded: !expanded });
-        }}
-        className={`cursor-pointer absolute -right-[1.125rem] z-50 top-8 shadow-md bg-primary-accent size-9 rounded-full grid place-content-center`}
-      >
-        <DashboardSizerIcon expanded={expanded} />
-      </div>
       <div className=" w-full flex justify-center ">
         <div
           className={`${

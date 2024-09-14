@@ -1,6 +1,7 @@
 "use client";
 
 import DashboardNavigation from "@/components/dashboard/Navigation";
+import DashboardSizerIcon from "@/components/reusable/DashboardSizerIcon";
 import { useDashboardData } from "@/stores/dashboardStore";
 import { Moon, SearchNormal1, Notification, Profile } from "iconsax-react";
 import React, { FC, ReactNode } from "react";
@@ -11,17 +12,27 @@ const Layout: FC<{ children: ReactNode }> = ({ children }) => {
   const expanded = useDashboardData((state) => state.expanded);
 
   return (
-    <div className="w-[100vw] h-[100vh] flex">
+    <div className="w-[100vw] h-[100vh] flex relative">
       <DashboardNavigation />
+      <div
+        onClick={() => {
+          useDashboardData.setState({ expanded: !expanded });
+        }}
+        className={`cursor-pointer absolute ${
+          expanded ? "left-[15.875rem]" : "left-[3.875rem]"
+        } z-50 top-8 duration-300 transition-all ease-in shadow-lg bg-primary-accent size-9 rounded-full grid place-content-center`}
+      >
+        <DashboardSizerIcon expanded={expanded} />
+      </div>
       <div
         className={`${
           expanded ? "w-[calc(100vw-17rem)]" : "w-[calc(100vw-5rem)]"
-        } flex flex-col bg-white duration-300 transition-all ease-in h-[100vh] overflow-y-scroll relative`}
+        } flex flex-col shadow-custom bg-white duration-300 transition-all ease-in h-[100vh] overflow-y-scroll relative`}
       >
         <div
           className={`h-[4.5rem]  
-           z-50 py-5 pr-8 bg-white shadow-custom-black duration-300 transition-all ease-in flex items-center justify-between fixed ${
-             expanded ? "left-[18.5rem]" : "left-[8rem]"
+           z-10 py-5 px-8 bg-white shadow-custom duration-300 transition-all ease-in flex items-center justify-between fixed ${
+             expanded ? "left-[17rem]" : "left-[5rem]"
            } top-0 right-0`}
         >
           <div className="w-[290px] relative">
