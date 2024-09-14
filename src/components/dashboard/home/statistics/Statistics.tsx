@@ -95,8 +95,8 @@ const Statistics = () => {
 
   return (
     <div className="w-full flex flex-col gap-2.5">
-      <div className="bg-white w-full rounded-xl px-9 py-6 h-[500px] gap-5 flex flex-col items-center">
-        <div className="w-full flex justify-between items-center">
+      <div className="w-full bg-white h-[450px] flex flex-col justify-between px-9 py-6 rounded-xl">
+        <div className="h-[60px] w-full items-center flex justify-between">
           <div className="flex flex-col gap-0.5">
             <h5 className="text-[0.975rem] text-[#9291A5] leading-[1.1rem]">
               Statistics
@@ -105,8 +105,7 @@ const Statistics = () => {
               Financial Metrics
             </h2>
           </div>
-
-          <div className="w-fit bg-[#F8F8FF] rounded-xl py-2 px-6 flex items-center gap-2.5">
+          <div className="w-fit h-fit bg-[#F8F8FF] rounded-xl py-2 px-6 flex items-center gap-2.5">
             {filters.map((f, i) => (
               <div
                 key={i}
@@ -144,6 +143,7 @@ const Statistics = () => {
           withYAxis={true}
         />
       </div>
+
       <div className="w-full grid grid-cols-3 gap-2.5">
         {transactionData.map((data, i) => (
           <TransactionCard key={i} data={data} />

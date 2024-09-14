@@ -17,6 +17,7 @@ interface iTransaction {
 }
 
 const Activity = () => {
+  const [expanded, setExpanded] = useState<boolean>(false);
   const [transactions, setTransactions] = useState<iTransaction[]>(
     Array(10).fill({
       transactionID: "TXN12345",
@@ -33,8 +34,11 @@ const Activity = () => {
     <div className="w-full bg-white p-5 flex flex-col gap-3 rounded-xl">
       <div className="w-full flex justify-between items-center">
         <h2 className="text-black text-med-button">Recent Activity</h2>
-        <h2 className="cursor-pointer text-med-button text-[#007AFF]">
-          View All
+        <h2
+          onClick={() => setExpanded(!expanded)}
+          className="cursor-pointer text-med-button text-[#007AFF]"
+        >
+          {expanded ? "View Less" : "View All"}
         </h2>
       </div>
       <div className="w-full justify-between items-center flex">
@@ -59,32 +63,34 @@ const Activity = () => {
             </tr>
           </thead>
           <tbody>
-            {transactions.map((txn, i) => (
-              <tr
-                key={i}
-                className="text-[#3A3A3A] text-[0.75rem] leading-[1.125rem] justify-around"
-              >
-                <td>{txn.transactionID}</td>
-                <td>{txn.username}</td>
-                <td>{txn.mda}</td>
-                <td>{txn.serviceType}</td>
-                <td>₦{txn.amount.toLocaleString("en-US")}</td>
-                <td>{convertDateWithDashesAndTime(txn.paymentDate)}</td>
-                <td>
-                  <div className="p-1 rounded-full grid place-content-center font-medium bg-[#E9F7EF] text-[#27AE60]">
-                    {txn.status}
-                  </div>
-                </td>
-                <td className="flex gap-1">
-                  <div className="cursor-pointer bg-[#FCEAE8] rounded size-6 grid place-content-center text-[#292D32]">
-                    <IoEye size={16} />
-                  </div>
-                  <div className="cursor-pointer bg-[#E99E104D] rounded size-6 grid place-content-center text-[#E94410]">
-                    <HiReceiptRefund size={16} />
-                  </div>
-                </td>
-              </tr>
-            ))}
+            {transactions
+              .slice(0, expanded ? transactions.length : 5)
+              .map((txn, i) => (
+                <tr
+                  key={i}
+                  className="odd:bg-white even:bg-slate-50 text-[#3A3A3A] text-[0.75rem] leading-[1.125rem] justify-around"
+                >
+                  <td>{txn.transactionID}</td>
+                  <td>{txn.username}</td>
+                  <td>{txn.mda}</td>
+                  <td>{txn.serviceType}</td>
+                  <td>₦{txn.amount.toLocaleString("en-US")}</td>
+                  <td>{convertDateWithDashesAndTime(txn.paymentDate)}</td>
+                  <td>
+                    <div className="p-1 rounded-full grid place-content-center font-medium bg-[#E9F7EF] text-[#27AE60]">
+                      {txn.status}
+                    </div>
+                  </td>
+                  <td className="flex gap-1">
+                    <div className="cursor-pointer bg-[#FCEAE8] rounded size-6 grid place-content-center text-[#292D32]">
+                      <IoEye size={16} />
+                    </div>
+                    <div className="cursor-pointer bg-[#E99E104D] rounded size-6 grid place-content-center text-[#E94410]">
+                      <HiReceiptRefund size={16} />
+                    </div>
+                  </td>
+                </tr>
+              ))}
           </tbody>
         </table>
       </div>

@@ -77,6 +77,7 @@ const TransactionCard: FC<{ data: iTransactionData }> = ({
         strokeColor=""
         interactive={false}
         colorFunction={(v, i) => getDonutColor(i)}
+        className="text-gray-950"
       />
       <div className="w-full flex flex-col gap-2.5">
         {transactionData.children.map((ch, i) => (
