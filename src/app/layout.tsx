@@ -54,10 +54,63 @@ const white: MantineColorsTuple = [
   "#ffffff",
 ];
 
+const red: MantineColorsTuple = [
+  "#EB5757",
+  "#EB5757",
+  "#EB5757",
+  "#EB5757",
+  "#EB5757",
+  "#EB5757",
+  "#EB5757",
+  "#EB5757",
+  "#EB5757",
+  "#EB5757",
+];
+const orange: MantineColorsTuple = [
+  "#F2994A",
+  "#F2994A",
+  "#F2994A",
+  "#F2994A",
+  "#F2994A",
+  "#F2994A",
+  "#F2994A",
+  "#F2994A",
+  "#F2994A",
+  "#F2994A",
+];
+const blue: MantineColorsTuple = [
+  "#32ADE6",
+  "#32ADE6",
+  "#32ADE6",
+  "#32ADE6",
+  "#32ADE6",
+  "#32ADE6",
+  "#32ADE6",
+  "#32ADE6",
+  "#32ADE6",
+  "#32ADE6",
+];
+const green: MantineColorsTuple = [
+  "#27AE60",
+  "#27AE60",
+  "#27AE60",
+  "#27AE60",
+  "#27AE60",
+  "#27AE60",
+  "#27AE60",
+  "#27AE60",
+  "#27AE60",
+  "#27AE60",
+];
+
 const theme = createTheme({
   colors: {
     primary,
     white,
+    red,
+    orange,
+    blue,
+    green,
   },
 });
 

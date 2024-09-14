@@ -4,7 +4,7 @@ import React, { useState } from "react";
 
 import Details from "./Details";
 import Activity from "./Activity";
-import Statistics from "./Statistics";
+import Statistics from "./statistics/Statistics";
 
 const Dashboard = () => {
   const [state, setState] = useState<string>("Taraba");

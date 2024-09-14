@@ -36,16 +36,16 @@ const Dropdown: FC<{
       <div
         onClick={() => setOpen(!open)}
         className={`${
-          open ? "ring-2 ring-purple-300" : "border border-gray-3"
-        } rounded px-2 py-1.5 w-full cursor-pointer text-filter-select`}
+          open ? "ring-2 ring-purple-300" : "border border-gray-4"
+        } rounded-lg p-2 w-full cursor-pointer text-filter-select`}
       >
-        <div className={`relative flex items-center justify-start w-full`}>
-          {value === "" && <p className="text-neutral-3">{hint}</p>}
-          <p className="line-clamp-1">{value}</p>
+        <div className={`relative flex items-center justify-start w-full `}>
+          {value === "" && <p className="text-gray-3">{hint}</p>}
+          <p className="line-clamp-1 text-gray-2">{value}</p>
           <IoMdArrowDropdown
             size={16}
             className={`${
-              open ? "text-purple-300" : "text-gray-2"
+              open ? "text-purple-300" : "text-gray-3"
             } absolute top-1/2 -translate-y-1/2 right-0`}
           />
         </div>
