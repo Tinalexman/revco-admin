@@ -248,24 +248,23 @@ const InvoiceManagement = () => {
         </Drawer.Root>
       )} */}
       {openedGenerateInvoice && (
-        <Modal.Root
+        <Drawer.Root
           opened={openedGenerateInvoice}
           onClose={closeGenerateInvoice}
-          centered
+          position="right"
           padding={0}
           top={0}
-          size={"60vw"}
-          radius={"lg"}
-          // closeOnClickOutside={false}
-          // closeOnEscape={false}
+          radius={12}
+          closeOnClickOutside={false}
+          closeOnEscape={false}
         >
-          <Modal.Overlay />
-          <Modal.Content>
-            <Modal.Body>
+          <Drawer.Overlay />
+          <Drawer.Content>
+            <Drawer.Body>
               <GenerateInvoice onClose={closeGenerateInvoice} />
-            </Modal.Body>
-          </Modal.Content>
-        </Modal.Root>
+            </Drawer.Body>
+          </Drawer.Content>
+        </Drawer.Root>
       )}
     </>
   );

@@ -47,7 +47,7 @@
 }
 
 .drawer-input {
-  @apply bg-white w-full outline-none focus:ring-2 focus:ring-purple-300 border border-gray-4 rounded-lg h-10 placeholder:text-[#89868D] text-black text-[0.875rem] leading-[1.25rem];
+  @apply bg-white w-full outline-none focus:ring-2 focus:ring-purple-300 border border-gray-4 rounded-lg h-10 placeholder:text-gray-3 text-black text-[0.875rem] leading-[1.25rem];
 }
 
 ::selection {
