@@ -206,8 +206,10 @@ const DashboardNavigation = () => {
                       setIndex(-1);
                     } else {
                       setIndex(i);
+                      if (!expanded) {
+                        useDashboardData.setState({ expanded: true });
+                      }
                     }
-                    // setIndex(index === -1 ? i : -1);
                   } else {
                     router.push(navItem.link);
                   }
@@ -244,39 +246,40 @@ const DashboardNavigation = () => {
                   )}
                 </div>
               </div>
-              {index !== -1 && index === i && expanded && (
-                <div
-                  className={`flex flex-col w-full px-3 
-                    `}
-                >
-                  {navItem.children.map(
-                    (child: iNavigationChild, childIndex: number) => (
-                      <div
-                        onClick={() => router.push(child.link)}
-                        className={`w-full flex items-center gap-2 py-2 pl-5 cursor-pointer ${
-                          activeChild === childIndex && page === i
-                            ? "text-primary"
-                            : "text-[#8E8E93]"
+              <div
+                className={`flex flex-col w-full px-3 transition-all ease-in duration-200 ${
+                  index !== -1 && index === i && expanded
+                    ? "scale-100 h-fit"
+                    : "scale-0 h-0 overflow-hidden"
+                } `}
+              >
+                {navItem.children.map(
+                  (child: iNavigationChild, childIndex: number) => (
+                    <div
+                      onClick={() => router.push(child.link)}
+                      className={`w-full flex items-center gap-2 py-2 pl-5 cursor-pointer ${
+                        activeChild === childIndex && page === i
+                          ? "text-primary"
+                          : "text-[#8E8E93]"
+                      }`}
+                      key={childIndex + navs.length}
+                    >
+                      <div>{child.icon}</div>
+                      <h2
+                        style={{
+                          transitionDelay: `${i + 3}00ms`,
+                        }}
+                        className={`text-dash-slider font-medium duration-500 ${
+                          !expanded &&
+                          "opacity-0 translate-x-28 overflow-hidden "
                         }`}
-                        key={childIndex + navs.length}
                       >
-                        <div>{child.icon}</div>
-                        <h2
-                          style={{
-                            transitionDelay: `${i + 3}00ms`,
-                          }}
-                          className={`text-dash-slider font-medium duration-500 ${
-                            !expanded &&
-                            "opacity-0 translate-x-28 overflow-hidden "
-                          }`}
-                        >
-                          {child.name}
-                        </h2>
-                      </div>
-                    )
-                  )}
-                </div>
-              )}
+                        {child.name}
+                      </h2>
+                    </div>
+                  )
+                )}
+              </div>
             </div>
           );
         })}

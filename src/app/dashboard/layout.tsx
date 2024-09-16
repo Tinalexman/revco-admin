@@ -27,7 +27,7 @@ const Layout: FC<{ children: ReactNode }> = ({ children }) => {
       <div
         className={`${
           expanded ? "w-[calc(100vw-17rem)]" : "w-[calc(100vw-5rem)]"
-        } flex flex-col shadow-custom bg-white duration-300 transition-all ease-in h-[100vh] overflow-y-scroll relative`}
+        } flex flex-col shadow-custom bg-white duration-300 transition-all ease-in h-[100vh] scrollbar-custom overflow-y-scroll relative`}
       >
         <div
           className={`h-[4.5rem]  
