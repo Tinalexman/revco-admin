@@ -4,7 +4,7 @@ import { Switch } from "@mantine/core";
 import { Form, Formik } from "formik";
 import Dropdown from "@/components/reusable/Dropdown";
 
-interface iCreateChannel {
+interface iEditChannel {
   channelName: string;
   type: string;
   apiKey: string;
@@ -14,15 +14,20 @@ interface iCreateChannel {
   status: boolean;
 }
 
-const AddChannel: FC<{ onClose: () => void }> = ({ onClose }) => {
-  const [hasApiCredentials, setHasApiCredentials] = useState<boolean>(false);
-  const [activeStatus, setActiveStatus] = useState<boolean>(false);
+const EditChannel: FC<{ channel: iEditChannel; onClose: () => void }> = ({
+  channel,
+  onClose,
+}) => {
+  const [hasApiCredentials, setHasApiCredentials] = useState<boolean>(
+    channel.apiKey.length > 0 || channel.clientID.length > 0
+  );
+  const [activeStatus, setActiveStatus] = useState<boolean>(channel.status);
 
   return (
     <div className="w-full bg-[#FEFEFE] px-5 pt-8 pb-12 flex flex-col items-center gap-6 overflow-y-scroll scrollbar-custom">
       <div className="w-full py-2 flex justify-between items-center">
         <h2 className="text-black font-semibold text-[1.25rem] leading-[1.5rem]">
-          Add New Channel
+          Edit - {channel.channelName}
         </h2>
         <div
           className="cursor-pointer text-black size-9 grid place-content-center rounded bg-[#F6F6F7]"
@@ -33,16 +38,16 @@ const AddChannel: FC<{ onClose: () => void }> = ({ onClose }) => {
       </div>
       <Formik
         initialValues={{
-          channelName: "",
-          type: "",
-          apiKey: "",
-          clientID: "",
-          email: "",
-          phone: "",
+          channelName: channel.channelName,
+          type: channel.type,
+          apiKey: channel.apiKey,
+          clientID: channel.clientID,
+          email: channel.email,
+          phone: channel.phone,
           status: false,
         }}
         validate={(values) => {
-          const errors: Partial<iCreateChannel> = {};
+          const errors: Partial<iEditChannel> = {};
 
           if (!values.channelName) {
             errors.channelName = "Required";
@@ -241,4 +246,4 @@ const AddChannel: FC<{ onClose: () => void }> = ({ onClose }) => {
   );
 };
 
-export default AddChannel;
+export default EditChannel;

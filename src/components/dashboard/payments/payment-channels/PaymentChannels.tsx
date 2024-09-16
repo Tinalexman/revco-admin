@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import { IoIosArrowDown, IoMdAdd } from "react-icons/io";
 import Filters from "../../common/activity/Filters";
-import { Drawer } from "@mantine/core";
+import { Drawer, Modal } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import AddChannel from "./AddChannel";
 import StatusContainer, {
@@ -14,6 +14,8 @@ import StatusContainer, {
 
 import { RiEdit2Fill } from "react-icons/ri";
 import { TiCancel } from "react-icons/ti";
+import EditChannel from "./EditChannel";
+import ChannelAction from "./ChannelAction";
 
 export interface iPaymentChannel {
   name: string;
@@ -32,8 +34,8 @@ const PaymentChannels = () => {
     { open: openEditChannel, close: closeEditChannel },
   ] = useDisclosure(false);
   const [
-    openedDeleteChannel,
-    { open: openDeleteChannel, close: closeDeleteChannel },
+    openedChannelAction,
+    { open: openChannelAction, close: closeChannelAction },
   ] = useDisclosure(false);
 
   const [channels, setChannels] = useState<iPaymentChannel[]>([
@@ -59,6 +61,30 @@ const PaymentChannels = () => {
       success: 95,
     },
   ]);
+
+  const [currentChannel, setCurrentChannel] = useState<iPaymentChannel | null>(
+    null
+  );
+
+  const openEditDrawer = (channel: iPaymentChannel) => {
+    setCurrentChannel(channel);
+    openEditChannel();
+  };
+
+  const closeEditDrawer = () => {
+    setCurrentChannel(null);
+    closeEditChannel();
+  };
+
+  const openActionModal = (channel: iPaymentChannel) => {
+    setCurrentChannel(channel);
+    openChannelAction();
+  };
+
+  const closeActionModal = () => {
+    setCurrentChannel(null);
+    closeChannelAction();
+  };
 
   return (
     <>
@@ -140,10 +166,16 @@ const PaymentChannels = () => {
                       <td className="p-4">{chn.success}%</td>
 
                       <td className="flex gap-1 p-4">
-                        <div className="cursor-pointer bg-[#E4ECF7] rounded size-6 grid place-content-center text-[#292D32]">
+                        <div
+                          onClick={() => openEditDrawer(chn)}
+                          className="cursor-pointer bg-[#E4ECF7] rounded size-6 grid place-content-center text-[#292D32]"
+                        >
                           <RiEdit2Fill size={16} />
                         </div>
-                        <div className="cursor-pointer bg-[#FDC6C6] rounded size-6 grid place-content-center text-[#D50000]">
+                        <div
+                          onClick={() => openActionModal(chn)}
+                          className="cursor-pointer bg-[#FDC6C6] rounded size-6 grid place-content-center text-[#D50000]"
+                        >
                           <TiCancel size={16} />
                         </div>
                       </td>
@@ -155,13 +187,15 @@ const PaymentChannels = () => {
           </div>
         </div>
       </div>
-      {openedAddChannel !== null && (
+      {openedAddChannel && (
         <Drawer.Root
           opened={openedAddChannel}
           onClose={closeAddChannel}
           position={"right"}
           padding={0}
           radius={12}
+          closeOnClickOutside={false}
+          closeOnEscape={false}
         >
           <Drawer.Overlay />
           <Drawer.Content>
@@ -170,6 +204,59 @@ const PaymentChannels = () => {
             </Drawer.Body>
           </Drawer.Content>
         </Drawer.Root>
+      )}
+      {currentChannel !== null && openedEditChannel && (
+        <Drawer.Root
+          opened={openedEditChannel}
+          onClose={closeEditDrawer}
+          position={"right"}
+          padding={0}
+          radius={12}
+          closeOnClickOutside={false}
+          closeOnEscape={false}
+        >
+          <Drawer.Overlay />
+          <Drawer.Content>
+            <Drawer.Body>
+              <EditChannel
+                channel={{
+                  apiKey: "38383232332323e23rwn",
+                  channelName: currentChannel.name,
+                  clientID: "Paysure Ltd",
+                  email: "support@revco",
+                  phone: "+234 5585 33434 ",
+                  type: "Online",
+                  status: true,
+                }}
+                onClose={closeEditDrawer}
+              />
+            </Drawer.Body>
+          </Drawer.Content>
+        </Drawer.Root>
+      )}
+      {currentChannel !== null && openedChannelAction && (
+        <Modal.Root
+          opened={openedChannelAction}
+          onClose={closeChannelAction}
+          centered
+          padding={0}
+          top={0}
+          size={"350px"}
+          radius={"lg"}
+          closeOnClickOutside={false}
+          closeOnEscape={false}
+        >
+          <Modal.Overlay />
+          <Modal.Content>
+            <Modal.Body>
+              <ChannelAction
+                name={currentChannel.name}
+                enable={true}
+                onClose={closeChannelAction}
+              />
+            </Modal.Body>
+          </Modal.Content>
+        </Modal.Root>
       )}
     </>
   );

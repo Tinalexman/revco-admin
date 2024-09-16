@@ -202,13 +202,11 @@ const DashboardNavigation = () => {
               <div
                 onClick={() => {
                   if (hasChildren(i)) {
-                    if (index === i) {
-                      setIndex(-1);
-                    } else {
+                    if (!expanded) {
                       setIndex(i);
-                      if (!expanded) {
-                        useDashboardData.setState({ expanded: true });
-                      }
+                      useDashboardData.setState({ expanded: true });
+                    } else {
+                      setIndex(index === i ? -1 : i);
                     }
                   } else {
                     router.push(navItem.link);
