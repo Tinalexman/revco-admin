@@ -5,6 +5,9 @@ import Receipt from "@/assets/payments/Receipt.svg";
 import { IoClose } from "react-icons/io5";
 import { BiSolidReceipt } from "react-icons/bi";
 import { HiReceiptRefund } from "react-icons/hi2";
+import StatusContainer, {
+  STATE_SUCCESS,
+} from "@/components/reusable/StatusContainer";
 
 const ViewTransaction: FC<{
   transaction: iTransaction;
@@ -67,9 +70,7 @@ const ViewTransaction: FC<{
           </div>
           <div className="flex justify-between items-center w-full h-10 px-5 border-b border-[#F2F2F7]">
             <h2>Payment Status:</h2>
-            <div className="px-2 py-1 rounded-full grid place-content-center font-medium bg-[#E9F7EF] text-[#27AE60]">
-              {transaction.status}
-            </div>
+            <StatusContainer text={transaction.status} status={STATE_SUCCESS} />
           </div>
           <div className="flex justify-between items-center w-full h-10 px-5 border-b border-[#F2F2F7]">
             <h2>PIN:</h2>

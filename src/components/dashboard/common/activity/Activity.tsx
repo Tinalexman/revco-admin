@@ -7,6 +7,9 @@ import { convertDateWithDashesAndTime } from "@/functions/dateFunctions";
 import { IoEye } from "react-icons/io5";
 import { HiReceiptRefund } from "react-icons/hi2";
 import ViewTransaction from "./ViewTransaction";
+import StatusContainer, {
+  STATE_SUCCESS,
+} from "@/components/reusable/StatusContainer";
 
 export interface iTransaction {
   transactionID: string;
@@ -103,18 +106,23 @@ const Activity = () => {
                     key={i}
                     className="odd:bg-white even:bg-slate-50 text-[#3A3A3A] text-[0.75rem] leading-[1.125rem] justify-around"
                   >
-                    <td>{txn.transactionID}</td>
-                    <td>{txn.payerName}</td>
-                    <td>{txn.mda}</td>
-                    <td>{txn.serviceType}</td>
-                    <td>₦{txn.amount.toLocaleString("en-US")}</td>
-                    <td>{convertDateWithDashesAndTime(txn.paymentDate)}</td>
-                    <td>
-                      <div className="p-1 rounded-full grid place-content-center font-medium bg-[#E9F7EF] text-[#27AE60]">
-                        {txn.status}
-                      </div>
+                    <td className="p-4">{txn.transactionID}</td>
+                    <td className="p-4">{txn.payerName}</td>
+                    <td className="p-4">{txn.mda}</td>
+                    <td className="p-4">{txn.serviceType}</td>
+                    <td className="p-4">
+                      ₦{txn.amount.toLocaleString("en-US")}
                     </td>
-                    <td className="flex gap-1">
+                    <td className="p-4">
+                      {convertDateWithDashesAndTime(txn.paymentDate)}
+                    </td>
+                    <td className="p-4">
+                      <StatusContainer
+                        text={txn.status}
+                        status={STATE_SUCCESS}
+                      />
+                    </td>
+                    <td className="flex gap-1 p-4">
                       <div
                         onClick={() => openDrawer(txn)}
                         className="cursor-pointer bg-[#FCEAE8] rounded size-6 grid place-content-center text-[#292D32]"

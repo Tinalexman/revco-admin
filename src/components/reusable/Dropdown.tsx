@@ -33,7 +33,7 @@ const Dropdown: FC<{
   }, []);
 
   return (
-    <div ref={dropdownRef} className="relative w-full">
+    <div ref={dropdownRef} className="relative w-full h-full">
       <div
         onClick={() => setOpen(!open)}
         className={`
@@ -44,9 +44,11 @@ const Dropdown: FC<{
               ? "ring-2 ring-purple-300"
               : "border border-gray-4"
           } 
-        rounded-lg p-2 w-full cursor-pointer text-filter-select`}
+        rounded-lg p-2 w-full h-full cursor-pointer text-filter-select`}
       >
-        <div className={`relative flex items-center justify-start w-full `}>
+        <div
+          className={`relative flex items-center justify-start w-full h-full`}
+        >
           {value === "" && <p className="text-gray-3">{hint}</p>}
           <p className="line-clamp-1 text-gray-2 font-medium">{value}</p>
           <IoMdArrowDropdown
