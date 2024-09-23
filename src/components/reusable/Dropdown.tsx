@@ -61,7 +61,7 @@ const Dropdown: FC<{
       </div>
       {open && (
         <div
-          className={`flex justify-start items-center bg-white absolute z-5 p-2 w-fit left-0 right-0 rounded-lg top-8 shadow-custom`}
+          className={`flex justify-start items-center bg-white absolute z-50 p-2 w-fit left-0 right-0 rounded-lg top-8 shadow-custom`}
         >
           <div
             className={`w-full flex flex-col overflow-y-auto gap-1 scrollbar-thin scrollbar-webkit `}

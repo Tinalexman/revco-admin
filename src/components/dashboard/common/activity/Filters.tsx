@@ -20,18 +20,34 @@ const Filters = () => {
 
   const handleStartDateChange = (dates: Date[] | null) => {
     if (dates) {
+      const startDate = new Date(dates[0]);
+      const endDate = new Date(dateRange.end);
+
+      if (startDate > endDate) {
+        // toast.error("Start date cannot be after the end date");
+        return;
+      }
+
       setDateRange({
         ...dateRange,
-        start: dates[0].toISOString().split("T")[0],
+        start: startDate.toISOString().split("T")[0],
       });
     }
   };
 
   const handleEndDateChange = (dates: Date[] | null) => {
     if (dates) {
+      const endDate = new Date(dates[0]);
+      const startDate = new Date(dateRange.start);
+
+      if (endDate < startDate) {
+        // toast.error("End date cannot be before the start date");
+        return;
+      }
+
       setDateRange({
         ...dateRange,
-        end: dates[0].toISOString().split("T")[0],
+        end: endDate.toISOString().split("T")[0],
       });
     }
   };
