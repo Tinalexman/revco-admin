@@ -6,6 +6,10 @@
   @apply font-medium text-[1.5rem] leading-[1.8rem];
 }
 
+.text-small {
+  @apply text-[0.75rem] leading-[1rem];
+}
+
 .text-reg-caption {
   @apply text-[0.875rem] leading-[1.25rem];
 }
