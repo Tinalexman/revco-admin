@@ -41,8 +41,10 @@ const DashboardNavigation = () => {
 
   const determineIndex = () => {
     const current = pathName.split("/")[2];
+    console.log("Current", current);
     for (let i = 0; i < paths.length; ++i) {
       if (paths[i] === current) {
+        console.log("About to break", i + 1);
         return i + 1;
       }
     }
@@ -121,7 +123,7 @@ const DashboardNavigation = () => {
       },
       {
         name: "Organizations",
-        icon: <MdGroups2 size={24} />,
+        icon: <MdGroups2 size={26} />,
         link: "/dashboard/organizations",
         children: [],
       },

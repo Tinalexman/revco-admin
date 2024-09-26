@@ -66,11 +66,11 @@ const AdminUsers = () => {
                 Admin Users
               </h2>
               <h3 className="text-primary text-reg-caption">
-                Manage all users
+                Manage all admin users
               </h3>
             </div>
             <Link
-              href={"/dashboard/users/admin-users/roles-and-permissions"}
+              href={"/dashboard/users/roles-and-permissions"}
               className="bg-primary text-white rounded-lg h-9 gap-2 px-3 text-[0.825rem] flex items-center leading-[0.98rem]"
             >
               <VscTools size={18} color="#FFFFFF" />
