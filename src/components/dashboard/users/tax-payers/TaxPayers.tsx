@@ -1,6 +1,10 @@
+"use client";
+
 import Link from "next/link";
 import React from "react";
 import { VscTools } from "react-icons/vsc";
+import Details from "./Details";
+import UserList from "./UserList";
 
 const TaxPayers = () => {
   return (
@@ -23,6 +27,10 @@ const TaxPayers = () => {
             <h3>User Roles & Permissions</h3>
           </Link>
         </div>
+      </div>
+      <div className="py-5 px-10 w-full flex flex-col gap-2.5">
+        <Details />
+        <UserList />
       </div>
     </div>
   );

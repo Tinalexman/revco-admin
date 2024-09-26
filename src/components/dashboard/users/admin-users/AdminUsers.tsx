@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import { Drawer } from "@mantine/core";
 import { VscTools } from "react-icons/vsc";
 import { IoIosAdd } from "react-icons/io";
-import Filters from "./Filters";
+import Filters from "../Filters";
 
 import StatusContainer, {
   STATE_PENDING,

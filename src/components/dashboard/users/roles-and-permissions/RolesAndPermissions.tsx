@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import { Drawer } from "@mantine/core";
 import { IoIosArrowForward } from "react-icons/io";
 import { IoIosAdd } from "react-icons/io";
-import Filters from "../admin-users/Filters";
+import Filters from "../Filters";
 
 import AddRole from "./AddRole";
 import EditRole from "./EditRole";

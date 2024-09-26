@@ -4,7 +4,7 @@ import React, { useState } from "react";
 
 import { DocumentText } from "iconsax-react";
 import { IoEye } from "react-icons/io5";
-import Filters from "@/components/dashboard/common/activity/Filters";
+import Filters from "@/components/dashboard/common/Filters";
 import StatusContainer, {
   STATE_ERROR,
   STATE_NULL,

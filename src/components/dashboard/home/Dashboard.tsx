@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 
 import Details from "./Details";
-import Activity from "../common/activity/Activity";
+import Activity from "../common/Activity";
 import Statistics from "./statistics/Statistics";
 
 const Dashboard = () => {

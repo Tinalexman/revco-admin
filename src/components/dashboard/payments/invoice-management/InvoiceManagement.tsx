@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import { IoIosArrowDown, IoMdAdd } from "react-icons/io";
 import { FaReceipt } from "react-icons/fa6";
 import { IoEye } from "react-icons/io5";
-import Filters from "../../common/activity/Filters";
+import Filters from "../../common/Filters";
 import { Drawer, Modal } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import StatusContainer, {
