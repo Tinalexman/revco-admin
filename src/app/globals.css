@@ -10,6 +10,10 @@
   @apply text-[0.75rem] leading-[1rem];
 }
 
+.text-reg-body-2 {
+  @apply text-[0.875rem] leading-[1rem];
+}
+
 .text-reg-caption {
   @apply text-[0.875rem] leading-[1.25rem];
 }

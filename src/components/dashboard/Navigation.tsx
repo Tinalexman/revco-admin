@@ -6,7 +6,7 @@ import { usePathname, useRouter } from "next/navigation";
 import Logo from "@/assets/Revco.svg";
 
 import { useDashboardData } from "@/stores/dashboardStore";
-import DashboardSizerIcon from "../reusable/DashboardSizerIcon";
+import { MdGroups2 } from "react-icons/md";
 import {
   Bank,
   Card,
@@ -72,7 +72,7 @@ const DashboardNavigation = () => {
       }
     } else if (parent === "users") {
       if (child === "tax-payers") return 0;
-      if (child === undefined) return 1;
+      if (child === "admin-users") return 1;
     }
 
     return -1;
@@ -91,6 +91,7 @@ const DashboardNavigation = () => {
         link: "/dashboard",
         children: [],
       },
+
       {
         name: "Payments",
         icon: <Coin1 size="24" variant="Bold" />,
@@ -119,6 +120,12 @@ const DashboardNavigation = () => {
         ],
       },
       {
+        name: "Organizations",
+        icon: <MdGroups2 size={24} />,
+        link: "/dashboard/organizations",
+        children: [],
+      },
+      {
         name: "Users",
         icon: <Profile2User size="24" variant="Bold" />,
         link: "",
@@ -129,9 +136,9 @@ const DashboardNavigation = () => {
             link: "/dashboard/users/tax-payers",
           },
           {
-            name: "Users",
+            name: "Admin Users",
             icon: <Bank size="24" />,
-            link: "/dashboard/users",
+            link: "/dashboard/users/admin-users",
           },
         ],
       },
@@ -156,6 +163,7 @@ const DashboardNavigation = () => {
     ];
     let newPaths: string[] = [
       "payments",
+      "organizations",
       "users",
       "reports",
       "support",
