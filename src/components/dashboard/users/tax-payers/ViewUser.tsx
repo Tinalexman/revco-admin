@@ -13,7 +13,8 @@ const ViewUser: FC<{
   user: iUserData;
   onClose: () => void;
   onEdit: () => void;
-}> = ({ user, onClose, onEdit }) => {
+  viewTransactions: () => void;
+}> = ({ user, onClose, onEdit, viewTransactions }) => {
   const dropdownRef = useRef<HTMLDivElement | null>(null);
   const [showMenu, shouldShowMenu] = useState<boolean>(false);
   const handleOutsideClick = (event: MouseEvent) => {
@@ -101,6 +102,7 @@ const ViewUser: FC<{
                 className="flex gap-1 w-full items-center cursor-pointer hover:bg-secondary-accent p-1.5 rounded text-filter-select"
                 onClick={() => {
                   shouldShowMenu(false);
+                  viewTransactions();
                 }}
               >
                 <RiEditBoxLine />

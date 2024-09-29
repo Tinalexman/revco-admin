@@ -25,10 +25,12 @@ const EditUser: FC<{ user: iUserData; onClose: () => void }> = ({
       </div>
       <Formik
         initialValues={{
-          name: "",
-          email: "",
+          name: user.name,
+          email: user.email,
+          phone: user.phoneNumber,
+          address: user.address,
           password: "",
-          role: "",
+          role: user.userType,
         }}
         validate={(values) => {
           const errors: any = {};
@@ -90,6 +92,22 @@ const EditUser: FC<{ user: iUserData; onClose: () => void }> = ({
                 <p className="text-err">{errors.email}</p>
               )}
             </div>
+            <div className="flex flex-col gap-0.5 w-full px-5 mt-4">
+              <h3 className="text-reg-caption font-medium text-[#111213]">
+                Phone Number
+              </h3>
+              <input
+                type="tel"
+                name="phone"
+                value={values.phone}
+                onChange={handleChange}
+                placeholder="e.g 09012345678"
+                className="px-4 drawer-input "
+              />
+              {errors.phone && touched.phone && (
+                <p className="text-err">{errors.phone}</p>
+              )}
+            </div>
             <div className="w-full bg-[#F6F6F7] h-10 flex items-center pl-5 mt-4 text-[#595959] text-reg-caption font-medium">
               Account Settings
             </div>
@@ -125,12 +143,7 @@ const EditUser: FC<{ user: iUserData; onClose: () => void }> = ({
               <div className="w-full h-10">
                 <Dropdown
                   value={values.role}
-                  menus={[
-                    "Board Chairman",
-                    "Revenue Staff",
-                    "Bank Staff",
-                    "State Governor",
-                  ].map((v) => ({
+                  menus={["Individual", "Corporate"].map((v) => ({
                     name: v,
                     onClick: () => {
                       setFieldValue("role", v);
@@ -153,7 +166,7 @@ const EditUser: FC<{ user: iUserData; onClose: () => void }> = ({
                 onClick={onClose}
                 className="text-white w-[48%] bg-primary h-10 flex justify-center gap-2 items-center rounded-lg"
               >
-                Send Invite
+                Save
               </button>
             </div>
           </Form>

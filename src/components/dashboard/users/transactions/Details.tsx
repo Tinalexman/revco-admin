@@ -1,53 +1,38 @@
-import React, { useState } from "react";
-import Filters from "./Filters";
+import React, { useState, FC } from "react";
 import { Drawer } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { IoIosArrowDown } from "react-icons/io";
 import { convertDateWithDashesAndTime } from "@/functions/dateFunctions";
 import { IoEye } from "react-icons/io5";
 import { HiReceiptRefund } from "react-icons/hi2";
-import ViewTransaction from "./ViewTransaction";
 import StatusContainer, {
   STATE_SUCCESS,
 } from "@/components/reusable/StatusContainer";
+import Filters from "../../common/Filters";
 
 export interface iTransaction {
-  transactionID: string;
-  payerName: string;
-  mda: string;
-  revenueHead: string;
+  transactionType: string;
   amount: number;
-  paymentDate: Date;
+  charge: number;
+  transactionRef: string;
+  paymentMethod: string;
   status: string;
-  serviceCharge: number;
-  serviceType: string;
-  pin: string;
-  payerID: string;
-  refNo: string;
-  tin: string;
-  total: number;
-  channel: string;
+  statusText: string;
+  dateCreated: Date;
 }
 
-const Activity = () => {
+const Details: FC<{ id: string }> = ({ id }) => {
   const [expanded, setExpanded] = useState<boolean>(false);
   const [transactions, setTransactions] = useState<iTransaction[]>(
     Array(10).fill({
-      transactionID: "TXN12345",
-      payerName: "Bola Tunde",
-      mda: "Min. of Agric",
-      revenueHead: "Taraba State Bill",
-      amount: 50000,
-      paymentDate: new Date("2024-02-05"),
-      status: "Successful",
-      serviceCharge: 50,
-      serviceType: "Revenue Fees",
-      pin: "123456789012",
-      payerID: "123456789012",
-      refNo: "123456789012",
-      tin: "123456789012",
-      total: 55000,
-      channel: "Bank Transfer",
+      transactionType: "Fund Wallet",
+      amount: 5000,
+      charge: 51,
+      transactionRef: "123456789000",
+      paymentMethod: "Bank Card",
+      status: STATE_SUCCESS,
+      statusText: "Pending",
+      dateCreated: new Date("2024-05-12"),
     })
   );
 
@@ -69,7 +54,7 @@ const Activity = () => {
     <>
       <div className="w-full bg-white p-5 flex flex-col gap-3 rounded-xl">
         <div className="w-full flex justify-between items-center">
-          <h2 className="text-black text-med-button">Recent Activity</h2>
+          <h2 className="text-black text-med-button">List of Transactions</h2>
           <h2
             onClick={() => setExpanded(!expanded)}
             className="cursor-pointer text-med-button text-[#007AFF]"
@@ -88,13 +73,14 @@ const Activity = () => {
           <table className="w-full">
             <thead className="w-full bg-[#F3F7FC] h-14">
               <tr className="text-[#3A3A3A] font-medium text-[0.75rem] leading-[1.125rem]">
-                <th scope="col">Transaction ID</th>
-                <th scope="col">Payer Name</th>
-                <th scope="col">MDA</th>
-                <th scope="col">Service Type</th>
-                <th scope="col">Amount Paid</th>
-                <th scope="col">Payment Date</th>
+                <th scope="col">S/N</th>
+                <th scope="col">Type</th>
+                <th scope="col">Amount</th>
+                <th scope="col">Charge</th>
+                <th scope="col">Transaction Ref</th>
+                <th scope="col">Payment Method</th>
                 <th scope="col">Status</th>
+                <th scope="col">Date Created</th>
                 <th scope="col">Actions</th>
               </tr>
             </thead>
@@ -106,21 +92,25 @@ const Activity = () => {
                     key={i}
                     className="odd:bg-white even:bg-slate-50 text-[#3A3A3A] text-[0.75rem] leading-[1.125rem] justify-around"
                   >
-                    <td className="p-4">{txn.transactionID}</td>
-                    <td className="p-4">{txn.payerName}</td>
-                    <td className="p-4">{txn.mda}</td>
-                    <td className="p-4">{txn.serviceType}</td>
+                    <td className="p-4">{i + 1}</td>
+                    <td className="p-4">{txn.transactionType}</td>
                     <td className="p-4">
                       ₦{txn.amount.toLocaleString("en-US")}
                     </td>
                     <td className="p-4">
-                      {convertDateWithDashesAndTime(txn.paymentDate)}
+                      ₦{txn.charge.toLocaleString("en-US")}
                     </td>
+                    <td className="p-4">{txn.transactionRef}</td>
+                    <td className="p-4">{txn.paymentMethod}</td>
+
                     <td className="p-4">
                       <StatusContainer
                         text={txn.status}
                         status={STATE_SUCCESS}
                       />
+                    </td>
+                    <td className="p-4">
+                      {convertDateWithDashesAndTime(txn.dateCreated)}
                     </td>
                     <td className="flex gap-1 p-4">
                       <div
@@ -129,9 +119,6 @@ const Activity = () => {
                       >
                         <IoEye size={16} />
                       </div>
-                      <div className="cursor-pointer bg-[#E99E104D] rounded size-6 grid place-content-center text-[#E94410]">
-                        <HiReceiptRefund size={16} />
-                      </div>
                     </td>
                   </tr>
                 ))}
@@ -139,31 +126,8 @@ const Activity = () => {
           </table>
         </div>
       </div>
-      {currentTransaction !== null && (
-        <Drawer.Root
-          opened={opened}
-          onClose={closeDrawer}
-          position={"right"}
-          padding={0}
-          radius={12}
-          closeOnClickOutside={false}
-          closeOnEscape={false}
-        >
-          <Drawer.Overlay />
-          <Drawer.Content>
-            <Drawer.Body>
-              <ViewTransaction
-                transaction={currentTransaction}
-                onClose={closeDrawer}
-                shouldRefund={true}
-                shouldPrint={true}
-              />
-            </Drawer.Body>
-          </Drawer.Content>
-        </Drawer.Root>
-      )}
     </>
   );
 };
 
-export default Activity;
+export default Details;

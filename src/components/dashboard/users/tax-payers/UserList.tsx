@@ -14,6 +14,8 @@ import { Drawer } from "@mantine/core";
 import ViewUser from "./ViewUser";
 import EditUser from "./EditUser";
 
+import { useRouter } from "next/navigation";
+
 export interface iUserData {
   taxPayerID: string;
   name: string;
@@ -25,12 +27,13 @@ export interface iUserData {
   phoneNumber: string;
   registrationDate: string;
   lastLogin: string;
+  address: string;
 }
 
 const UserList = () => {
   const [indexOfChildToBeViewed, setIndexOfChildToBeViewed] =
     useState<number>(0);
-
+  const router = useRouter();
   const childrenNames: string[] = ["All", "Banks", "Ministries", "Others"];
   const [currentUser, setCurrentUser] = useState<iUserData | null>(null);
   const [expanded, setExpanded] = useState<boolean>(false);
@@ -47,6 +50,7 @@ const UserList = () => {
       phoneNumber: "09012345678",
       registrationDate: "2024-01-15",
       lastLogin: "2024-01-15",
+      address: "Somewhere in Lagos",
     },
     {
       taxPayerID: "TXN12345",
@@ -59,6 +63,7 @@ const UserList = () => {
       phoneNumber: "09012345678",
       registrationDate: "2024-01-15",
       lastLogin: "2024-01-15",
+      address: "Somewhere in Lagos",
     },
     {
       taxPayerID: "TXN12345",
@@ -71,6 +76,7 @@ const UserList = () => {
       phoneNumber: "09012345678",
       registrationDate: "2024-01-15",
       lastLogin: "2024-01-15",
+      address: "Somewhere in Lagos",
     },
     {
       taxPayerID: "TXN12345",
@@ -83,6 +89,7 @@ const UserList = () => {
       phoneNumber: "09012345678",
       registrationDate: "2024-01-15",
       lastLogin: "2024-01-15",
+      address: "Somewhere in Lagos",
     },
     {
       taxPayerID: "TXN12345",
@@ -95,6 +102,7 @@ const UserList = () => {
       phoneNumber: "09012345678",
       registrationDate: "2024-01-15",
       lastLogin: "2024-01-15",
+      address: "Somewhere in Lagos",
     },
   ]);
 
@@ -224,6 +232,11 @@ const UserList = () => {
                   onClose={closeDrawer}
                   onEdit={() => {
                     setEditMode(true);
+                  }}
+                  viewTransactions={() => {
+                    router.push(
+                      `/dashboard/users/transactions?id=${currentUser.taxPayerID}`
+                    );
                   }}
                 />
               )}

@@ -27,13 +27,11 @@ const Layout: FC<{ children: ReactNode }> = ({ children }) => {
       <div
         className={`${
           expanded ? "w-[calc(100vw-17rem)]" : "w-[calc(100vw-5rem)]"
-        } flex flex-col shadow-custom bg-background duration-300 transition-all ease-in h-[100vh] scrollbar-custom overflow-y-scroll relative`}
+        } flex flex-col bg-background shadow-custom duration-300 transition-all ease-in h-[100vh] overflow-y-scroll`}
       >
         <div
           className={`h-[4.5rem]  
-           z-10 py-5 px-8 bg-white shadow-custom duration-300 transition-all ease-in flex items-center justify-between fixed ${
-             expanded ? "left-[17rem]" : "left-[5rem]"
-           } top-0 right-0`}
+           z-10 py-5 px-8 bg-white duration-300 transition-all ease-in flex items-center justify-between sticky top-0 `}
         >
           <div className="w-[290px] relative">
             <input
@@ -64,7 +62,7 @@ const Layout: FC<{ children: ReactNode }> = ({ children }) => {
             </div>
           </div>
         </div>
-        <div className="bg-background w-full mt-[4.5rem]">{children}</div>
+        <div className="bg-background w-full">{children}</div>
       </div>
     </div>
   );
