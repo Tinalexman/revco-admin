@@ -11,10 +11,12 @@ interface iAddUser {
   role: string;
 }
 
-const AddNewUser: FC<{ onClose: () => void }> = ({ onClose }) => {
+const AddGroup: FC<{ onClose: () => void }> = ({ onClose }) => {
   const [permissions, setPermissions] = useState<string[]>([]);
   const allPermissions: string[] = [
     "Access Dashboard",
+    "Onboard Users",
+    "Generate Invoice",
     "Make Payments",
     "View Reports",
   ];
@@ -23,7 +25,7 @@ const AddNewUser: FC<{ onClose: () => void }> = ({ onClose }) => {
     <div className="w-full bg-[#FEFEFE] pt-8 pb-12 flex flex-col items-center gap-6 overflow-y-scroll scrollbar-custom">
       <div className="w-full px-5 py-2 flex justify-between items-center">
         <h2 className="text-black font-semibold text-[1.25rem] leading-[1.5rem]">
-          New User
+          New Group
         </h2>
         <div
           className="cursor-pointer text-black size-9 grid place-content-center rounded bg-[#F6F6F7]"
@@ -36,8 +38,9 @@ const AddNewUser: FC<{ onClose: () => void }> = ({ onClose }) => {
         initialValues={{
           name: "",
           email: "",
-          password: "",
-          role: "",
+          serviceType: "",
+          phone: "",
+          groupType: "",
         }}
         validate={(values) => {
           const errors: Partial<iAddUser> = {};
@@ -76,13 +79,36 @@ const AddNewUser: FC<{ onClose: () => void }> = ({ onClose }) => {
                 name="name"
                 value={values.name}
                 onChange={handleChange}
-                placeholder="e.g John Doe"
+                placeholder="e.g Bank of Nigeria"
                 className="px-4 drawer-input"
               />
               {errors.name && touched.name && (
                 <p className="text-err">{errors.name}</p>
               )}
             </div>
+            <div className="flex flex-col gap-0.5 w-full px-5 mt-4">
+              <h3 className="text-reg-caption font-medium text-[#111213]">
+                Service Type
+              </h3>
+              <div className="w-full h-10">
+                <Dropdown
+                  value={values.serviceType}
+                  menus={["Banking Industry", "Education", "Ministry"].map(
+                    (v) => ({
+                      name: v,
+                      onClick: () => {
+                        setFieldValue("serviceType", v);
+                      },
+                    })
+                  )}
+                  hint="Select Service Type"
+                />
+              </div>
+              {errors.serviceType && (
+                <p className="text-err">{errors.serviceType}</p>
+              )}
+            </div>
+
             <div className="flex flex-col gap-0.5 w-full px-5 mt-4">
               <h3 className="text-reg-caption font-medium text-[#111213]">
                 Email
@@ -92,64 +118,50 @@ const AddNewUser: FC<{ onClose: () => void }> = ({ onClose }) => {
                 name="email"
                 value={values.email}
                 onChange={handleChange}
-                placeholder="e.g johndoe@mail.com"
+                placeholder="e.g bank@gov.ng"
                 className="px-4 drawer-input "
               />
               {errors.email && touched.email && (
                 <p className="text-err">{errors.email}</p>
               )}
             </div>
-            <div className="w-full bg-[#F6F6F7] h-10 flex items-center pl-5 mt-4 text-[#595959] text-reg-caption font-medium">
-              Account Settings
-            </div>
-
             <div className="flex flex-col gap-0.5 w-full px-5 mt-4">
               <h3 className="text-reg-caption font-medium text-[#111213]">
-                Password
+                Phone Number
               </h3>
-              <div className="w-full flex gap-1">
-                <div className="flex flex-col gap-0.5 w-full">
-                  <input
-                    type="text"
-                    name="password"
-                    value={values.password}
-                    onChange={handleChange}
-                    placeholder="*********"
-                    className="px-4 drawer-input "
-                  />
-                  {errors.password && touched.password && (
-                    <p className="text-err">{errors.password}</p>
-                  )}
-                </div>
-                <button className="text-white w-[250px] text-reg-caption bg-[#EB5757] h-10 flex justify-center gap-2 items-center rounded-lg">
-                  Generate Password
-                </button>
-              </div>
+              <input
+                type="tel"
+                name="phone"
+                value={values.phone}
+                onChange={handleChange}
+                placeholder="e.g +2349012345678"
+                className="px-4 drawer-input "
+              />
+              {errors.phone && touched.phone && (
+                <p className="text-err">{errors.phone}</p>
+              )}
             </div>
-
-            <div className="flex flex-col gap-0.5 w-full px-5 mt-2">
+            <div className="flex flex-col gap-0.5 w-full px-5 mt-4">
               <h3 className="text-reg-caption font-medium text-[#111213]">
-                User Role
+                Group Type
               </h3>
               <div className="w-full h-10">
                 <Dropdown
-                  value={values.role}
-                  menus={[
-                    "Board Chairman",
-                    "Revenue Staff",
-                    "Bank Staff",
-                    "State Governor",
-                  ].map((v) => ({
+                  value={values.groupType}
+                  menus={["Bank", "Ministry", "Others"].map((v) => ({
                     name: v,
                     onClick: () => {
-                      setFieldValue("role", v);
+                      setFieldValue("groupType", v);
                     },
                   }))}
-                  hint="Select User Role"
+                  hint="Select Group Type"
                 />
               </div>
-              {errors.role && <p className="text-err">{errors.role}</p>}
+              {errors.groupType && (
+                <p className="text-err">{errors.groupType}</p>
+              )}
             </div>
+
             <div className="w-full bg-[#F6F6F7] h-10 flex items-center pl-5 mt-4 text-[#595959] text-reg-caption font-medium">
               Permissions
             </div>
@@ -204,4 +216,4 @@ const AddNewUser: FC<{ onClose: () => void }> = ({ onClose }) => {
   );
 };
 
-export default AddNewUser;
+export default AddGroup;
