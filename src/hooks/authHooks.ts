@@ -90,6 +90,7 @@ export const useRegister = () => {
 export const useForgotPassword = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [success, setSuccess] = useState<boolean>(false);
+  const { requestApi } = useAxios();
 
   let forgot = async (email: string) => {
     if (loading) return;
@@ -122,7 +123,7 @@ export const useForgotPassword = () => {
 export const useResetPassword = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [success, setSuccess] = useState<boolean>(false);
-  const [data, setData] = useState<any>({});
+  const { requestApi } = useAxios();
 
   let reset = async (payload: iResetPayload) => {
     if (loading) return;
@@ -150,7 +151,6 @@ export const useResetPassword = () => {
   return {
     loading,
     success,
-    data,
     reset,
   };
 };

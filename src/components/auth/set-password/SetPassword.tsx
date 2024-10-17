@@ -1,26 +1,51 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, Suspense, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import Logo from "@/assets/Revco.svg";
 
 import { Form, Formik } from "formik";
 import { Loader } from "@mantine/core";
-
+import { useRouter, useSearchParams } from "next/navigation";
 import { MdVisibilityOff, MdVisibility } from "react-icons/md";
-import { ArrowLeft, ArrowRight } from "iconsax-react";
-import CustomCheckbox from "@/components/reusable/CustomCheckbox";
-
-interface iManualLoginPayload {
-  confirmPassword: string;
-  password: string;
-}
+import { ArrowRight } from "iconsax-react";
+import BackButton from "@/components/reusable/BackButton";
+import { useResetPassword } from "@/hooks/authHooks";
 
 const SetPassword = () => {
+  return (
+    <Suspense fallback={<Loader color="primary.6" />}>
+      <SetPasswordContent />
+    </Suspense>
+  );
+}
+
+
+const SetPasswordContent = () => {
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [showConfirmPassword, setConfirmShowPassword] =
     useState<boolean>(false);
+
+  const { success, loading, reset } = useResetPassword();
+
+  useEffect(() => {
+    if (success && !loading) {
+      router.replace("/auth/login");
+    }
+
+  }, [success, loading])
+
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const code = searchParams.get("code");
+
+  useEffect(() => {
+    if (code === null) {
+      router.back();
+    }
+
+  }, [code])
 
   return (
     <div className="h-fit w-[27.5rem] flex flex-col items-center justify-center gap-10">
@@ -39,7 +64,7 @@ const SetPassword = () => {
             password: "",
           }}
           validate={(values) => {
-            const errors: Partial<iManualLoginPayload> = {};
+            const errors: any = {};
 
             if (!values.password) {
               errors.password = "Required";
@@ -67,15 +92,12 @@ const SetPassword = () => {
 
             return errors;
           }}
-          onSubmit={async (values, { setSubmitting }) => {
-            // fn(values, (val: any) => {
-            //   setSubmitting(false);
-            //   if (val) {
-            //     setTimeout(() => {
-            //       window.location.replace("/dashboard/make-payment");
-            //     }, 500);
-            //   }
-            // });
+          onSubmit={(values, { setSubmitting }) => {
+            setSubmitting(false);
+            reset({
+              password: values.password,
+              resetCode: code!,
+            })
           }}
         >
           {({
@@ -83,12 +105,8 @@ const SetPassword = () => {
             errors,
             touched,
             handleChange,
-            handleBlur,
             handleSubmit,
             isSubmitting,
-            isInitialValid,
-            isValid,
-            setSubmitting,
           }) => (
             <Form
               onSubmit={handleSubmit}
@@ -164,17 +182,16 @@ const SetPassword = () => {
                 type="submit"
                 className={`bg-primary rounded-lg w-full  h-10 flex justify-center items-center gap-2 text-med-button text-white `}
               >
-                <p>Continue</p>
-                <ArrowRight size="26" color="#FFFFFF" variant="Broken" />
+                {
+                  loading ? <Loader color="white.6" size={24} /> : <><p>Continue</p>
+                    <ArrowRight size="26" color="#FFFFFF" variant="Broken" /></>
+                }
               </button>
             </Form>
           )}
         </Formik>
       </div>
-      <div className="flex gap-2 items-center">
-        <ArrowLeft size="30" color="#4F4F4F" variant="Broken" />
-        <p className="text-reg-caption text-gray-2">Go Back</p>
-      </div>
+      <BackButton color="#4F4F4F" text="Go Back" />
     </div>
   );
 };

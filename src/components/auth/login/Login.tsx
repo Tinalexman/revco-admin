@@ -23,13 +23,13 @@ interface iManualLoginPayload {
 const Login = () => {
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [remember, setRemember] = useState<boolean>(false);
+  const { success, loading, login } = useLogin();
   const router = useRouter();
 
-  const { success, loading, login } = useLogin();
 
   useEffect(() => {
     if (success && !loading) {
-      // router.replace("/dashboard");
+      router.replace("/dashboard");
     }
 
   }, [success, loading])
@@ -68,6 +68,10 @@ const Login = () => {
                 "Password must contain at least one lowercase letter";
             } else if (!/[0-9]/.test(values.password)) {
               errors.password = "Password must contain at least one number";
+            } else if (
+              !/[!@#$%^&*()_+\-=\[\]{}|;':"\\/?]/.test(values.password)
+            ) {
+              errors.password = "Password must contain at least one symbol";
             }
 
             return errors;

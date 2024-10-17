@@ -11,6 +11,7 @@ import { Loader } from "@mantine/core";
 import { ArrowLeft, ArrowRight } from "iconsax-react";
 import { LuMail } from "react-icons/lu";
 import { useForgotPassword } from "@/hooks/authHooks";
+import BackButton from "@/components/reusable/BackButton";
 
 interface iManualLoginPayload {
   email: string;
@@ -63,8 +64,11 @@ const ResetPassword = () => {
             return errors;
           }}
           onSubmit={async (values, { setSubmitting }) => {
-            setSubmitting(false);
-            forgot(values.email)
+            if (!sent) {
+              setSubmitting(false);
+              forgot(values.email)
+            }
+
           }}
         >
           {({
@@ -72,12 +76,8 @@ const ResetPassword = () => {
             errors,
             touched,
             handleChange,
-            handleBlur,
             handleSubmit,
             isSubmitting,
-            isInitialValid,
-            isValid,
-            setSubmitting,
           }) => (
             <Form
               onSubmit={handleSubmit}
@@ -110,10 +110,10 @@ const ResetPassword = () => {
                     <LuMail size="26" color="#FFFFFF" />
                   </>
                 ) : (
-                  <div className="w-full h-full">
+                  <div className="w-full h-full grid place-content-center">
                     {
-                      loading ? <Loader color="white.6" size={24} /> : <><p>Send Reset Link</p>
-                        <ArrowRight size="26" color="#FFFFFF" variant="Broken" /> </>
+                      loading ? <Loader color="white.6" size={24} /> : <div className="w-fit gap-2 flex items-center"><p>Send Reset Link</p>
+                        <ArrowRight size="26" color="#FFFFFF" variant="Broken" /> </div>
                     }
                   </div>
                 )}
@@ -122,10 +122,7 @@ const ResetPassword = () => {
           )}
         </Formik>
       </div>
-      <div className="flex gap-2 items-center">
-        <ArrowLeft size="30" color="#4F4F4F" variant="Broken" />
-        <p className="text-reg-caption text-gray-2">Go Back</p>
-      </div>
+      <BackButton color="#4F4F4F" text="Go Back" />
     </div>
   );
 };
