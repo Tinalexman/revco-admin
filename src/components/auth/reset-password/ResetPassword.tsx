@@ -1,23 +1,36 @@
 "use client";
 
-import React, { useState } from "react";
-import Link from "next/link";
+import React, { useEffect, useState } from "react";
+
 import Image from "next/image";
 import Logo from "@/assets/Revco.svg";
 
 import { Form, Formik } from "formik";
 import { Loader } from "@mantine/core";
 
-import { MdVisibilityOff, MdVisibility } from "react-icons/md";
 import { ArrowLeft, ArrowRight } from "iconsax-react";
-import CustomCheckbox from "@/components/reusable/CustomCheckbox";
 import { LuMail } from "react-icons/lu";
+import { useForgotPassword } from "@/hooks/authHooks";
+
 interface iManualLoginPayload {
   email: string;
 }
 
 const ResetPassword = () => {
+  const { success, loading, forgot } = useForgotPassword();
   const [sent, hasSent] = useState<boolean>(false);
+
+
+
+  useEffect(() => {
+    if (!loading && success) {
+      hasSent(true);
+    }
+
+  }, [loading, success])
+
+
+
 
   return (
     <div className="h-fit w-[27.5rem] flex flex-col items-center justify-center gap-10">
@@ -50,15 +63,8 @@ const ResetPassword = () => {
             return errors;
           }}
           onSubmit={async (values, { setSubmitting }) => {
-            // fn(values, (val: any) => {
-            //   setSubmitting(false);
-            //   if (val) {
-            //     setTimeout(() => {
-            //       window.location.replace("/dashboard/make-payment");
-            //     }, 500);
-            //   }
-            // });
-            hasSent(true);
+            setSubmitting(false);
+            forgot(values.email)
           }}
         >
           {({
@@ -104,10 +110,12 @@ const ResetPassword = () => {
                     <LuMail size="26" color="#FFFFFF" />
                   </>
                 ) : (
-                  <>
-                    <p>Send Reset Link</p>
-                    <ArrowRight size="26" color="#FFFFFF" variant="Broken" />
-                  </>
+                  <div className="w-full h-full">
+                    {
+                      loading ? <Loader color="white.6" size={24} /> : <><p>Send Reset Link</p>
+                        <ArrowRight size="26" color="#FFFFFF" variant="Broken" /> </>
+                    }
+                  </div>
                 )}
               </button>
             </Form>

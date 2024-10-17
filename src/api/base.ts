@@ -5,12 +5,11 @@ import { useToken } from "@/providers/AuthProvider";
 
 interface iResponse {
   status: boolean;
-  message: string;
   data?: any;
 }
 
 export const useAxios = () => {
-  const baseURL = "https://servexi.onrender.com/api";
+  const baseURL = "https://core.revco.ng:8080";
   const api = axios.create({
     baseURL,
   });
@@ -52,7 +51,7 @@ export const useAxios = () => {
     headers?: object
   ): Promise<iResponse> => {
     try {
-      const apiData = await api.request({
+      const response = await api.request({
         url: path,
         method: method,
         data: body,
@@ -60,11 +59,10 @@ export const useAxios = () => {
       });
       return {
         status: true,
-        data: apiData.data,
-        message: apiData.data.message,
+        data: response.data,
       };
     } catch (e) {
-      return { status: false, data: e, message: "" };
+      return { status: false, data: e };
     }
   };
 

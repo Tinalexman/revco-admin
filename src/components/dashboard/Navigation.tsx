@@ -41,10 +41,8 @@ const DashboardNavigation = () => {
 
   const determineIndex = () => {
     const current = pathName.split("/")[2];
-    console.log("Current", current);
     for (let i = 0; i < paths.length; ++i) {
       if (paths[i] === current) {
-        console.log("About to break", i + 1);
         return i + 1;
       }
     }
@@ -188,15 +186,13 @@ const DashboardNavigation = () => {
 
   return (
     <div
-      className={`${
-        expanded ? "w-[17rem] pr-4" : "w-[5rem] pl-3 pr-4"
-      } h-[100vh] z-5 pt-6 duration-300 transition-all ease-in flex shadow-custom flex-col gap-10 items-center bg-white`}
+      className={`${expanded ? "w-[17rem] pr-4" : "w-[5rem] pl-3 pr-4"
+        } h-[100vh] z-5 pt-6 duration-300 transition-all ease-in flex shadow-custom flex-col gap-10 items-center bg-white`}
     >
       <div className=" w-full flex justify-center ">
         <div
-          className={`${
-            expanded ? "scale-100" : "scale-0"
-          } w-fit object-cover duration-300 transition-all ease-out flex flex-col items-center`}
+          className={`${expanded ? "scale-100" : "scale-0"
+            } w-fit object-cover duration-300 transition-all ease-out flex flex-col items-center`}
         >
           <Image
             src={Logo}
@@ -222,19 +218,16 @@ const DashboardNavigation = () => {
                     router.push(navItem.link);
                   }
                 }}
-                className={`flex w-full gap-[6px] items-center rounded-lg h-11 ${
-                  page === i && "bg-secondary-accent"
-                } ${expanded && "justify-center"}`}
+                className={`flex w-full gap-[6px] items-center rounded-lg h-11 ${page === i && "bg-secondary-accent"
+                  } ${expanded && "justify-center"}`}
               >
                 <div
-                  className={`w-[6px] h-9 rounded-br-[4px] rounded-tr-[4px] ${
-                    page === i && expanded && "bg-primary"
-                  }`}
+                  className={`w-[6px] h-9 rounded-br-[4px] rounded-tr-[4px] ${page === i && expanded && "bg-primary"
+                    }`}
                 />
                 <div
-                  className={`w-full flex p-2 rounded-[10px] ${
-                    page === i ? "text-primary" : "text-gray-2"
-                  } justify-between items-center cursor-pointer transition-colors ease-out duration-100 relative`}
+                  className={`w-full flex p-2 rounded-[10px] ${page === i ? "text-primary" : "text-gray-2"
+                    } justify-between items-center cursor-pointer transition-colors ease-out duration-100 relative`}
                 >
                   <div className={`w-fit flex items-center gap-2 `}>
                     <div>{navItem.icon}</div>
@@ -242,9 +235,8 @@ const DashboardNavigation = () => {
                       style={{
                         transitionDelay: `${i + 3}00ms`,
                       }}
-                      className={`text-dash-slider font-medium duration-500 ${
-                        !expanded && "opacity-0 translate-x-28 overflow-hidden "
-                      }`}
+                      className={`text-dash-slider font-medium duration-500 ${!expanded && "opacity-0 translate-x-28 overflow-hidden "
+                        }`}
                     >
                       {navItem.name}
                     </h2>
@@ -255,21 +247,19 @@ const DashboardNavigation = () => {
                 </div>
               </div>
               <div
-                className={`flex flex-col w-full px-3 transition-all ease-in duration-200 ${
-                  index !== -1 && index === i && expanded
+                className={`flex flex-col w-full px-3 transition-all ease-in duration-200 ${index !== -1 && index === i && expanded
                     ? "scale-100 h-fit"
                     : "scale-0 h-0 overflow-hidden"
-                } `}
+                  } `}
               >
                 {navItem.children.map(
                   (child: iNavigationChild, childIndex: number) => (
                     <div
                       onClick={() => router.push(child.link)}
-                      className={`w-full flex items-center gap-2 py-2 pl-5 cursor-pointer ${
-                        activeChild === childIndex && page === i
+                      className={`w-full flex items-center gap-2 py-2 pl-5 cursor-pointer ${activeChild === childIndex && page === i
                           ? "text-primary"
                           : "text-[#8E8E93]"
-                      }`}
+                        }`}
                       key={childIndex + navs.length}
                     >
                       <div>{child.icon}</div>
@@ -277,10 +267,9 @@ const DashboardNavigation = () => {
                         style={{
                           transitionDelay: `${i + 3}00ms`,
                         }}
-                        className={`text-dash-slider font-medium duration-500 ${
-                          !expanded &&
+                        className={`text-dash-slider font-medium duration-500 ${!expanded &&
                           "opacity-0 translate-x-28 overflow-hidden "
-                        }`}
+                          }`}
                       >
                         {child.name}
                       </h2>

@@ -20,6 +20,7 @@ const config: Config = {
         "gray-5": "#333333",
         "gray-6": "#F2F2F2",
         monokai: "#202224",
+        error: "#FF4040",
       },
       screens: {
         xs: "320px", // Small mobile devices

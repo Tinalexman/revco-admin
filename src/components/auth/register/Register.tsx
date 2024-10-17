@@ -11,6 +11,7 @@ import { Loader } from "@mantine/core";
 import { MdVisibilityOff, MdVisibility } from "react-icons/md";
 import { ArrowLeft, ArrowRight } from "iconsax-react";
 import CustomCheckbox from "@/components/reusable/CustomCheckbox";
+import BackButton from "@/components/reusable/BackButton";
 
 interface iManualLoginPayload {
   username: string;
@@ -119,10 +120,8 @@ const Register = () => {
           )}
         </Formik>
       </div>
-      <div className="flex gap-2 items-center">
-        <ArrowLeft size="30" color="#4F4F4F" variant="Broken" />
-        <p className="text-reg-caption text-gray-2">Go Back</p>
-      </div>
+      <BackButton color="#4F4F4F" text="Go Back" />
+
     </div>
   );
 };

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import Logo from "@/assets/Revco.svg";
@@ -13,6 +13,7 @@ import { ArrowRight } from "iconsax-react";
 import CustomCheckbox from "@/components/reusable/CustomCheckbox";
 
 import { useRouter } from "next/navigation";
+import { useLogin } from "@/hooks/authHooks";
 
 interface iManualLoginPayload {
   username: string;
@@ -23,6 +24,15 @@ const Login = () => {
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [remember, setRemember] = useState<boolean>(false);
   const router = useRouter();
+
+  const { success, loading, login } = useLogin();
+
+  useEffect(() => {
+    if (success && !loading) {
+      // router.replace("/dashboard");
+    }
+
+  }, [success, loading])
 
   return (
     <div className="h-fit w-[27.5rem] flex flex-col items-center justify-center gap-10">
@@ -58,24 +68,13 @@ const Login = () => {
                 "Password must contain at least one lowercase letter";
             } else if (!/[0-9]/.test(values.password)) {
               errors.password = "Password must contain at least one number";
-            } else if (
-              !/[!@#$%^&*()_+\-=\[\]{}|;':"\\/?]/.test(values.password)
-            ) {
-              errors.password = "Password must contain at least one symbol";
             }
 
             return errors;
           }}
           onSubmit={async (values, { setSubmitting }) => {
-            router.replace("/dashboard");
-            // fn(values, (val: any) => {
-            //   setSubmitting(false);
-            //   if (val) {
-            //     setTimeout(() => {
-            //       window.location.replace("/dashboard/make-payment");
-            //     }, 500);
-            //   }
-            // });
+            setSubmitting(false);
+            login(values);
           }}
         >
           {({
@@ -83,12 +82,8 @@ const Login = () => {
             errors,
             touched,
             handleChange,
-            handleBlur,
             handleSubmit,
             isSubmitting,
-            isInitialValid,
-            isValid,
-            setSubmitting,
           }) => (
             <Form
               onSubmit={handleSubmit}
@@ -152,8 +147,10 @@ const Login = () => {
                 type="submit"
                 className={`bg-primary rounded-lg w-full  h-10 flex justify-center items-center gap-2 text-med-button text-white `}
               >
-                <p>Log in</p>
-                <ArrowRight size="26" color="#FFFFFF" variant="Broken" />
+                {
+                  loading ? <Loader color="white.6" size={24} /> : <><p>Log in</p>
+                    <ArrowRight size="26" color="#FFFFFF" variant="Broken" /></>
+                }
               </button>
             </Form>
           )}
