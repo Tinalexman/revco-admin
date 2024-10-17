@@ -3,6 +3,7 @@
 import DashboardNavigation from "@/components/dashboard/Navigation";
 import DashboardSizerIcon from "@/components/reusable/DashboardSizerIcon";
 import { useDashboardData } from "@/stores/dashboardStore";
+import { useRevcoUserStore } from "@/stores/userStore";
 import { Moon, SearchNormal1, Notification, Profile } from "iconsax-react";
 import React, { FC, ReactNode } from "react";
 import { IoIosArrowDown } from "react-icons/io";
@@ -11,6 +12,8 @@ const Layout: FC<{ children: ReactNode }> = ({ children }) => {
   const search = useDashboardData((state) => state.searchFilter);
   const expanded = useDashboardData((state) => state.expanded);
 
+  const role = useRevcoUserStore((state) => state.role);
+
   return (
     <div className="w-[100vw] h-[100vh] flex relative">
       <DashboardNavigation />
@@ -18,16 +21,14 @@ const Layout: FC<{ children: ReactNode }> = ({ children }) => {
         onClick={() => {
           useDashboardData.setState({ expanded: !expanded });
         }}
-        className={`cursor-pointer absolute ${
-          expanded ? "left-[15.875rem]" : "left-[3.875rem]"
-        } z-50 top-8 duration-300 transition-all ease-in shadow-lg bg-primary-accent size-9 rounded-full grid place-content-center`}
+        className={`cursor-pointer absolute ${expanded ? "left-[15.875rem]" : "left-[3.875rem]"
+          } z-50 top-8 duration-300 transition-all ease-in shadow-lg bg-primary-accent size-9 rounded-full grid place-content-center`}
       >
         <DashboardSizerIcon expanded={expanded} />
       </div>
       <div
-        className={`${
-          expanded ? "w-[calc(100vw-17rem)]" : "w-[calc(100vw-5rem)]"
-        } flex flex-col bg-background shadow-custom duration-300 transition-all ease-in h-[100vh] overflow-y-scroll`}
+        className={`${expanded ? "w-[calc(100vw-17rem)]" : "w-[calc(100vw-5rem)]"
+          } flex flex-col bg-background shadow-custom duration-300 transition-all ease-in h-[100vh] overflow-y-scroll`}
       >
         <div
           className={`h-[4.5rem]  
@@ -57,7 +58,7 @@ const Layout: FC<{ children: ReactNode }> = ({ children }) => {
             </div>
             <div className="border-l border-gray-4 flex w-fit px-4 py-2 gap-2 items-center">
               <Profile size="24" variant="Bold" />
-              <p className="text-reg-body">Admin User</p>
+              <p className="text-reg-body">{role}</p>
               <IoIosArrowDown className="text-black " size={22} />
             </div>
           </div>

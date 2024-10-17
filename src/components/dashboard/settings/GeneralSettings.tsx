@@ -5,6 +5,8 @@ import User from "@/assets/settings/user.jpeg";
 import { FaCamera } from "react-icons/fa6";
 
 import { useFormik } from "formik";
+import { useRevcoUserStore } from "@/stores/userStore";
+import { formatNumberWithThreesAndFours, unformatNumberWithThreesAndFours } from "@/functions/numberFunctions";
 
 interface iGeneralSettings {
   name: string;
@@ -16,6 +18,12 @@ const GeneralSettings = () => {
   const [newImageBase64Data, setNewImageBase64Data] = useState<string>("");
   const [newImageFile, setNewImageFile] = useState<File | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+
+  const firstName = useRevcoUserStore((state) => state.firstName);
+  const lastName = useRevcoUserStore((state) => state.lastName);
+  const email = useRevcoUserStore((state) => state.email);
+  const phone = useRevcoUserStore((state) => state.phone);
+
 
   const {
     values,
@@ -33,15 +41,15 @@ const GeneralSettings = () => {
       email: "",
       phone: "",
     },
-    validate: (values) => {},
-    onSubmit: (values, { setSubmitting }) => {},
+    validate: (values) => { },
+    onSubmit: (values, { setSubmitting }) => { },
   });
 
   useEffect(() => {
-    setFieldValue("name", "Adebayo Femi");
-    setFieldValue("email", "adminuser@mail.com");
-    setFieldValue("phone", "080 1234 5678");
-  }, []);
+    setFieldValue("name", `${firstName} ${lastName}`);
+    setFieldValue("email", email);
+    setFieldValue("phone", formatNumberWithThreesAndFours(phone));
+  }, [firstName, lastName, email, phone]);
 
   return (
     <div className="w-full bg-white rounded-xl px-5 py-8 flex flex-col gap-2.5">
@@ -50,7 +58,7 @@ const GeneralSettings = () => {
       </p>
       <div className="w-full grid place-content-center">
         <div className="w-[500px] flex flex-col items-center">
-          <div className="size-24 relative">
+          {/* <div className="size-24 relative">
             {newImageBase64Data ? (
               <Image
                 src={newImageBase64Data}
@@ -90,7 +98,7 @@ const GeneralSettings = () => {
                 }
               }}
             />
-          </div>
+          </div> */}
           <form
             method="POST"
             onSubmit={handleSubmit}
@@ -134,7 +142,18 @@ const GeneralSettings = () => {
                 type="tel"
                 name="phone"
                 value={values.phone}
-                onChange={handleChange}
+                onChange={(e) => {
+                  const res = unformatNumberWithThreesAndFours(
+                    e.target.value
+                  );
+
+                  if (isNaN(Number(res))) return;
+
+                  setFieldValue(
+                    "phone",
+                    formatNumberWithThreesAndFours(res)
+                  );
+                }}
                 className="w-full drawer-input px-4"
               />
               {errors.phone && touched.phone && (

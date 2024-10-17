@@ -2,6 +2,7 @@ import toast from "react-hot-toast";
 
 import { useState, useEffect } from "react";
 import { useAxios } from "@/api/base";
+import { useRevcoUserStore } from "@/stores/userStore";
 
 export interface iLoginPayload {
   username: string;
@@ -13,12 +14,34 @@ export interface iResetPayload {
   password: string;
 }
 
-export interface iCreateUserPayload {}
+export interface iChangePasswordPayload {
+  currentPassword: string;
+  newPassword: string;
+  confirmNewPassword: string;
+}
+
+export interface iLoginResponse {
+  firstName: string;
+  lastName: string;
+  otherNames: any;
+  email: string;
+  phone: string;
+  createdDate: string;
+  lastUpdatedDate: string;
+  role: "Admin" | "Sub-Admin1" | "Sub-Admin2" | "Sub-Admin3" | "Agent";
+  lastLoginDate: string;
+  token: string;
+  mda: any;
+  project: string;
+  projectPaymentChannels: any;
+  isDefaultPass: boolean;
+  isEnumerated: boolean;
+  isRemittanceLogin: boolean;
+}
 
 export const useLogin = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [success, setSuccess] = useState<boolean>(false);
-  const [data, setData] = useState<any>({});
   const { requestApi } = useAxios();
 
   let login = async (payload: iLoginPayload) => {
@@ -28,12 +51,12 @@ export const useLogin = () => {
 
     const { data, status } = await requestApi("/auth/login", "POST", payload);
 
-    setData(data);
+    useRevcoUserStore.setState({ ...data.data });
     setLoading(false);
     setSuccess(status);
 
     if (status) {
-      toast.success("Wlelcome back");
+      toast.success(`Welcome back, ${data.data.lastName}`);
     } else {
       toast.error(
         data?.response?.data?.data ?? "An error occurred. Please try again"
@@ -45,7 +68,6 @@ export const useLogin = () => {
     loading,
     success,
     login,
-    data,
   };
 };
 
@@ -152,5 +174,40 @@ export const useResetPassword = () => {
     loading,
     success,
     reset,
+  };
+};
+
+export const useChangePassword = () => {
+  const [loading, setLoading] = useState<boolean>(false);
+  const [success, setSuccess] = useState<boolean>(false);
+  const { requestApi } = useAxios();
+
+  let change = async (payload: iChangePasswordPayload) => {
+    if (loading) return;
+
+    setLoading(true);
+
+    const { data, status } = await requestApi(
+      "/auth/changepassword",
+      "POST",
+      payload
+    );
+
+    setLoading(false);
+    setSuccess(status);
+
+    if (status) {
+      toast.success("Your password has been changed successfully");
+    } else {
+      toast.error(
+        data?.response?.data?.data ?? "An error occurred. Please try again"
+      );
+    }
+  };
+
+  return {
+    loading,
+    success,
+    change,
   };
 };

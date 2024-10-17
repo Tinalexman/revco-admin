@@ -58,21 +58,22 @@ const Login = () => {
 
             if (!values.password) {
               errors.password = "Required";
-            } else if (values.password.length < 8) {
-              errors.password = "Password must be at least 8 characters long";
-            } else if (!/[A-Z]/.test(values.password)) {
-              errors.password =
-                "Password must contain at least one uppercase letter";
-            } else if (!/[a-z]/.test(values.password)) {
-              errors.password =
-                "Password must contain at least one lowercase letter";
-            } else if (!/[0-9]/.test(values.password)) {
-              errors.password = "Password must contain at least one number";
-            } else if (
-              !/[!@#$%^&*()_+\-=\[\]{}|;':"\\/?]/.test(values.password)
-            ) {
-              errors.password = "Password must contain at least one symbol";
             }
+            // } else if (values.password.length < 8) {
+            //   errors.password = "Password must be at least 8 characters long";
+            // } else if (!/[A-Z]/.test(values.password)) {
+            //   errors.password =
+            //     "Password must contain at least one uppercase letter";
+            // } else if (!/[a-z]/.test(values.password)) {
+            //   errors.password =
+            //     "Password must contain at least one lowercase letter";
+            // } else if (!/[0-9]/.test(values.password)) {
+            //   errors.password = "Password must contain at least one number";
+            // } else if (
+            //   !/[!@#$%^&*()_+\-=\[\]{}|;':"\\/?]/.test(values.password)
+            // ) {
+            //   errors.password = "Password must contain at least one symbol";
+            // }
 
             return errors;
           }}

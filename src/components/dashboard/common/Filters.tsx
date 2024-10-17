@@ -2,15 +2,16 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import Dropdown from "@/components/reusable/Dropdown";
 import { SearchNormal1, Calendar } from "iconsax-react";
-import React, { useState } from "react";
+import React, { useState, FC } from "react";
 import { convertDateWithDayAndMonth } from "@/functions/dateFunctions";
+import toast from "react-hot-toast";
 
 interface DateRange {
   start: string;
   end: string;
 }
 
-const Filters = () => {
+const Filters: FC<{ onDatesChanged?: (startDate: string, endDate: string) => void }> = ({ onDatesChanged }) => {
   const [search, setSearch] = useState<string>("");
   const [type, setType] = useState<string>("");
   const [dateRange, setDateRange] = useState<DateRange>({
@@ -24,8 +25,12 @@ const Filters = () => {
       const endDate = new Date(dateRange.end);
 
       if (startDate > endDate) {
-        // toast.error("Start date cannot be after the end date");
+        toast.error("Start date cannot be after the end date");
         return;
+      }
+
+      if (onDatesChanged) {
+        onDatesChanged(startDate.toISOString().split("T")[0], dateRange.end);
       }
 
       setDateRange({
@@ -41,8 +46,12 @@ const Filters = () => {
       const startDate = new Date(dateRange.start);
 
       if (endDate < startDate) {
-        // toast.error("End date cannot be before the start date");
+        toast.error("End date cannot be before the start date");
         return;
+      }
+
+      if (onDatesChanged) {
+        onDatesChanged(dateRange.start, endDate.toISOString().split("T")[0]);
       }
 
       setDateRange({
