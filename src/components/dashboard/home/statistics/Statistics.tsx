@@ -2,9 +2,11 @@ import React, { useState } from "react";
 
 import TransactionCard, { iTransactionData } from "./TransactionCard";
 
-import { AreaChart } from "@mantine/charts";
+import { AreaChart, getFilteredChartTooltipPayload } from "@mantine/charts";
 import { useGetTransactionChannelsPieData, useGetMetrics } from "@/hooks/dashboardHooks";
 import { Loader } from "@mantine/core";
+
+
 
 const Statistics = () => {
 
@@ -146,17 +148,10 @@ const Statistics = () => {
             series={[{ name: "amount", color: "primary.5" }]}
             curveType="bump"
             gridAxis="x"
-            valueFormatter={(value) => {
-              if (value < 999) return value.toLocaleString("en-US");
-              if (value < 1000000) {
-                let quotient = Math.ceil(value / 1000);
-                return `${quotient.toLocaleString("en-US")}K`;
-              } else if (value < 1000000000) {
-                let quotient = Math.ceil(value / 1000000);
-                return `${quotient.toLocaleString("en-US")}M`;
-              }
-              return value.toLocaleString("en-US");
+            tooltipProps={{
+              content: ({ label, payload }) => <ChartTooltip label={label} payload={payload} />,
             }}
+            valueFormatter={formatValue}
             withXAxis={true}
             withYAxis={true}
           />
@@ -171,5 +166,39 @@ const Statistics = () => {
     </div>
   );
 };
+
+
+function formatValue(value: number): string {
+  if (value < 999) return value.toLocaleString("en-US");
+  if (value < 1000000) {
+    let quotient = Math.ceil(value / 1000);
+    return `${quotient.toLocaleString("en-US")}K`;
+  } else if (value < 1000000000) {
+    let quotient = Math.ceil(value / 1000000);
+    return `${quotient.toLocaleString("en-US")}M`;
+  }
+  return value.toLocaleString("en-US");
+}
+
+interface ChartTooltipProps {
+  label: string;
+  payload: Record<string, any>[] | undefined;
+}
+
+
+
+
+function ChartTooltip({ label, payload }: ChartTooltipProps) {
+  if (!payload) return null;
+
+  return <div className="flex flex-col gap-2 p-3 bg-white shadow-custom rounded">
+    <h2 className="text-reg-caption text-[#555555] font-semibold">{label}</h2>
+    {getFilteredChartTooltipPayload(payload).map((item: any) => (
+      <h3 key={item.name} className="text-dash-slider text-monokai font-bold">
+        {formatValue(item.value)}
+      </h3>
+    ))}
+  </div>
+}
 
 export default Statistics;
