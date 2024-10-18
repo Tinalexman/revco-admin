@@ -3,6 +3,7 @@ import React, { useState, FC } from "react";
 
 import DonutChart from "react-donut-chart";
 
+
 const transactionDataColorList: string[] = [
   "#27AE60",
   "#F2994A",
@@ -63,22 +64,24 @@ const TransactionCard: FC<{ data: iTransactionData }> = ({
           />
         </div>
       </div>
-      <DonutChart
-        height={250}
-        width={250}
-        innerRadius={0.6}
-        legend={false}
-        formatValues={(v) => new Number(v).toLocaleString("en-US")}
-        data={transactionData.children.map((ch, i) => ({
-          label: transactionData.label,
-          value: ch.fraction,
-          isEmpty: false,
-        }))}
-        strokeColor=""
-        interactive={false}
-        colorFunction={(v, i) => getDonutColor(i)}
-        className="text-gray-950"
-      />
+      <div className="size-[180px]">
+        <DonutChart
+          height={180}
+          width={180}
+          innerRadius={0.6}
+          legend={false}
+          formatValues={(v) => new Number(v).toLocaleString("en-US")}
+          data={transactionData.children.map((ch, i) => ({
+            label: transactionData.label,
+            value: ch.fraction,
+            isEmpty: false,
+          }))}
+          strokeColor=""
+          interactive={false}
+          colorFunction={(v, i) => getDonutColor(i)}
+          className="text-gray-950"
+        />
+      </div>
       <div className="w-full flex flex-col gap-2.5">
         {transactionData.children.map((ch, i) => (
           <div key={i} className="w-full justify-between items-center flex">

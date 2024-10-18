@@ -31,6 +31,13 @@ const Statistics = () => {
       label: "Total Transactions",
       subLabel: totalChannelsRevenue,
       children: [
+        ...[
+          {
+            name: "None",
+            fraction: 0.0,
+            value: `0%`,
+          }
+        ],
         ...(transactionChannels.map((tnc, i) => {
           const frac = totalChannelsCount === 0 ? 0 : tnc.count / totalChannelsCount;
           return {
@@ -184,9 +191,6 @@ interface ChartTooltipProps {
   label: string;
   payload: Record<string, any>[] | undefined;
 }
-
-
-
 
 function ChartTooltip({ label, payload }: ChartTooltipProps) {
   if (!payload) return null;
