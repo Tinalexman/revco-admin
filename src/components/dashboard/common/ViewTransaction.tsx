@@ -11,7 +11,7 @@ import StatusContainer, {
 import { iRecentActivityResponse } from "@/hooks/dashboardHooks";
 
 const ViewTransaction: FC<{
-  transaction: iRecentActivityResponse;
+  transaction: any;
   onClose: () => void;
   shouldPrint?: boolean;
   shouldRefund?: boolean;

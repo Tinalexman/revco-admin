@@ -244,7 +244,7 @@ export const useGetUserActivity = () => {
     setLoading(true);
 
     const { data, status } = await requestApi(
-      `/mda-report/user-activitytype=${type}`,
+      `/mda-report/user-activity?type=${type}`,
       "GET",
       {},
       {
