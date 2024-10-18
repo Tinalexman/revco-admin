@@ -4,35 +4,40 @@ import TransactionCard, { iTransactionData } from "./TransactionCard";
 
 import { AreaChart } from "@mantine/charts";
 import { data } from "./data";
+import { useGetTransactionChannelsPieData } from "@/hooks/dashboardHooks";
 
 const Statistics = () => {
+
+  const { loading,
+    success,
+    data: transactionChannels, } = useGetTransactionChannelsPieData();
+
+  const totalChannelsCount = transactionChannels.reduce((acc, tnc) => {
+    return acc + tnc.count
+  }, 0)
+
+  const totalChannelsRevenue = transactionChannels.reduce((acc, tnc) => {
+    return acc + tnc.totalRev
+  }, 0)
+
+
   const transactionData: iTransactionData[] = [
     {
       title: "Transaction Channels",
       label: "Total Transactions",
-      subLabel: 100,
+      subLabel: totalChannelsRevenue,
       children: [
-        {
-          name: "POS",
-          fraction: 0.75,
-          value: "75%",
-        },
-        {
-          name: "Card Payment",
-          value: "15%",
-          fraction: 0.15,
-        },
-        {
-          name: "Bank Transfer",
-          value: "5%",
-          fraction: 0.05,
-        },
-        {
-          name: "Online",
-          value: "5%",
-          fraction: 0.05,
-        },
-      ],
+        ...(transactionChannels.map((tnc, i) => {
+          const frac = totalChannelsCount === 0 ? 0 : tnc.count / totalChannelsCount;
+          return {
+            name: tnc.channel,
+            fraction: frac,
+            value: `${(frac * 100).toFixed(0)}%`,
+          };
+        })),
+
+
+      ]
     },
     {
       title: "Transaction Status",
@@ -110,11 +115,10 @@ const Statistics = () => {
               <div
                 key={i}
                 onClick={() => setFilterIndex(i)}
-                className={`${
-                  filterIndex === i
-                    ? "text-white bg-[#1E1B39]"
-                    : "text-[#9291A5]"
-                } transition-colors duration-300 ease-out rounded-xl cursor-pointer py-2 px-3 text-[0.76rem] leading-[0.865rem]`}
+                className={`${filterIndex === i
+                  ? "text-white bg-[#1E1B39]"
+                  : "text-[#9291A5]"
+                  } transition-colors duration-300 ease-out rounded-xl cursor-pointer py-2 px-3 text-[0.76rem] leading-[0.865rem]`}
               >
                 {f}
               </div>

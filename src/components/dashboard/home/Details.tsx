@@ -7,6 +7,7 @@ import { Profile, Profile2User } from "iconsax-react";
 import Image, { StaticImageData } from "next/image";
 import TaxPayersImage from "@/assets/dashboard/tax payers.png";
 import TotalUsersImage from "@/assets/dashboard/total users.png";
+import { useGetTransactionRemittanceSummary, useGetTransactionSummary, useGetTwelveMonthTransactionSummary } from "@/hooks/dashboardHooks";
 
 interface iRevenueItem {
   value: number;
@@ -25,7 +26,6 @@ interface iPersonItem {
 }
 
 const Details = () => {
-  const [state, setState] = useState<string>("");
   const [filter, setFilter] = useState<string>("");
 
   const [revenueItems, setRevenueItems] = useState<iRevenueItem[]>([
@@ -73,6 +73,16 @@ const Details = () => {
       background: TotalUsersImage,
     },
   ]);
+
+  // const { loading,
+  //   success,
+  //   getSummary,
+  //   data, } = useGetTransactionSummary();
+
+  const { loading,
+    success,
+    getSummary,
+    data, } = useGetTransactionRemittanceSummary();
 
   return (
     <div className="w-full flex flex-col gap-2.5">
@@ -149,9 +159,8 @@ const Details = () => {
               alt={pt.title}
               width={300}
               height={200}
-              className={`absolute bottom-0 right-0 ${
-                i === 0 ? "w-[30%]" : "w-[25%]"
-              } h-auto`}
+              className={`absolute bottom-0 right-0 ${i === 0 ? "w-[30%]" : "w-[25%]"
+                } h-auto`}
             />
           </div>
         ))}

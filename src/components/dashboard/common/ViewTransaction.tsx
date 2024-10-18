@@ -1,16 +1,17 @@
 import React, { FC } from "react";
-import { iTransaction } from "./Activity";
 import Image from "next/image";
 import Receipt from "@/assets/payments/Receipt.svg";
 import { IoClose } from "react-icons/io5";
 import { BiSolidReceipt } from "react-icons/bi";
 import { HiReceiptRefund } from "react-icons/hi2";
 import StatusContainer, {
+  STATE_PENDING,
   STATE_SUCCESS,
 } from "@/components/reusable/StatusContainer";
+import { iRecentActivityResponse } from "@/hooks/dashboardHooks";
 
 const ViewTransaction: FC<{
-  transaction: iTransaction;
+  transaction: iRecentActivityResponse;
   onClose: () => void;
   shouldPrint?: boolean;
   shouldRefund?: boolean;
@@ -44,7 +45,7 @@ const ViewTransaction: FC<{
         <div className="w-full flex flex-col text-black text-[0.875rem] leading-[1.06rem]">
           <div className="flex justify-between items-center w-full h-10 px-5 border-b border-[#F2F2F7]">
             <h2>Payer&apos;s Name:</h2>
-            <h2 className="font-medium">{transaction.payerName}</h2>
+            <h2 className="font-medium">{transaction.payer}</h2>
           </div>
           <div className="flex justify-between items-center w-full h-10 px-5 border-b border-[#F2F2F7]">
             <h2>MDA:</h2>
@@ -52,41 +53,39 @@ const ViewTransaction: FC<{
           </div>
           <div className="flex justify-between items-center w-full h-10 px-5 border-b border-[#F2F2F7]">
             <h2>Revenue Head:</h2>
-            <h2 className="font-medium">{transaction.revenueHead}</h2>
+            <h2 className="font-medium">{transaction.assesedService}</h2>
           </div>
           <div className="flex justify-between items-center w-full h-10 px-5 border-b border-[#F2F2F7]">
             <h2>Channel:</h2>
-            <h2 className="font-medium">{transaction.channel}</h2>
+            <h2 className="font-medium">{transaction.paymentChannel}</h2>
           </div>
-          <div className="flex justify-between items-center w-full h-10 px-5 border-b border-[#F2F2F7]">
-            <h2>Service Charge:</h2>
-            <h2 className="font-medium">
-              ₦{transaction.serviceCharge.toLocaleString("en-US")}
-            </h2>
-          </div>
-          <div className="flex justify-between items-center w-full h-10 px-5 border-b border-[#F2F2F7]">
+          {/* <div className="flex justify-between items-center w-full h-10 px-5 border-b border-[#F2F2F7]">
             <h2>Service Type:</h2>
             <h2 className="font-medium">{transaction.serviceType}</h2>
-          </div>
+          </div> */}
           <div className="flex justify-between items-center w-full h-10 px-5 border-b border-[#F2F2F7]">
             <h2>Payment Status:</h2>
-            <StatusContainer text={transaction.status} status={STATE_SUCCESS} />
+            <StatusContainer
+              text={transaction.paid ? "Successful" : "Pending"}
+              status={transaction.paid ? STATE_SUCCESS : STATE_PENDING}
+            />
+
           </div>
           <div className="flex justify-between items-center w-full h-10 px-5 border-b border-[#F2F2F7]">
             <h2>PIN:</h2>
-            <h2 className="font-medium">{transaction.pin}</h2>
+            <h2 className="font-medium">{transaction.invoiceNo}</h2>
           </div>
           <div className="flex justify-between items-center w-full h-10 px-5 border-b border-[#F2F2F7]">
             <h2>Payer ID:</h2>
-            <h2 className="font-medium">{transaction.payerID}</h2>
+            <h2 className="font-medium">{transaction.payerId ?? ""}</h2>
           </div>
-          <div className="flex justify-between items-center w-full h-10 px-5 border-b border-[#F2F2F7]">
+          {/* <div className="flex justify-between items-center w-full h-10 px-5 border-b border-[#F2F2F7]">
             <h2>External Ref No:</h2>
             <h2 className="font-medium">{transaction.refNo}</h2>
-          </div>
+          </div> */}
           <div className="flex justify-between items-center w-full h-10 px-5">
             <h2>TIN:</h2>
-            <h2 className="font-medium">{transaction.tin}</h2>
+            <h2 className="font-medium">{transaction.payerTin ?? ""}</h2>
           </div>
         </div>
         <div className="w-full bg-[#F6F6F7] h-16 flex justify-between items-center px-5">
@@ -94,7 +93,7 @@ const ViewTransaction: FC<{
             Total
           </h3>
           <h3 className="text-[#202224] text-[1rem] leading-[1.3125rem] font-semibold">
-            ₦{transaction.amount.toLocaleString("en-US")}
+            ₦{transaction.invoiceAmount.toLocaleString("en-US")}
           </h3>
         </div>
       </div>

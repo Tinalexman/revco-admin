@@ -11,26 +11,9 @@ import StatusContainer, {
   STATE_PENDING,
   STATE_SUCCESS,
 } from "@/components/reusable/StatusContainer";
-import { useGetRecentActivity } from "@/hooks/dashboardHooks";
+import { iRecentActivityResponse, useGetRecentActivity } from "@/hooks/dashboardHooks";
 import { Loader } from "@mantine/core";
 
-export interface iTransaction {
-  transactionID: string;
-  payerName: string;
-  mda: string;
-  revenueHead: string;
-  amount: number;
-  paymentDate: Date;
-  status: string;
-  serviceCharge: number;
-  serviceType: string;
-  pin: string;
-  payerID: string;
-  refNo: string;
-  tin: string;
-  total: number;
-  channel: string;
-}
 
 const Activity = () => {
   const [expanded, setExpanded] = useState<boolean>(false);
@@ -38,9 +21,9 @@ const Activity = () => {
 
   const [opened, { open, close }] = useDisclosure(false);
   const [currentTransaction, setCurrentTransaction] =
-    useState<iTransaction | null>(null);
+    useState<iRecentActivityResponse | null>(null);
 
-  const openDrawer = (transaction: iTransaction) => {
+  const openDrawer = (transaction: iRecentActivityResponse) => {
     setCurrentTransaction(transaction);
     open();
   };
@@ -113,7 +96,7 @@ const Activity = () => {
                     </td>
                     <td className="flex gap-1 p-4">
                       <div
-                        // onClick={() => openDrawer(txn)}
+                        onClick={() => openDrawer(txn)}
                         className="cursor-pointer bg-[#FCEAE8] rounded size-6 grid place-content-center text-[#292D32]"
                       >
                         <IoEye size={16} />
