@@ -7,7 +7,7 @@ import { Profile, Profile2User } from "iconsax-react";
 import Image, { StaticImageData } from "next/image";
 import TaxPayersImage from "@/assets/dashboard/tax payers.png";
 import TotalUsersImage from "@/assets/dashboard/total users.png";
-import { useGetTransactionRemittanceSummary, useGetTransactionSummary, useGetTwelveMonthTransactionSummary } from "@/hooks/dashboardHooks";
+import { useGetStatisticsSummary, useGetTransactionRemittanceSummary, useGetTransactionSummary, useGetTwelveMonthTransactionSummary } from "@/hooks/dashboardHooks";
 
 interface iRevenueItem {
   value: number;
@@ -74,15 +74,11 @@ const Details = () => {
     },
   ]);
 
-  // const { loading,
-  //   success,
-  //   getSummary,
-  //   data, } = useGetTransactionSummary();
+  const { loading: loadingStatisticsSummary,
+    getStatisticsSummary,
+    data: statsSummary, } = useGetStatisticsSummary();
 
-  const { loading,
-    success,
-    getSummary,
-    data, } = useGetTransactionRemittanceSummary();
+
 
   return (
     <div className="w-full flex flex-col gap-2.5">
@@ -94,7 +90,10 @@ const Details = () => {
           <Dropdown
             menus={["Daily", "Monthly", "Yearly"].map((v, i) => ({
               name: v,
-              onClick: () => setFilter(v),
+              onClick: () => {
+                setFilter(v);
+                getStatisticsSummary(v.substring(0, 1))
+              },
             }))}
             value={filter}
             hint={"Select"}

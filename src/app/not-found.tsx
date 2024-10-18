@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Error from "@/assets/not found.png";
-import Thumbnail from "@/assets/Grid Vectors.svg";
+import Thumbnail from "@/assets/Grid_Vectors.svg";
 
 export default function NotfoundPage() {
   return (

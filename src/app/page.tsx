@@ -1,10 +1,10 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import Thumbnail from "@/assets/Grid Vectors.svg";
+import Thumbnail from "@/assets/Grid_Vectors.svg";
 import Revco from "@/assets/Revco.svg";
 
 const Loader = () => {

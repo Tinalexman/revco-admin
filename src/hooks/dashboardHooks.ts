@@ -1,4 +1,5 @@
 import { useAxios } from "@/api/base";
+import { useToken } from "@/providers/AuthProvider";
 import { useRevcoUserStore } from "@/stores/userStore";
 import { useState, useEffect } from "react";
 import toast from "react-hot-toast";
@@ -35,12 +36,19 @@ export interface iTransactionSummaryChartDataResponse {
   totalRev: number;
 }
 
+export interface iStatisticsSummaryResponse {
+  totalRevenue: number;
+  totalInvoiceGeneratedInNaira: number;
+  totalCommissionInNaira: number;
+  totalAmountRemitted: number;
+}
+
 export const useGetRecentActivity = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [success, setSuccess] = useState<boolean>(false);
   const [data, setData] = useState<iRecentActivityResponse[]>([]);
   const { requestApi } = useAxios();
-  const token = useRevcoUserStore((state) => state.token);
+  const token = useToken().getToken();
 
   let getActivity = async (startDate: string, endDate: string) => {
     if (loading) return;
@@ -82,12 +90,55 @@ export const useGetRecentActivity = () => {
   };
 };
 
+export const useGetStatisticsSummary = () => {
+  const [loading, setLoading] = useState<boolean>(false);
+  const [data, setData] = useState<iStatisticsSummaryResponse | null>(null);
+  const { requestApi } = useAxios();
+  const token = useToken().getToken();
+
+  let getStatisticsSummary = async (type: string) => {
+    if (loading) return;
+
+    setLoading(true);
+
+    const { data, status } = await requestApi(
+      `/stats/statistics-summary?type=${type}`,
+      "GET",
+      {},
+      {
+        Authorization: `Bearer ${token}`,
+      }
+    );
+
+    console.log(data);
+    setLoading(false);
+
+    if (!status) {
+      toast.error(
+        data?.response?.data?.data ?? "An error occurred. Please try again"
+      );
+    }
+  };
+
+  useEffect(() => {
+    if (token) {
+      getStatisticsSummary("Y");
+    }
+  }, [token]);
+
+  return {
+    loading,
+    getStatisticsSummary,
+    data,
+  };
+};
+
 export const useGetTransactionSummary = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [success, setSuccess] = useState<boolean>(false);
   const [data, setData] = useState<iRecentActivityResponse[]>([]);
   const { requestApi } = useAxios();
-  const token = useRevcoUserStore((state) => state.token);
+  const token = useToken().getToken();
 
   let getSummary = async (
     projectId: string | number,
@@ -137,7 +188,7 @@ export const useGetTwelveMonthTransactionSummary = () => {
   const [success, setSuccess] = useState<boolean>(false);
   const [data, setData] = useState<iRecentActivityResponse[]>([]);
   const { requestApi } = useAxios();
-  const token = useRevcoUserStore((state) => state.token);
+  const token = useToken().getToken();
 
   let getSummary = async (
     projectId: string | number,
@@ -186,7 +237,7 @@ export const useGetTransactionRemittanceSummary = () => {
   const [success, setSuccess] = useState<boolean>(false);
   const [data, setData] = useState<iRecentActivityResponse[]>([]);
   const { requestApi } = useAxios();
-  const token = useRevcoUserStore((state) => state.token);
+  const token = useToken().getToken();
 
   let getSummary = async (agentId: string | number) => {
     if (loading) return;
@@ -281,7 +332,7 @@ export const useGetTransactionChannelsPieData = () => {
   const [success, setSuccess] = useState<boolean>(false);
   const [data, setData] = useState<iTransactionSummaryChartDataResponse[]>([]);
   const { requestApi } = useAxios();
-  const token = useRevcoUserStore((state) => state.token);
+  const token = useToken().getToken();
 
   let getPieData = async (
     projectId: string | number,

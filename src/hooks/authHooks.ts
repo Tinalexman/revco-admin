@@ -1,8 +1,9 @@
 import toast from "react-hot-toast";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useAxios } from "@/api/base";
 import { useRevcoUserStore } from "@/stores/userStore";
+import { useToken } from "@/providers/AuthProvider";
 
 export interface iLoginPayload {
   username: string;
@@ -43,6 +44,7 @@ export const useLogin = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [success, setSuccess] = useState<boolean>(false);
   const { requestApi } = useAxios();
+  const { setToken } = useToken();
 
   let login = async (payload: iLoginPayload) => {
     if (loading) return;
@@ -51,11 +53,12 @@ export const useLogin = () => {
 
     const { data, status } = await requestApi("/auth/login", "POST", payload);
 
-    useRevcoUserStore.setState({ ...data.data });
     setLoading(false);
     setSuccess(status);
 
     if (status) {
+      setToken(data.data.token);
+      useRevcoUserStore.setState({ ...data.data });
       toast.success(`Welcome back, ${data.data.lastName}`);
     } else {
       toast.error(
