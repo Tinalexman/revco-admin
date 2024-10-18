@@ -3,13 +3,15 @@ import React, { useState } from "react";
 import TransactionCard, { iTransactionData } from "./TransactionCard";
 
 import { AreaChart } from "@mantine/charts";
-import { data } from "./data";
-import { useGetTransactionChannelsPieData } from "@/hooks/dashboardHooks";
+import { useGetTransactionChannelsPieData, useGetMetrics } from "@/hooks/dashboardHooks";
+import { Loader } from "@mantine/core";
 
 const Statistics = () => {
 
-  const { loading,
-    success,
+  const { data: metrics, getMetrics, loading: loadingMetrics } = useGetMetrics();
+
+
+  const { loading: loadingTransactionChannelsPieData,
     data: transactionChannels, } = useGetTransactionChannelsPieData();
 
   const totalChannelsCount = transactionChannels.reduce((acc, tnc) => {
@@ -114,7 +116,12 @@ const Statistics = () => {
             {filters.map((f, i) => (
               <div
                 key={i}
-                onClick={() => setFilterIndex(i)}
+                onClick={() => {
+                  setFilterIndex(i);
+                  if (i === 0) getMetrics("D");
+                  if (i === 1) getMetrics("M");
+                  if (i === 2) getMetrics("Y");
+                }}
                 className={`${filterIndex === i
                   ? "text-white bg-[#1E1B39]"
                   : "text-[#9291A5]"
@@ -125,27 +132,35 @@ const Statistics = () => {
             ))}
           </div>
         </div>
-        <AreaChart
-          h={300}
-          data={data}
-          dataKey="month"
-          series={[{ name: "amount", color: "primary.5" }]}
-          curveType="bump"
-          gridAxis="x"
-          valueFormatter={(value) => {
-            if (value < 999) return value.toLocaleString("en-US");
-            if (value < 1000000) {
-              let quotient = Math.ceil(value / 1000);
-              return `${quotient.toLocaleString("en-US")}K`;
-            } else if (value < 1000000000) {
-              let quotient = Math.ceil(value / 1000000);
-              return `${quotient.toLocaleString("en-US")}M`;
-            }
-            return value.toLocaleString("en-US");
-          }}
-          withXAxis={true}
-          withYAxis={true}
-        />
+        {
+          loadingMetrics ? <div className="w-full h-[300px] grid place-content-center">
+            <Loader color="primary.6" />
+
+          </div> : <AreaChart
+            h={300}
+            data={metrics.map((mt, i) => ({
+              month: mt.referenceName,
+              amount: mt.amount,
+            }))}
+            dataKey="month"
+            series={[{ name: "amount", color: "primary.5" }]}
+            curveType="bump"
+            gridAxis="x"
+            valueFormatter={(value) => {
+              if (value < 999) return value.toLocaleString("en-US");
+              if (value < 1000000) {
+                let quotient = Math.ceil(value / 1000);
+                return `${quotient.toLocaleString("en-US")}K`;
+              } else if (value < 1000000000) {
+                let quotient = Math.ceil(value / 1000000);
+                return `${quotient.toLocaleString("en-US")}M`;
+              }
+              return value.toLocaleString("en-US");
+            }}
+            withXAxis={true}
+            withYAxis={true}
+          />
+        }
       </div>
 
       <div className="w-full grid grid-cols-3 gap-2.5">

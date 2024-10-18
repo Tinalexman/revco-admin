@@ -97,7 +97,7 @@ const Filters: FC<{ onDatesChanged?: (startDate: string, endDate: string) => voi
           />
         </div>
       </div>
-      <div className="max-w-[17rem] w-fit h-10 flex gap-2 items-center rounded border border-gray-4 px-2">
+      {/* <div className="max-w-[17rem] w-fit h-10 flex gap-2 items-center rounded border border-gray-4 px-2">
         <p className=" text-[#10101266] text-[0.815rem] leading-[0.975rem]">
           From:
         </p>
@@ -133,7 +133,7 @@ const Filters: FC<{ onDatesChanged?: (startDate: string, endDate: string) => voi
             </div>
           }
         />
-      </div>
+      </div> */}
     </div>
   );
 };

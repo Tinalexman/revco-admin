@@ -46,9 +46,7 @@ const Activity = () => {
           </h2>
         </div>
         <div className="w-full justify-between items-center flex">
-          <Filters onDatesChanged={(start: string, end: string) => {
-            getActivity(start, end)
-          }} />
+          <Filters />
           <button className="bg-[#F0E6FC] rounded text-primary flex gap-3 items-center px-3 h-10">
             <p className="text-[0.815rem] leading-[0.975rem]">Export</p>
             <IoIosArrowDown />
@@ -58,13 +56,13 @@ const Activity = () => {
           <table className="w-full">
             <thead className="w-full bg-[#F3F7FC] h-14">
               <tr className="text-[#3A3A3A] font-medium text-[0.75rem] leading-[1.125rem]">
-                <th scope="col">Invoice Number</th>
+                <th scope="col">Transaction ID</th>
                 <th scope="col">Payer Name</th>
                 <th scope="col">MDA</th>
                 <th scope="col">Service Type</th>
                 <th scope="col">Amount Paid</th>
                 <th scope="col">Payment Date</th>
-                <th scope="col">Status</th>
+                {/* <th scope="col">Status</th> */}
                 <th scope="col">Actions</th>
               </tr>
             </thead>
@@ -77,23 +75,23 @@ const Activity = () => {
                     className="odd:bg-white even:bg-slate-50 text-[#3A3A3A] text-[0.75rem] leading-[1.125rem] justify-around max-h-[15rem]"
                   >
                     <td className="p-4">
-                      {txn.invoiceNo}
+                      {txn.txid}
                     </td>
-                    <td className="p-4">{txn.payer}</td>
+                    <td className="p-4">{txn.username}</td>
                     <td className="p-4">{txn.mda}</td>
-                    <td className="p-4">{txn.assesedService}</td>
+                    <td className="p-4">{txn.type}</td>
                     <td className="p-4">
-                      ₦{txn.invoiceAmount.toLocaleString("en-US")}
+                      ₦{txn.amountPaid.toLocaleString("en-US")}
                     </td>
                     <td className="p-4">
-                      {/* {convertDateWithDashesAndTime(txn.)} */}
+                      {txn.paymentDate}
                     </td>
-                    <td className="p-4">
+                    {/* <td className="p-4">
                       <StatusContainer
                         text={txn.paid ? "Successful" : "Pending"}
                         status={txn.paid ? STATE_SUCCESS : STATE_PENDING}
                       />
-                    </td>
+                    </td> */}
                     <td className="flex gap-1 p-4">
                       <div
                         onClick={() => openDrawer(txn)}
