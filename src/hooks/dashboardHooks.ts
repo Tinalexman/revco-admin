@@ -325,3 +325,48 @@ export const useGetTransactionChannelsPieData = () => {
     data,
   };
 };
+
+export const useGetRecentTransaction = (txid: string) => {
+  const [loading, setLoading] = useState<boolean>(false);
+  const [success, setSuccess] = useState<boolean>(false);
+  const [data, setData] = useState<iUserActivityResponse | null>(null);
+  const { requestApi } = useAxios();
+  const token = useToken().getToken();
+
+  let getTransaction = async () => {
+    if (loading) return;
+
+    setLoading(true);
+
+    const { data, status } = await requestApi(
+      `/mda-report/transaction?ref=${txid}`,
+      "GET",
+      {},
+      {
+        Authorization: `Bearer ${token}`,
+      }
+    );
+
+    setData(data);
+    setLoading(false);
+    setSuccess(status);
+
+    if (!status) {
+      toast.error(
+        data?.response?.data?.data ?? "An error occurred. Please try again"
+      );
+    }
+  };
+
+  useEffect(() => {
+    if (token) {
+      getTransaction();
+    }
+  }, [token]);
+
+  return {
+    loading,
+    success,
+    data,
+  };
+};

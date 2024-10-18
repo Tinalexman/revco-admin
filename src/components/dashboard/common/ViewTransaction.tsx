@@ -8,14 +8,16 @@ import StatusContainer, {
   STATE_PENDING,
   STATE_SUCCESS,
 } from "@/components/reusable/StatusContainer";
-import { iRecentActivityResponse } from "@/hooks/dashboardHooks";
+import { iRecentActivityResponse, useGetRecentTransaction } from "@/hooks/dashboardHooks";
 
 const ViewTransaction: FC<{
-  transaction: any;
+  txid: string;
   onClose: () => void;
   shouldPrint?: boolean;
   shouldRefund?: boolean;
-}> = ({ transaction, onClose, shouldPrint, shouldRefund }) => {
+}> = ({ txid, onClose, shouldPrint, shouldRefund }) => {
+  const { } = useGetRecentTransaction(txid);
+
   return (
     <div className="w-full bg-[#FEFEFE] px-5 py-8 flex flex-col items-center gap-6 overflow-y-scroll scrollbar-custom">
       <div className="w-full py-2 flex justify-between items-center">
@@ -36,6 +38,7 @@ const ViewTransaction: FC<{
         height={56}
         className="size-14 object-cover"
       />
+      { /*
       <div className="w-full flex flex-col">
         <div className="w-full bg-[#F6F6F7] h-10 flex items-center px-5">
           <h3 className="text-[#595959] text-[0.875rem] leading-[1.3125rem]">
@@ -59,10 +62,10 @@ const ViewTransaction: FC<{
             <h2>Channel:</h2>
             <h2 className="font-medium">{transaction.paymentChannel}</h2>
           </div>
-          {/* <div className="flex justify-between items-center w-full h-10 px-5 border-b border-[#F2F2F7]">
+          <div className="flex justify-between items-center w-full h-10 px-5 border-b border-[#F2F2F7]">
             <h2>Service Type:</h2>
             <h2 className="font-medium">{transaction.serviceType}</h2>
-          </div> */}
+          </div> 
           <div className="flex justify-between items-center w-full h-10 px-5 border-b border-[#F2F2F7]">
             <h2>Payment Status:</h2>
             <StatusContainer
@@ -79,10 +82,10 @@ const ViewTransaction: FC<{
             <h2>Payer ID:</h2>
             <h2 className="font-medium">{transaction.payerId ?? ""}</h2>
           </div>
-          {/* <div className="flex justify-between items-center w-full h-10 px-5 border-b border-[#F2F2F7]">
+          <div className="flex justify-between items-center w-full h-10 px-5 border-b border-[#F2F2F7]">
             <h2>External Ref No:</h2>
             <h2 className="font-medium">{transaction.refNo}</h2>
-          </div> */}
+          </div> 
           <div className="flex justify-between items-center w-full h-10 px-5">
             <h2>TIN:</h2>
             <h2 className="font-medium">{transaction.payerTin ?? ""}</h2>
@@ -96,7 +99,8 @@ const ViewTransaction: FC<{
             ₦{transaction.invoiceAmount.toLocaleString("en-US")}
           </h3>
         </div>
-      </div>
+      </div> */}
+
       {shouldPrint && shouldPrint && (
         <button className="w-full hover:bg-primary hover:text-white hover:border-0 transition-all duration-200 ease-out text-[#222222] border-2 border-[#F6F6F7] h-11 flex justify-center gap-2 items-center rounded-lg">
           <h4 className="text-reg-caption font-medium">Print Receipt</h4>

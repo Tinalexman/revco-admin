@@ -3,27 +3,25 @@ import Filters from "./Filters";
 import { Drawer } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { IoIosArrowDown } from "react-icons/io";
-import { convertDateWithDashesAndTime } from "@/functions/dateFunctions";
 import { IoEye } from "react-icons/io5";
 import { HiReceiptRefund } from "react-icons/hi2";
 import ViewTransaction from "./ViewTransaction";
-import StatusContainer, {
-  STATE_PENDING,
-  STATE_SUCCESS,
-} from "@/components/reusable/StatusContainer";
-import { iRecentActivityResponse, useGetRecentActivity } from "@/hooks/dashboardHooks";
+import { useGetRecentActivity } from "@/hooks/dashboardHooks";
 import { Loader } from "@mantine/core";
 
+import ResponsivePagination from 'react-responsive-pagination';
+import 'react-responsive-pagination/themes/classic.css';
+import Paginator from "@/components/reusable/paginator/Paginator";
 
 const Activity = () => {
   const [expanded, setExpanded] = useState<boolean>(false);
-  const { loading, getActivity, data: transactions } = useGetRecentActivity();
+  const { loading, data: transactions, getActivity } = useGetRecentActivity();
 
   const [opened, { open, close }] = useDisclosure(false);
   const [currentTransaction, setCurrentTransaction] =
-    useState<iRecentActivityResponse | null>(null);
+    useState<string | null>(null);
 
-  const openDrawer = (transaction: iRecentActivityResponse) => {
+  const openDrawer = (transaction: string) => {
     setCurrentTransaction(transaction);
     open();
   };
@@ -32,6 +30,14 @@ const Activity = () => {
     setCurrentTransaction(null);
     close();
   };
+
+  const [totalPages, setTotalPages] = useState<number>(5);
+  const [currentPage, setCurrentPage] = useState<number>(1);
+
+  function handlePageChange(page: number) {
+    setCurrentPage(page);
+    getActivity(`${page}`);
+  }
 
   return (
     <>
@@ -47,23 +53,29 @@ const Activity = () => {
         </div>
         <div className="w-full justify-between items-center flex">
           <Filters />
+          <div className="w-[35%]">
+            <Paginator
+              totalPages={totalPages}
+              currentPage={currentPage}
+              handlePageChange={page => handlePageChange(page)}
+            />
+          </div>
           <button className="bg-[#F0E6FC] rounded text-primary flex gap-3 items-center px-3 h-10">
             <p className="text-[0.815rem] leading-[0.975rem]">Export</p>
             <IoIosArrowDown />
           </button>
         </div>
-        <div className="relative overflow-x-auto w-full">
-          <table className="w-full">
-            <thead className="w-full bg-[#F3F7FC] h-14">
-              <tr className="text-[#3A3A3A] font-medium text-[0.75rem] leading-[1.125rem]">
-                <th scope="col">Transaction ID</th>
-                <th scope="col">Payer Name</th>
-                <th scope="col">MDA</th>
-                <th scope="col">Service Type</th>
-                <th scope="col">Amount Paid</th>
-                <th scope="col">Payment Date</th>
-                {/* <th scope="col">Status</th> */}
-                <th scope="col">Actions</th>
+        <div className="relative overflow-x-auto scrollbar-thin scrollbar-webkit w-full">
+          <table className="w-[150%] ">
+            <thead className=" bg-[#F3F7FC] h-14">
+              <tr className="text-[#3A3A3A] font-medium text-[0.75rem] leading-[1.125rem] text-left">
+                <th scope="col" className="px-4">Transaction ID</th>
+                <th scope="col" className="px-4">Payer Name</th>
+                <th scope="col" className="px-4">MDA</th>
+                <th scope="col" className="px-4">Service Type</th>
+                <th scope="col" className="px-4">Amount Paid</th>
+                <th scope="col" className="px-4">Payment Date</th>
+                <th scope="col" className="px-4">Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -86,15 +98,9 @@ const Activity = () => {
                     <td className="p-4">
                       {txn.paymentDate}
                     </td>
-                    {/* <td className="p-4">
-                      <StatusContainer
-                        text={txn.paid ? "Successful" : "Pending"}
-                        status={txn.paid ? STATE_SUCCESS : STATE_PENDING}
-                      />
-                    </td> */}
                     <td className="flex gap-1 p-4">
                       <div
-                        onClick={() => openDrawer(txn)}
+                        onClick={() => openDrawer(txn.txid)}
                         className="cursor-pointer bg-[#FCEAE8] rounded size-6 grid place-content-center text-[#292D32]"
                       >
                         <IoEye size={16} />
@@ -107,6 +113,7 @@ const Activity = () => {
                 ))}
             </tbody>
           </table>
+
           {
             loading && <div className="w-full h-60 grid place-content-center">
               <Loader color="primary.6" />
@@ -133,7 +140,7 @@ const Activity = () => {
           <Drawer.Content>
             <Drawer.Body>
               <ViewTransaction
-                transaction={currentTransaction}
+                txid={currentTransaction}
                 onClose={closeDrawer}
                 shouldRefund={true}
                 shouldPrint={true}
