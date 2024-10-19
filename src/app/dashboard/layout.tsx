@@ -79,12 +79,12 @@ const Layout: FC<{ children: ReactNode }> = ({ children }) => {
             />
           </div>
           <div className="w-fit flex items-center gap-5 text-secondary">
-            <div className="flex gap-4 items-center w-fit">
+            {/* <div className="flex gap-4 items-center w-fit">
               <Moon size="24" variant="Bold" />
               <Notification size="24" variant="Bold" />
-            </div>
+            </div> */}
             <div ref={dropdownRef}
-              onClick={() => setOpen(!open)} className="border-l cursor-pointer border-gray-4 flex w-fit px-4 py-2 gap-2 items-center">
+              onClick={() => setOpen(!open)} className="border-0 cursor-pointer border-gray-4 flex w-fit px-4 py-2 gap-2 items-center">
               <Profile size="24" variant="Bold" />
               <p className="text-reg-body">{role}</p>
               <IoIosArrowDown className="text-black " size={22} />

@@ -28,7 +28,7 @@ const EditUser: FC<{ user: iUserData; onClose: () => void }> = ({
           name: user.name,
           email: user.email,
           phone: user.phoneNumber,
-          address: user.address,
+          address: "",
           password: "",
           role: user.userType,
         }}
@@ -37,7 +37,7 @@ const EditUser: FC<{ user: iUserData; onClose: () => void }> = ({
 
           return errors;
         }}
-        onSubmit={async (values, { setSubmitting }) => {}}
+        onSubmit={async (values, { setSubmitting }) => { }}
       >
         {({
           values,
