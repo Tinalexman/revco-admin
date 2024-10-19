@@ -24,7 +24,7 @@ const Filters = () => {
           color="#292D32"
         />
       </div>
-      <div className="w-40 h-10 flex gap-2 items-center rounded border border-gray-4 pl-2">
+      {/* <div className="w-40 h-10 flex gap-2 items-center rounded border border-gray-4 pl-2">
         <p className=" text-[#10101266] text-[0.815rem] leading-[0.975rem]">
           Showing:
         </p>
@@ -41,7 +41,7 @@ const Filters = () => {
             value={type}
           />
         </div>
-      </div>
+      </div> */}
     </div>
   );
 };

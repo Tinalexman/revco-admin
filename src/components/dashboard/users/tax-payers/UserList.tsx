@@ -10,108 +10,56 @@ import StatusContainer, {
   STATE_SUCCESS,
   STATE_PENDING,
 } from "@/components/reusable/StatusContainer";
-import { Drawer } from "@mantine/core";
+import { Drawer, Loader } from "@mantine/core";
 import ViewUser from "./ViewUser";
 import EditUser from "./EditUser";
 
 import { useRouter } from "next/navigation";
+import { useGetTaxPayers } from "@/hooks/userHooks";
+import Paginator from "@/components/reusable/paginator/Paginator";
 
 export interface iUserData {
   taxPayerID: string;
   name: string;
   email: string;
   userType: string;
-  nin: string;
   status: string;
   statusText: string;
   phoneNumber: string;
   registrationDate: string;
-  lastLogin: string;
-  address: string;
 }
 
 const UserList = () => {
   const [indexOfChildToBeViewed, setIndexOfChildToBeViewed] =
     useState<number>(0);
   const router = useRouter();
-  const childrenNames: string[] = ["All", "Banks", "Ministries", "Others"];
+  const childrenNames: string[] = ["All", "Individual", "Corporation", "Agent"];
   const [currentUser, setCurrentUser] = useState<iUserData | null>(null);
   const [expanded, setExpanded] = useState<boolean>(false);
   const [editMode, setEditMode] = useState<boolean>(false);
-  const [users, setUsers] = useState<iUserData[]>([
-    {
-      taxPayerID: "TXN12345",
-      name: "Bola Tunde",
-      email: "johndoe@mail.com",
-      userType: "Individual",
-      nin: "12345678900",
-      status: STATE_SUCCESS,
-      statusText: "Active",
-      phoneNumber: "09012345678",
-      registrationDate: "2024-01-15",
-      lastLogin: "2024-01-15",
-      address: "Somewhere in Lagos",
-    },
-    {
-      taxPayerID: "TXN12345",
-      name: "Bola Tunde",
-      email: "johndoe@mail.com",
-      userType: "Individual",
-      nin: "12345678900",
-      status: STATE_PENDING,
-      statusText: "Pending",
-      phoneNumber: "09012345678",
-      registrationDate: "2024-01-15",
-      lastLogin: "2024-01-15",
-      address: "Somewhere in Lagos",
-    },
-    {
-      taxPayerID: "TXN12345",
-      name: "Bola Tunde",
-      email: "johndoe@mail.com",
-      userType: "Individual",
-      nin: "12345678900",
-      status: STATE_SUCCESS,
-      statusText: "Active",
-      phoneNumber: "09012345678",
-      registrationDate: "2024-01-15",
-      lastLogin: "2024-01-15",
-      address: "Somewhere in Lagos",
-    },
-    {
-      taxPayerID: "TXN12345",
-      name: "Bola Tunde",
-      email: "johndoe@mail.com",
-      userType: "Individual",
-      nin: "12345678900",
-      status: STATE_SUCCESS,
-      statusText: "Active",
-      phoneNumber: "09012345678",
-      registrationDate: "2024-01-15",
-      lastLogin: "2024-01-15",
-      address: "Somewhere in Lagos",
-    },
-    {
-      taxPayerID: "TXN12345",
-      name: "Bola Tunde",
-      email: "johndoe@mail.com",
-      userType: "Individual",
-      nin: "12345678900",
-      status: STATE_SUCCESS,
-      statusText: "Active",
-      phoneNumber: "09012345678",
-      registrationDate: "2024-01-15",
-      lastLogin: "2024-01-15",
-      address: "Somewhere in Lagos",
-    },
-  ]);
 
   const [opened, { open, close }] = useDisclosure(false);
-
   const closeDrawer = () => {
     setCurrentUser(null);
     close();
   };
+
+  const { data, loading, getUsers } = useGetTaxPayers();
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const totalPages = Math.ceil(data.count / 10);
+
+
+  function handlePageChange(page: number) {
+    setCurrentPage(page);
+    getUsers(`${page}`, getRoleValue(childrenNames[indexOfChildToBeViewed]));
+  }
+
+  const getRoleValue = (role: string) => {
+    if (role === "Individual") return "Individual";
+    if (role === "Corporation") return "Non-Individual";
+    if (role === "Agent") return "Agent";
+    return "";
+  }
 
   return (
     <>
@@ -121,18 +69,19 @@ const UserList = () => {
             {childrenNames.map((childName, index) => (
               <div
                 key={index}
-                onClick={() => setIndexOfChildToBeViewed(index)}
-                className={`text-reg-caption cursor-pointer transition-all duration-300 ease-out px-4 grid place-content-center font-semibold ${
-                  indexOfChildToBeViewed === index
-                    ? "text-primary bg-white"
-                    : "text-[#A9A9A9]"
-                } ${
-                  index === 0
+                onClick={() => {
+                  setIndexOfChildToBeViewed(index);
+                  getUsers(`${currentPage}`, getRoleValue(childName));
+                }}
+                className={`text-reg-caption cursor-pointer transition-all duration-300 ease-out px-4 grid place-content-center font-semibold ${indexOfChildToBeViewed === index
+                  ? "text-primary bg-white"
+                  : "text-[#A9A9A9]"
+                  } ${index === 0
                     ? "rounded-l-xl"
                     : index === childrenNames.length - 1
-                    ? "rounded-r-xl"
-                    : ""
-                }`}
+                      ? "rounded-r-xl"
+                      : ""
+                  }`}
               >
                 <h3>{childName}</h3>
               </div>
@@ -150,6 +99,13 @@ const UserList = () => {
         </div>
         <div className="w-full justify-between items-center flex">
           <Filters />
+          <div className="w-[35%]">
+            <Paginator
+              totalPages={totalPages}
+              currentPage={currentPage}
+              handlePageChange={page => handlePageChange(page)}
+            />
+          </div>
           <button className="bg-[#F0E6FC] rounded text-primary flex gap-3 items-center px-3 h-10">
             <p className="text-[0.815rem] leading-[0.975rem]">Export</p>
             <IoIosArrowDown />
@@ -159,39 +115,45 @@ const UserList = () => {
           <table className="w-full">
             <thead className="w-full bg-[#F3F7FC] h-14">
               <tr className="text-[#3A3A3A] font-medium text-[0.75rem] leading-[1.125rem]">
-                <th scope="col">Tax Payer ID</th>
-                <th scope="col">Name</th>
-                <th scope="col">Email</th>
-                <th scope="col">User Type</th>
-                <th scope="col">NIN</th>
-                <th scope="col">Status</th>
-                <th scope="col">Actions</th>
+                <th scope="col" className="text-left px-4">Tax Payer ID</th>
+                <th scope="col" className="text-left px-4">Name</th>
+                <th scope="col" className="text-left px-4">Email</th>
+                <th scope="col" className="text-left px-4">User Type</th>
+                <th scope="col" className="text-left px-4">Status</th>
+                <th scope="col" className="text-left px-4">Actions</th>
               </tr>
             </thead>
             <tbody>
-              {users.slice(0, expanded ? users.length : 5).map((user, i) => {
-                const formattedNin =
-                  user.nin.substring(0, 5) + "****" + user.nin.substring(9);
+              {!loading && data.data.slice(0, expanded ? data.data.length : 5).map((user, i) => {
+
                 return (
                   <tr
                     key={i}
                     className="odd:bg-white even:bg-slate-50 text-[#3A3A3A] text-[0.75rem] leading-[1.125rem] justify-around"
                   >
-                    <td className="p-4">{user.taxPayerID}</td>
+                    <td className="p-4">{user.id}</td>
                     <td className="p-4">{user.name}</td>
                     <td className="p-4">{user.email}</td>
-                    <td className="p-4">{user.userType}</td>
-                    <td className="p-4">{formattedNin}</td>
+                    <td className="p-4">{user.role}</td>
                     <td className="p-4">
                       <StatusContainer
-                        text={user.statusText}
-                        status={user.status}
+                        text={user.status === "false" ? "Inactive" : "Active"}
+                        status={user.status === "false" ? STATE_PENDING : STATE_SUCCESS}
                       />
                     </td>
                     <td className="flex gap-1 p-4">
                       <div
                         onClick={() => {
-                          setCurrentUser(user);
+                          setCurrentUser({
+                            email: user.email,
+                            name: user.name,
+                            phoneNumber: user.phone,
+                            registrationDate: user.createdAt,
+                            status: user.status === "false" ? STATE_PENDING : STATE_SUCCESS,
+                            statusText: user.status === "false" ? "Inactive" : "Active",
+                            taxPayerID: user.id,
+                            userType: user.role,
+                          });
                           open();
                         }}
                         className="cursor-pointer bg-[#FCEAE8] rounded size-6 grid place-content-center text-[#292D32]"
@@ -204,6 +166,16 @@ const UserList = () => {
               })}
             </tbody>
           </table>
+          {
+            loading && <div className="w-full h-60 grid place-content-center">
+              <Loader color="primary.6" />
+            </div>
+          }
+          {
+            !loading && data.data.length === 0 && <div className="w-full h-60 grid place-content-center text-[#3A3A3A] font-medium text-[1rem] leading-[1.125rem]">
+              No users available
+            </div>
+          }
         </div>
       </div>
       {currentUser !== null && (
@@ -235,7 +207,7 @@ const UserList = () => {
                   }}
                   viewTransactions={() => {
                     router.push(
-                      `/dashboard/users/transactions?id=${currentUser.taxPayerID}`
+                      `/dashboard/users/transactions?name=${currentUser.name}&phoneNumber=${currentUser.phoneNumber}`
                     );
                   }}
                 />

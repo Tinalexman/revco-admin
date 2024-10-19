@@ -8,6 +8,8 @@ import { MdContentCopy } from "react-icons/md";
 import { IoMail } from "react-icons/io5";
 import { RiEditBoxLine } from "react-icons/ri";
 import { MdArrowOutward } from "react-icons/md";
+import { convertDateWithDashesAndTime } from "@/functions/dateFunctions";
+import toast from "react-hot-toast";
 
 const ViewUser: FC<{
   user: iUserData;
@@ -35,6 +37,7 @@ const ViewUser: FC<{
   }, []);
 
   function copyToClipboard(text: string) {
+    toast.success("Email copied to clipboard");
     navigator.clipboard.writeText(text);
   }
 
@@ -119,10 +122,6 @@ const ViewUser: FC<{
           </p>
         </div>
         <div className="w-full p-3 text-[0.875rem] text-black leading-[1rem] flex items-center justify-between">
-          <h3>NIN:</h3>
-          <h3 className="font-medium">{user.nin}</h3>
-        </div>
-        <div className="w-full p-3 text-[0.875rem] text-black leading-[1rem] flex items-center justify-between">
           <h3>Name:</h3>
           <h3 className="font-medium">{user.name}</h3>
         </div>
@@ -144,11 +143,7 @@ const ViewUser: FC<{
         </div>
         <div className="w-full p-3 text-[0.875rem] text-black leading-[1rem] flex items-center justify-between">
           <h3>Registration Date:</h3>
-          <h3 className="font-medium">{user.registrationDate}</h3>
-        </div>
-        <div className="w-full p-3 text-[0.875rem] text-black leading-[1rem] flex items-center justify-between">
-          <h3>Last Login:</h3>
-          <h3 className="font-medium">{user.lastLogin}</h3>
+          <h3 className="font-medium">{convertDateWithDashesAndTime(user.registrationDate)}</h3>
         </div>
       </div>
       <div className="w-full flex justify-between items-center ">

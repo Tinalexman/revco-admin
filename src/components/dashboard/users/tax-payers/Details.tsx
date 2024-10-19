@@ -7,6 +7,8 @@ import { Profile, Profile2User } from "iconsax-react";
 import Image, { StaticImageData } from "next/image";
 import TaxPayersImage from "@/assets/dashboard/tax payers.png";
 import TotalUsersImage from "@/assets/dashboard/total users.png";
+import { useGetUserActivity } from "@/hooks/dashboardHooks";
+import { Loader } from "@mantine/core";
 
 interface iPersonItem {
   value: number;
@@ -18,25 +20,26 @@ interface iPersonItem {
 }
 
 const Details = () => {
-  const [filter, setFilter] = useState<string>("");
-  const [personItems, setPersonItems] = useState<iPersonItem[]>([
+  const [filter, setFilter] = useState<string>("Yearly");
+  const { data: userActivity, loading: loadingActivity, getActivity } = useGetUserActivity();
+  const personItems: iPersonItem[] = [
     {
       title: "Total Tax Payers",
-      value: 200,
+      value: userActivity?.taxpayers || 0,
       icon: <Profile size={20} className="text-primary" variant="Bold" />,
-      individual: 140,
-      corporate: 60,
+      individual: userActivity?.individuals || 0,
+      corporate: userActivity?.corporations || 0,
       background: TaxPayersImage,
     },
     {
       title: "New Sign-ups",
-      value: 120,
+      value: userActivity?.newSignUps || 0,
       icon: <Profile2User size={20} className="text-primary" variant="Bold" />,
-      individual: 90,
-      corporate: 30,
+      individual: userActivity?.nsIndividual || 0,
+      corporate: userActivity?.nsCorporations || 0,
       background: TotalUsersImage,
     },
-  ]);
+  ];
 
   return (
     <div className="flex flex-col w-full gap-2.5">
@@ -46,7 +49,10 @@ const Details = () => {
           <Dropdown
             menus={["Daily", "Monthly", "Yearly"].map((v, i) => ({
               name: v,
-              onClick: () => setFilter(v),
+              onClick: () => {
+                setFilter(v);
+                getActivity(v.substring(0, 1));
+              },
             }))}
             value={filter}
             hint={"Select"}
@@ -63,27 +69,33 @@ const Details = () => {
             <div className="w-[70%] flex justify-between">
               <div className="w-fit flex flex-col">
                 <h3 className="text-med-button text-[#9EA4AA]">{pt.title}</h3>
-                <h2 className="text-dash-intro-header font-semibold text-gray-5">
-                  {pt.value}
-                </h2>
+                {
+                  loadingActivity ? <Loader color="primary.6" size={24} /> : <h2 className="text-dash-intro-header font-semibold text-gray-5">
+                    {pt.value}
+                  </h2>
+                }
               </div>
               <div className="w-fit flex gap-2 items-center">
                 <div className="flex flex-col w-fit">
                   <h3 className="text-[0.69rem] leading-[1.085rem] text-gray-5 font-medium">
                     Individual
                   </h3>
-                  <h2 className="text-[1.185rem] leading-[1.4rem] font-semibold text-gray-5">
-                    {pt.individual}
-                  </h2>
+                  {
+                    loadingActivity ? <Loader color="primary.6" size={24} /> : <h2 className="text-[1.185rem] leading-[1.4rem] font-semibold text-gray-5">
+                      {pt.individual}
+                    </h2>
+                  }
                 </div>
                 <div className="w-[1px] h-full bg-[#8E8E93]" />
                 <div className="flex flex-col w-fit">
                   <h3 className="text-[0.69rem] leading-[1.085rem] text-gray-5 font-medium">
                     Corporate
                   </h3>
-                  <h2 className="text-[1.185rem] leading-[1.4rem] font-semibold text-gray-5">
-                    {pt.corporate}
-                  </h2>
+                  {
+                    loadingActivity ? <Loader color="primary.6" size={24} /> : <h2 className="text-[1.185rem] leading-[1.4rem] font-semibold text-gray-5">
+                      {pt.corporate}
+                    </h2>
+                  }
                 </div>
               </div>
             </div>
@@ -92,9 +104,8 @@ const Details = () => {
               alt={pt.title}
               width={300}
               height={200}
-              className={`absolute bottom-0 right-0 ${
-                i === 0 ? "w-[30%]" : "w-[25%]"
-              } h-auto`}
+              className={`absolute bottom-0 right-0 ${i === 0 ? "w-[30%]" : "w-[25%]"
+                } h-auto`}
             />
           </div>
         ))}

@@ -6,6 +6,8 @@ import { useRouter, useSearchParams } from "next/navigation";
 import React, { Suspense, useEffect } from "react";
 import { VscTools } from "react-icons/vsc";
 import Details from "./Details";
+import { IoIosArrowForward } from "react-icons/io";
+
 
 const Transactions = () => {
   return (
@@ -18,10 +20,11 @@ const Transactions = () => {
 const Content = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const taxPayerID = searchParams.get("id");
+  const phoneNumber = searchParams.get("phoneNumber");
+  const name = searchParams.get("name")
 
   useEffect(() => {
-    if (taxPayerID === null) {
+    if (phoneNumber === null || name === null) {
       router.back();
     }
   }, [router]);
@@ -48,7 +51,20 @@ const Content = () => {
         </div>
       </div>
       <div className="py-5 px-10 w-full flex flex-col gap-2.5">
-        <Details id={taxPayerID!} />
+        <div className="h-14 bg-white rounded-xl w-full flex items-center gap-3 px-7">
+          <p className="font-semibold text-reg-caption text-gray-5">
+            Users
+          </p>
+          <IoIosArrowForward className="text-gray-5" size={24} />
+          <p className="font-medium text-reg-caption text-gray-5">
+            {name!}
+          </p>
+          <IoIosArrowForward className="text-gray-5" size={24} />
+          <p className="font-normal text-reg-caption text-gray-5">
+            Transaction History
+          </p>
+        </div>
+        <Details name={name!} phoneNumber={phoneNumber!} />
       </div>
     </div>
   );
