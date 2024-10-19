@@ -3,26 +3,26 @@
 import React, { useState } from "react";
 import { IoIosArrowDown, IoMdAdd } from "react-icons/io";
 import Filters from "../../common/Filters";
-import { Drawer, Modal } from "@mantine/core";
+import { Drawer, Loader, Modal } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import AddChannel from "./AddChannel";
 import StatusContainer, {
   STATE_SUCCESS,
-  STATE_ERROR,
-  STATE_PENDING,
 } from "@/components/reusable/StatusContainer";
 
 import { RiEdit2Fill } from "react-icons/ri";
 import { TiCancel } from "react-icons/ti";
 import EditChannel from "./EditChannel";
 import ChannelAction from "./ChannelAction";
+import { useGetPaymentChannels } from "@/hooks/paymentHooks";
+import { useRevcoUserStore } from "@/stores/userStore";
 
 export interface iPaymentChannel {
   name: string;
   type: string;
   status: string;
   statusText: string;
-  success: number;
+  success: string;
 }
 
 const PaymentChannels = () => {
@@ -38,33 +38,22 @@ const PaymentChannels = () => {
     { open: openChannelAction, close: closeChannelAction },
   ] = useDisclosure(false);
 
-  const [channels, setChannels] = useState<iPaymentChannel[]>([
-    {
-      name: "Bank Branch",
-      type: "Offline",
-      status: STATE_SUCCESS,
-      statusText: "Active",
-      success: 95,
-    },
-    {
-      name: "Online Bank",
-      type: "Offline",
-      status: STATE_PENDING,
-      statusText: "Pending",
-      success: 95,
-    },
-    {
-      name: "POS Terminal",
-      type: "Offline",
-      status: STATE_ERROR,
-      statusText: "Failed",
-      success: 95,
-    },
-  ]);
+  const { data, loading } = useGetPaymentChannels();
+
+
+  const channels: iPaymentChannel[] = data.map((dt, i) => ({
+    name: dt.channel,
+    type: "Online",
+    status: STATE_SUCCESS,
+    statusText: "Active",
+    success: dt.percentage,
+  }));
 
   const [currentChannel, setCurrentChannel] = useState<iPaymentChannel | null>(
     null
   );
+
+  const isAdmin = useRevcoUserStore((state) => state.role) === "Admin";
 
   const openEditDrawer = (channel: iPaymentChannel) => {
     setCurrentChannel(channel);
@@ -104,12 +93,14 @@ const PaymentChannels = () => {
             <p className="font-semibold text-dash-header text-gray-5">
               Payment Channels
             </p>
-            <button
-              onClick={openAddChannel}
-              className="bg-primary text-white rounded-lg h-9 gap-2 px-3 text-[0.825rem] flex items-center leading-[0.98rem]"
-            >
-              Add New Channel <IoMdAdd />
-            </button>
+            {
+              isAdmin && <button
+                onClick={openAddChannel}
+                className="bg-primary text-white rounded-lg h-9 gap-2 px-3 text-[0.825rem] flex items-center leading-[0.98rem]"
+              >
+                Add New Channel <IoMdAdd />
+              </button>
+            }
           </div>
           <div className="w-full bg-white p-5 flex flex-col gap-3 rounded-xl">
             <div className="w-full flex justify-between items-center">
@@ -144,9 +135,11 @@ const PaymentChannels = () => {
                     <th scope="col" className="text-start px-4">
                       Success Rate
                     </th>
-                    <th scope="col" className="text-start px-4">
-                      Actions
-                    </th>
+                    {
+                      isAdmin && <th scope="col" className="text-start px-4">
+                        Actions
+                      </th>
+                    }
                   </tr>
                 </thead>
                 <tbody>
@@ -165,7 +158,7 @@ const PaymentChannels = () => {
                       </td>
                       <td className="p-4">{chn.success}%</td>
 
-                      <td className="flex gap-1 p-4">
+                      {isAdmin && <td className="flex gap-1 p-4">
                         <div
                           onClick={() => openEditDrawer(chn)}
                           className="cursor-pointer bg-[#E4ECF7] rounded size-6 grid place-content-center text-[#292D32]"
@@ -178,11 +171,21 @@ const PaymentChannels = () => {
                         >
                           <TiCancel size={16} />
                         </div>
-                      </td>
+                      </td>}
                     </tr>
                   ))}
                 </tbody>
               </table>
+              {
+                loading && <div className="w-full h-60 grid place-content-center">
+                  <Loader color="primary.6" />
+                </div>
+              }
+              {
+                !loading && data.length === 0 && <div className="w-full h-60 grid place-content-center text-[#3A3A3A] font-medium text-[1rem] leading-[1.125rem]">
+                  No payment channels available
+                </div>
+              }
             </div>
           </div>
         </div>

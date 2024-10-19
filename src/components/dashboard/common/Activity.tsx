@@ -31,7 +31,7 @@ const Activity = () => {
     close();
   };
 
-  const [totalPages, setTotalPages] = useState<number>(5);
+  const totalPages = Math.ceil(transactions.count / 10);
   const [currentPage, setCurrentPage] = useState<number>(1);
 
   function handlePageChange(page: number) {
@@ -79,8 +79,8 @@ const Activity = () => {
               </tr>
             </thead>
             <tbody>
-              {!loading && transactions.length > 0 && transactions
-                .slice(0, expanded ? transactions.length : 5)
+              {!loading && transactions.data.length > 0 && transactions.data
+                .slice(0, expanded ? transactions.data.length : 5)
                 .map((txn, i) => (
                   <tr
                     key={i}
@@ -120,7 +120,7 @@ const Activity = () => {
             </div>
           }
           {
-            !loading && transactions.length === 0 && <div className="w-full h-60 grid place-content-center text-[#3A3A3A] font-medium text-[1rem] leading-[1.125rem]">
+            !loading && transactions.data.length === 0 && <div className="w-full h-60 grid place-content-center text-[#3A3A3A] font-medium text-[1rem] leading-[1.125rem]">
               No recent activity
             </div>
           }

@@ -1,8 +1,12 @@
 import { useAxios } from "@/api/base";
 import { useToken } from "@/providers/AuthProvider";
-import { useRevcoUserStore } from "@/stores/userStore";
 import { useState, useEffect } from "react";
 import toast from "react-hot-toast";
+
+export interface iRecentActivity {
+  count: number;
+  data: iRecentActivityResponse[];
+}
 
 export interface iRecentActivityResponse {
   txid: string;
@@ -49,7 +53,10 @@ export interface iUserActivityResponse {
 export const useGetRecentActivity = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [success, setSuccess] = useState<boolean>(false);
-  const [data, setData] = useState<iRecentActivityResponse[]>([]);
+  const [data, setData] = useState<iRecentActivity>({
+    count: 0,
+    data: [],
+  });
   const { requestApi } = useAxios();
   const token = useToken().getToken();
 

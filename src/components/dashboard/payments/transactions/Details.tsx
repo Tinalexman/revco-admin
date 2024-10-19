@@ -2,6 +2,8 @@ import React, { useState } from "react";
 
 import { RiMoneyDollarCircleFill } from "react-icons/ri";
 import Dropdown from "@/components/reusable/Dropdown";
+import { useGetStatisticsSummary } from "@/hooks/dashboardHooks";
+import { Loader } from "@mantine/core";
 
 interface iRevenueItem {
   value: number;
@@ -11,34 +13,38 @@ interface iRevenueItem {
 }
 
 const Details = () => {
-  const [filter, setFilter] = useState<string>("");
+  const [filter, setFilter] = useState<string>("Yearly");
 
-  const [revenueItems, setRevenueItems] = useState<iRevenueItem[]>([
+  const {
+    loading: loadingSummary,
+    getStatisticsSummary,
+    data: statsSummary, } = useGetStatisticsSummary();
+  const revenueItems: iRevenueItem[] = [
     {
       title: "Total Revenue",
-      value: 1450000,
+      value: statsSummary?.totalRevenue || 0,
       subtitle: 3000,
       icon: <RiMoneyDollarCircleFill size={20} className="text-primary" />,
     },
     {
       title: "Total Invoice Generated",
-      value: 1450000,
+      value: statsSummary?.totalInvoiceGeneratedInNaira || 0,
       subtitle: 3000,
       icon: <RiMoneyDollarCircleFill size={20} className="text-primary" />,
     },
     {
       title: "Total Commission",
-      value: 1450000,
+      value: statsSummary?.totalCommissionInNaira || 0,
       subtitle: 3000,
       icon: <RiMoneyDollarCircleFill size={20} className="text-primary" />,
     },
     {
       title: "Total Amount Remitted",
-      value: 1450000,
+      value: statsSummary?.totalAmountRemitted || 0,
       subtitle: 3000,
       icon: <RiMoneyDollarCircleFill size={20} className="text-primary" />,
     },
-  ]);
+  ];
 
   return (
     <div className="w-full flex flex-col gap-2.5">
@@ -66,12 +72,11 @@ const Details = () => {
             <div className="bg-primary-accent rounded-full p-2">{it.icon}</div>
             <div className="w-full flex flex-col">
               <h3 className="text-med-button text-[#9EA4AA]">{it.title}</h3>
-              <h2 className="text-dash-intro-header font-semibold text-gray-5">
-                ₦{it.value.toLocaleString("en-US")}
-              </h2>
-              <h6 className="text-[#615E83] text-[0.865rem] leading-[0.975rem] text-end">
-                {it.subtitle}
-              </h6>
+              {
+                loadingSummary ? <Loader color="primary.6" size={24} /> : <h2 className="text-dash-intro-header font-semibold text-gray-5">
+                  ₦{it.value.toLocaleString("en-US")}
+                </h2>
+              }
             </div>
           </div>
         ))}

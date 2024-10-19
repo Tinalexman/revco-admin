@@ -101,7 +101,8 @@ export function convertDateWithJustSlashes(date: Date) {
   return `${date.getDate()}/${date.getMonth()}/${date.getFullYear()}`;
 }
 
-export function convertDateWithDashesAndTime(date: Date) {
+export function convertDateWithDashesAndTime(other: Date | string) {
+  const date = new Date(other);
   let isPM = date.getHours() > 11;
   let hours = date.getHours();
   let minutes = date.getMinutes();

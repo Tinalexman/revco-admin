@@ -5,12 +5,10 @@ import { IoIosArrowDown, IoMdAdd } from "react-icons/io";
 import { FaReceipt } from "react-icons/fa6";
 import { IoEye } from "react-icons/io5";
 import Filters from "../../common/Filters";
-import { Drawer, Modal } from "@mantine/core";
+import { Drawer, Loader } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import StatusContainer, {
   STATE_SUCCESS,
-  STATE_ERROR,
-  STATE_PENDING,
   STATE_NULL,
 } from "@/components/reusable/StatusContainer";
 
@@ -18,15 +16,13 @@ import { RiEdit2Fill } from "react-icons/ri";
 import { TiCancel } from "react-icons/ti";
 import { convertDateWithDashesAndTime } from "@/functions/dateFunctions";
 import GenerateInvoice from "./GenerateInvoice";
+import { useGetRecentInvoices } from "@/hooks/paymentHooks";
+import Paginator from "@/components/reusable/paginator/Paginator";
 
-export interface iInvoice {
-  invoiceNo: string;
-  payerName: string;
-  serviceType: string;
-  amount: number;
-  dueDate: Date;
-  status: string;
-  statusText: string;
+
+interface iDateData {
+  start: string;
+  end: string;
 }
 
 const InvoiceManagement = () => {
@@ -35,66 +31,18 @@ const InvoiceManagement = () => {
     openedGenerateInvoice,
     { open: openGenerateInvoice, close: closeGenerateInvoice },
   ] = useDisclosure(false);
-  const [
-    openedEditChannel,
-    { open: openEditChannel, close: closeEditChannel },
-  ] = useDisclosure(false);
-  const [
-    openedChannelAction,
-    { open: openChannelAction, close: closeChannelAction },
-  ] = useDisclosure(false);
 
-  const [invoices, setInvoices] = useState<iInvoice[]>([
-    {
-      invoiceNo: "1234567890",
-      payerName: "Bolaji Tunde",
-      serviceType: "PAYEE",
-      amount: 50000,
-      dueDate: new Date("2024-08-11"),
-      status: STATE_SUCCESS,
-      statusText: "Paid",
-    },
-    {
-      invoiceNo: "1234567890",
-      payerName: "Bolaji Tunde",
-      serviceType: "PAYEE",
-      amount: 50000,
-      dueDate: new Date("2024-08-11"),
-      status: STATE_NULL,
-      statusText: "Unpaid",
-    },
-    {
-      invoiceNo: "1234567890",
-      payerName: "Bolaji Tunde",
-      serviceType: "PAYEE",
-      amount: 50000,
-      dueDate: new Date("2024-08-11"),
-      status: STATE_ERROR,
-      statusText: "Overdue",
-    },
-  ]);
+  const currentDate = new Date().toISOString().split("T")[0];
+  const { loading, data, getInvoices } = useGetRecentInvoices();
+  const totalPages = 5; //Math.ceil(data.count / 10);
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const [dateData, setDateData] = useState<iDateData>({ start: currentDate, end: currentDate });
 
-  const [currentInvoice, setCurrentInvoice] = useState<iInvoice | null>(null);
+  function handlePageChange(page: number) {
+    setCurrentPage(page);
+    getInvoices(dateData.start, dateData.end, `${page}`);
+  }
 
-  const openEditDrawer = (invoice: iInvoice) => {
-    setCurrentInvoice(invoice);
-    openEditChannel();
-  };
-
-  const closeEditDrawer = () => {
-    setCurrentInvoice(null);
-    closeEditChannel();
-  };
-
-  const openActionModal = (invoice: iInvoice) => {
-    setCurrentInvoice(invoice);
-    openChannelAction();
-  };
-
-  const closeActionModal = () => {
-    setCurrentInvoice(null);
-    closeChannelAction();
-  };
 
   return (
     <>
@@ -132,7 +80,17 @@ const InvoiceManagement = () => {
               </h2>
             </div>
             <div className="w-full justify-between items-center flex">
-              <Filters />
+              <Filters onDatesChanged={(start, end) => {
+                setDateData({ start, end });
+                getInvoices(start, end, `${currentPage}`)
+              }} showDatePicker={true} />
+              <div className="w-[35%]">
+                <Paginator
+                  totalPages={totalPages}
+                  currentPage={currentPage}
+                  handlePageChange={page => handlePageChange(page)}
+                />
+              </div>
               <button className="bg-[#F0E6FC] rounded text-primary flex gap-3 items-center px-3 h-10">
                 <p className="text-[0.815rem] leading-[0.975rem]">Export</p>
                 <IoIosArrowDown />
@@ -149,13 +107,13 @@ const InvoiceManagement = () => {
                       Payer Name
                     </th>
                     <th scope="col" className="text-start px-4">
-                      Service type
+                      Service Type
                     </th>
                     <th scope="col" className="text-start px-4">
                       Amount Paid
                     </th>
                     <th scope="col" className="text-start px-4">
-                      Due Date
+                      Payment Date
                     </th>
                     <th scope="col" className="text-start px-4">
                       Status
@@ -166,36 +124,53 @@ const InvoiceManagement = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {invoices.map((inv, i) => (
-                    <tr
-                      key={i}
-                      className="odd:bg-white even:bg-slate-50 text-[#3A3A3A] text-[0.75rem] leading-[1.125rem] justify-around"
-                    >
-                      <td className="p-4">{inv.invoiceNo}</td>
-                      <td className="p-4">{inv.payerName}</td>
-                      <td className="p-4">{inv.serviceType}</td>
-                      <td className="p-4">
-                        ₦{inv.amount.toLocaleString("en-US")}
-                      </td>
-                      <td className="p-4">
-                        {convertDateWithDashesAndTime(inv.dueDate)}
-                      </td>
-                      <td className="p-4">
-                        <StatusContainer
-                          status={inv.status}
-                          text={inv.statusText}
-                        />
-                      </td>
+                  {!loading && data.data
+                    .slice(0, expanded ? data.data.length : 5)
+                    .map((inv, i) => (
+                      <tr
+                        key={i}
+                        className="odd:bg-white even:bg-slate-50 text-[#3A3A3A] text-[0.75rem] leading-[1.125rem] justify-around"
+                      >
+                        <td className="p-4">{inv.transactionDetails.invoiceNumber}</td>
+                        <td className="p-4">{inv.userDetails.firstname} {inv.userDetails.lastname}</td>
+                        <td className="p-4">{inv.organizationDetails.serviceDescription}</td>
+                        <td className="p-4">
+                          {
+                            inv.payment.length === 0 ? "N/A" : (`₦${inv.payment[0].totalAmountPaid.toLocaleString("en-US")}`)
+                          }
+                        </td>
+                        <td className="p-4">
+                          {
+                            inv.payment.length === 0 ? "N/A" : (convertDateWithDashesAndTime(inv.payment[0].transactionDate))
+                          }
+                        </td>
+                        <td className="p-4">
+                          <StatusContainer
+                            status={inv.payment.length !== 0 ? STATE_SUCCESS : STATE_NULL}
+                            text={inv.payment.length === 0 ? "Unpaid" : "Paid"}
+                          />
+                        </td>
 
-                      <td className="p-4">
-                        <div className="cursor-pointer bg-[#FCEAE8] rounded size-6 grid place-content-center text-[#292D32]">
-                          <IoEye size={16} />
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
+                        <td className="p-4">
+                          <div className="cursor-pointer bg-[#FCEAE8] rounded size-6 grid place-content-center text-[#292D32]">
+                            <IoEye size={16} />
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
                 </tbody>
               </table>
+
+              {
+                loading && <div className="w-full h-60 grid place-content-center">
+                  <Loader color="primary.6" />
+                </div>
+              }
+              {
+                !loading && data.data.length === 0 && <div className="w-full h-60 grid place-content-center text-[#3A3A3A] font-medium text-[1rem] leading-[1.125rem]">
+                  No recent invoices
+                </div>
+              }
             </div>
           </div>
         </div>

@@ -61,12 +61,7 @@ const GenerateInvoice: FC<{ onClose: () => void }> = ({ onClose }) => {
           errors,
           touched,
           handleChange,
-          handleBlur,
           handleSubmit,
-          isSubmitting,
-          isInitialValid,
-          isValid,
-          setSubmitting,
           setFieldValue,
         }) => (
           <Form

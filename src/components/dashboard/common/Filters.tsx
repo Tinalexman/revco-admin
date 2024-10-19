@@ -11,9 +11,9 @@ interface DateRange {
   end: string;
 }
 
-const Filters: FC<{ onDatesChanged?: (startDate: string, endDate: string) => void }> = ({ onDatesChanged }) => {
+const Filters: FC<{ onDatesChanged?: (startDate: string, endDate: string) => void, showDatePicker?: boolean, onSearch?: (search: string) => void }> = ({ onDatesChanged, showDatePicker, onSearch }) => {
   const [search, setSearch] = useState<string>("");
-  const [type, setType] = useState<string>("");
+  // const [type, setType] = useState<string>("");
   const [dateRange, setDateRange] = useState<DateRange>({
     start: new Date().toISOString().split("T")[0],
     end: new Date().toISOString().split("T")[0],
@@ -68,7 +68,10 @@ const Filters: FC<{ onDatesChanged?: (startDate: string, endDate: string) => voi
           type="text"
           value={search}
           className="w-full h-full rounded border text-[0.815rem] leading-[0.975rem] border-gray-4 pl-14 pr-8 text-[#16192C] bg-white focus:outline-none "
-          onChange={(e) => setSearch(e.target.value)}
+          onChange={(e) => {
+            setSearch(e.target.value);
+            onSearch?.(e.target.value);
+          }}
         />
         <p className="absolute text-[#10101266] text-[0.815rem] leading-[0.975rem] top-1/2 left-2 -translate-y-1/2">
           Search
@@ -79,7 +82,7 @@ const Filters: FC<{ onDatesChanged?: (startDate: string, endDate: string) => voi
           color="#292D32"
         />
       </div>
-      <div className="w-40 h-10 flex gap-2 items-center rounded border border-gray-4 pl-2">
+      {/* <div className="w-40 h-10 flex gap-2 items-center rounded border border-gray-4 pl-2">
         <p className=" text-[#10101266] text-[0.815rem] leading-[0.975rem]">
           Showing:
         </p>
@@ -96,44 +99,46 @@ const Filters: FC<{ onDatesChanged?: (startDate: string, endDate: string) => voi
             value={type}
           />
         </div>
-      </div>
-      {/* <div className="max-w-[17rem] w-fit h-10 flex gap-2 items-center rounded border border-gray-4 px-2">
-        <p className=" text-[#10101266] text-[0.815rem] leading-[0.975rem]">
-          From:
-        </p>
-        <DatePicker
-          selected={new Date(dateRange.start)}
-          onChange={handleStartDateChange}
-          selectsMultiple={true}
-          dateFormat="MMMM d, yyyy"
-          customInput={
-            <div className="flex items-center justify-start w-full h-full cursor-pointer text-[0.815rem] leading-[0.975rem]">
-              <span className="text-[#16192C] font-medium">
-                {convertDateWithDayAndMonth(dateRange.start)}
-              </span>
-              <Calendar className="ml-1" size="16" color="#16192C" />
-            </div>
-          }
-        />
-        <div className="w-[1px] h-[60%] bg-gray-3" />
-        <p className=" text-[#10101266] text-[0.815rem] leading-[0.975rem]">
-          To:
-        </p>
-        <DatePicker
-          selected={new Date(dateRange.end)}
-          onChange={handleEndDateChange}
-          selectsMultiple={true}
-          dateFormat="MMMM d, yyyy"
-          customInput={
-            <div className="flex items-center justify-start w-full h-full cursor-pointer text-[0.815rem] leading-[0.975rem]">
-              <span className="text-[#16192C] font-medium">
-                {convertDateWithDayAndMonth(dateRange.end)}
-              </span>
-              <Calendar className="ml-1" size="16" color="#16192C" />
-            </div>
-          }
-        />
       </div> */}
+      {
+        showDatePicker && showDatePicker && <div className="max-w-[17rem] w-fit h-10 flex gap-2 items-center rounded border border-gray-4 px-2">
+          <p className=" text-[#10101266] text-[0.815rem] leading-[0.975rem]">
+            From:
+          </p>
+          <DatePicker
+            selected={new Date(dateRange.start)}
+            onChange={handleStartDateChange}
+            selectsMultiple={true}
+            dateFormat="MMMM d, yyyy"
+            customInput={
+              <div className="flex items-center justify-start w-full h-full cursor-pointer text-[0.815rem] leading-[0.975rem]">
+                <span className="text-[#16192C] font-medium">
+                  {convertDateWithDayAndMonth(dateRange.start)}
+                </span>
+                <Calendar className="ml-1" size="16" color="#16192C" />
+              </div>
+            }
+          />
+          <div className="w-[1px] h-[60%] bg-gray-3" />
+          <p className=" text-[#10101266] text-[0.815rem] leading-[0.975rem]">
+            To:
+          </p>
+          <DatePicker
+            selected={new Date(dateRange.end)}
+            onChange={handleEndDateChange}
+            selectsMultiple={true}
+            dateFormat="MMMM d, yyyy"
+            customInput={
+              <div className="flex items-center justify-start w-full h-full cursor-pointer text-[0.815rem] leading-[0.975rem]">
+                <span className="text-[#16192C] font-medium">
+                  {convertDateWithDayAndMonth(dateRange.end)}
+                </span>
+                <Calendar className="ml-1" size="16" color="#16192C" />
+              </div>
+            }
+          />
+        </div>
+      }
     </div>
   );
 };
