@@ -42,7 +42,7 @@ const Layout: FC<{ children: ReactNode }> = ({ children }) => {
   };
 
   return (
-    <div className="w-[100vw] h-[100vh] flex relative">
+    <div className="w-[100vw] h-[100vh] flex relative font-inter">
       <DashboardNavigation />
       <div
         onClick={() => {

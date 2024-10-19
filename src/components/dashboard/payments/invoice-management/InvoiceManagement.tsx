@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { IoIosArrowDown, IoMdAdd } from "react-icons/io";
+import { IoIosArrowDown } from "react-icons/io";
 import { FaReceipt } from "react-icons/fa6";
 import { IoEye } from "react-icons/io5";
 import Filters from "../../common/Filters";
@@ -18,6 +18,9 @@ import { convertDateWithDashesAndTime } from "@/functions/dateFunctions";
 import GenerateInvoice from "./GenerateInvoice";
 import { useGetRecentInvoices } from "@/hooks/paymentHooks";
 import Paginator from "@/components/reusable/paginator/Paginator";
+import Link from "next/link";
+import { iPaidReceiptData } from "@/components/reusable/receipts/Paid";
+import { iPendingReceiptData } from "@/components/reusable/receipts/Pending";
 
 
 interface iDateData {
@@ -34,7 +37,7 @@ const InvoiceManagement = () => {
 
   const currentDate = new Date().toISOString().split("T")[0];
   const { loading, data, getInvoices } = useGetRecentInvoices();
-  const totalPages = 5; //Math.ceil(data.count / 10);
+  const totalPages = Math.ceil(data.count / 10);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [dateData, setDateData] = useState<iDateData>({ start: currentDate, end: currentDate });
 
@@ -96,8 +99,8 @@ const InvoiceManagement = () => {
                 <IoIosArrowDown />
               </button>
             </div>
-            <div className="relative overflow-x-auto">
-              <table className="w-full">
+            <div className="relative overflow-x-auto scrollbar-thin scrollbar-webkit w-full">
+              <table className="w-[150%]">
                 <thead className="w-full bg-[#F3F7FC] h-14">
                   <tr className="text-[#3A3A3A] font-medium text-[0.75rem] leading-[1.125rem]">
                     <th scope="col" className="text-start px-4">
@@ -126,8 +129,45 @@ const InvoiceManagement = () => {
                 <tbody>
                   {!loading && data.data
                     .slice(0, expanded ? data.data.length : 5)
-                    .map((inv, i) => (
-                      <tr
+                    .map((inv, i) => {
+                      let data: string = "";
+                      let status: string = "";
+
+                      if (inv.payment.length === 0) {
+                        status = "pending";
+                        const pendingData: iPendingReceiptData = {
+                          amount: Number.parseFloat(inv.transactionDetails.totalAmount),
+                          invoiceNo: inv.transactionDetails.invoiceNumber,
+                          mda: inv.organizationDetails.mdaName,
+                          payer: `${inv.userDetails.firstname} ${inv.userDetails.lastname}`,
+                          payerEmail: inv.userDetails.email,
+                          payerPhone: inv.userDetails.phone,
+                          revenueHead: inv.organizationDetails.serviceDescription,
+                          billerItem: "Payment Bill",
+                        };
+                        data = Buffer.from(JSON.stringify(pendingData)).toString("base64")
+
+                      } else {
+                        status = "paid"
+                        const paidData: iPaidReceiptData = {
+                          amount: Number.parseFloat(inv.transactionDetails.totalAmount),
+                          invoiceNo: inv.transactionDetails.invoiceNumber,
+                          mda: inv.organizationDetails.mdaName,
+                          payer: `${inv.userDetails.firstname} ${inv.userDetails.lastname}`,
+                          payerEmail: inv.userDetails.email,
+                          payerPhone: inv.userDetails.phone,
+                          revenueHead: inv.organizationDetails.serviceDescription,
+                          billerItem: "Payment Bill",
+                          transactionDate: inv.payment[0].transactionDate,
+                          paymentRef: inv.payment[0].transactionReference,
+                          paymentChannel: inv.payment[0].channel,
+                        };
+
+                        data = Buffer.from(JSON.stringify(paidData)).toString("base64")
+                      }
+
+
+                      return <tr
                         key={i}
                         className="odd:bg-white even:bg-slate-50 text-[#3A3A3A] text-[0.75rem] leading-[1.125rem] justify-around"
                       >
@@ -135,9 +175,7 @@ const InvoiceManagement = () => {
                         <td className="p-4">{inv.userDetails.firstname} {inv.userDetails.lastname}</td>
                         <td className="p-4">{inv.organizationDetails.serviceDescription}</td>
                         <td className="p-4">
-                          {
-                            inv.payment.length === 0 ? "N/A" : (`₦${inv.payment[0].totalAmountPaid.toLocaleString("en-US")}`)
-                          }
+                          ₦{Number.parseFloat(inv.transactionDetails.totalAmount).toLocaleString("en-US")}
                         </td>
                         <td className="p-4">
                           {
@@ -152,12 +190,12 @@ const InvoiceManagement = () => {
                         </td>
 
                         <td className="p-4">
-                          <div className="cursor-pointer bg-[#FCEAE8] rounded size-6 grid place-content-center text-[#292D32]">
+                          <Link href={`/dashboard/payments/invoice-management/receipt?status=${status}&data=${data}`} className="cursor-pointer bg-[#FCEAE8] rounded size-6 grid place-content-center text-[#292D32]">
                             <IoEye size={16} />
-                          </div>
+                          </Link>
                         </td>
                       </tr>
-                    ))}
+                    })}
                 </tbody>
               </table>
 
@@ -175,53 +213,6 @@ const InvoiceManagement = () => {
           </div>
         </div>
       </div>
-      {/* {openedAddChannel && (
-        <Drawer.Root
-          opened={openedAddChannel}
-          onClose={closeAddChannel}
-          position={"right"}
-          padding={0}
-          radius={12}
-          closeOnClickOutside={false}
-          closeOnEscape={false}
-        >
-          <Drawer.Overlay />
-          <Drawer.Content>
-            <Drawer.Body>
-              <AddChannel onClose={closeAddChannel} />
-            </Drawer.Body>
-          </Drawer.Content>
-        </Drawer.Root>
-      )}
-      {currentChannel !== null && openedEditChannel && (
-        <Drawer.Root
-          opened={openedEditChannel}
-          onClose={closeEditDrawer}
-          position={"right"}
-          padding={0}
-          radius={12}
-          closeOnClickOutside={false}
-          closeOnEscape={false}
-        >
-          <Drawer.Overlay />
-          <Drawer.Content>
-            <Drawer.Body>
-              <EditChannel
-                channel={{
-                  apiKey: "38383232332323e23rwn",
-                  channelName: currentChannel.name,
-                  clientID: "Paysure Ltd",
-                  email: "support@revco",
-                  phone: "+234 5585 33434 ",
-                  type: "Online",
-                  status: true,
-                }}
-                onClose={closeEditDrawer}
-              />
-            </Drawer.Body>
-          </Drawer.Content>
-        </Drawer.Root>
-      )} */}
       {openedGenerateInvoice && (
         <Drawer.Root
           opened={openedGenerateInvoice}

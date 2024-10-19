@@ -151,8 +151,8 @@ export const useGetRecentInvoices = () => {
     );
 
     setData({
-      data: data,
-      count: 0,
+      data: data.data,
+      count: data.count,
     });
     setLoading(false);
     setSuccess(status);

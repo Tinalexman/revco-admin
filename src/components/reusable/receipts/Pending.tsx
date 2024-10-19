@@ -3,14 +3,15 @@
 import React, { FC } from "react";
 
 import Image from "next/image";
-import Logo from "@/public/image_261.svg";
-import Qr from "@/public/paysure qr.svg";
-import UnpaidStamp from "@/public/Unpaid Stamp.svg";
-import Coat from "@/public/Coat of Arms.svg";
-
-import { iStateColors, stateColorsData } from "@/src/constants/constants";
-import { convertDateWithJustSlashes } from "@/src/functions/dateFunctions";
-
+import Logo from "@/assets/image_261.svg";
+import Qr from "@/assets/paysure qr.svg";
+import UnpaidStamp from "@/assets/Unpaid Stamp.svg";
+import Coat from "@/assets/Coat of Arms.svg";
+import { ArrowLeft } from 'iconsax-react'
+import { useRouter } from "next/navigation";
+import { iStateColors, stateColorsData } from "@/constants/constants";
+import { convertDateWithJustSlashes } from "@/functions/dateFunctions";
+import { FiDownload } from "react-icons/fi";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 
@@ -22,9 +23,6 @@ export interface iPendingReceiptData {
   billerItem: string;
   mda: string;
   revenueHead: string;
-  paymentRef: string;
-  charges: number;
-  vat: number;
   amount: number;
 }
 
@@ -32,6 +30,7 @@ const colors: iStateColors = stateColorsData["Taraba"];
 
 const Pending: FC<{ receipt: iPendingReceiptData }> = ({ receipt }) => {
 
+  const router = useRouter();
 
   const downloadReceipt = () => {
     const receiptElement = document.getElementById(
@@ -78,12 +77,30 @@ const Pending: FC<{ receipt: iPendingReceiptData }> = ({ receipt }) => {
   };
 
   return (
-    <div className="w-[804px] flex flex-col items-center">
+    <div className="w-[804px] flex flex-col gap-10 items-center">
+      <div className="w-full flex items-center gap-4 justify-between mt-10">
+        <button
+          onClick={() => router.back()}
+          className="border-2 border-[#555555] h-12 flex gap-2 justify-center items-center rounded-lg w-[200px] text-[#555555] font-medium"
+        >
+          <ArrowLeft size={'24'} />
+          Go Back
+        </button>
+        <button
+          onClick={downloadReceipt}
+          className="bg-primary h-12 flex gap-2 justify-center items-center rounded-lg w-[200px] text-white font-semibold"
+        >
+          <FiDownload size={24} />
+          Download
+        </button>
+      </div>
+
+
       <div
         id="revco-desktop-receipt"
-        className="w-[804px] shadow-sm border border-gray-200 flex flex-col bg-white text-black"
+        className="w-[804px] font-poppins shadow-sm border border-gray-200 flex flex-col bg-white text-black"
       >
-        <div className="w-full h-full bg-[url('../../public/Background.png')] bg-center bg-cover bg-no-repeat relative">
+        <div className="w-full h-full bg-[url('.././assets/Background.png')] bg-center bg-cover bg-no-repeat relative">
           <p className="text-[8px] font-medium left-5 top-3 absolute">
             E-Receipt
           </p>
@@ -235,7 +252,7 @@ const Pending: FC<{ receipt: iPendingReceiptData }> = ({ receipt }) => {
                 <div className="w-[101px] px-[2px] py-[7px]" style={{
                   background: colors.otherSectionItemValue
                 }}>
-                  <h3>{receipt.paymentRef}</h3>
+
                 </div>
                 <div className="w-[260px] px-[10px] py-[7px]" style={{
                   background: colors.otherSectionItemValue
@@ -385,12 +402,7 @@ const Pending: FC<{ receipt: iPendingReceiptData }> = ({ receipt }) => {
         </div>
       </div>
 
-      <button
-        onClick={downloadReceipt}
-        className="my-12 bg-primary lg:h-12 xs:h-10 rounded-full w-[250px] text-white font-semibold"
-      >
-        Download Receipt
-      </button>
+      <div className="h-20" />
     </div>
   )
 }

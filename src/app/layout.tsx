@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Inter, Podkova, Poppins } from "next/font/google";
 import "./globals.css";
 
 import {
@@ -15,9 +15,21 @@ import AuthProvider from "@/providers/AuthProvider";
 import UserProvider from "@/providers/UserProvider";
 
 const inter = Inter({
-  variable: "--font-inter",
   subsets: ["latin"],
-  weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
+  variable: "--font-inter",
+  weight: ["200", "300", "400", "500", "600", "700", "800", "900"],
+});
+
+const podvoka = Podkova({
+  subsets: ["latin"],
+  variable: "--font-podkova",
+  weight: ["400", "500", "600", "700", "800"],
+});
+
+const poppins = Poppins({
+  subsets: ["latin"],
+  variable: "--font-poppins",
+  weight: ["200", "300", "400", "500", "600", "700", "800", "900"],
 });
 
 export const metadata: Metadata = {
@@ -124,7 +136,7 @@ export default function RootLayout({
       <head>
         <ColorSchemeScript defaultColorScheme="light" />
       </head>
-      <body className={`${inter.className} antialiased`}>
+      <body className={`${podvoka.variable} ${inter.className} ${poppins.variable} antialiased`}>
         <Toaster />
         <MantineProvider theme={theme}>
           <AuthProvider>

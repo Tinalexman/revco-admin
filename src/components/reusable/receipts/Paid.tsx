@@ -3,13 +3,15 @@
 import React, { FC } from "react";
 
 import Image from "next/image";
-import Logo from "@/public/image_261.svg";
-import Qr from "@/public/paysure qr.svg";
-import PaidStamp from "@/public/Paid Stamp.svg";
-import Coat from "@/public/Coat of Arms.svg";
-
+import Logo from "@/assets/image_261.svg";
+import Qr from "@/assets/paysure qr.svg";
+import PaidStamp from "@/assets/Paid Stamp.svg";
+import Coat from "@/assets/Coat of Arms.svg";
+import { FiDownload } from "react-icons/fi";
 import { iStateColors, stateColorsData } from "@/constants/constants";
 import { convertDateWithJustSlashes } from "@/functions/dateFunctions";
+import { ArrowLeft } from 'iconsax-react'
+import { useRouter } from "next/navigation";
 
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
@@ -31,6 +33,8 @@ export interface iPaidReceiptData {
 const colors: iStateColors = stateColorsData["Taraba"];
 
 const Paid: FC<{ receipt: iPaidReceiptData }> = ({ receipt }) => {
+
+  const router = useRouter();
 
   const downloadReceipt = () => {
     const receiptElement = document.getElementById(
@@ -77,12 +81,30 @@ const Paid: FC<{ receipt: iPaidReceiptData }> = ({ receipt }) => {
   };
 
   return (
-    <div className="w-[804px] flex flex-col items-center">
+    <div className="w-[804px] flex flex-col gap-10 items-center">
+      <div className="w-full flex items-center gap-4 justify-between mt-10">
+        <button
+          onClick={() => router.back()}
+          className="border-2 border-[#555555] h-12 flex gap-2 justify-center items-center rounded-lg w-[200px] text-[#555555] font-medium"
+        >
+          <ArrowLeft size={'24'} />
+          Go Back
+        </button>
+        <button
+          onClick={downloadReceipt}
+          className="bg-primary h-12 flex gap-2 justify-center items-center rounded-lg w-[200px] text-white font-semibold"
+        >
+          <FiDownload size={24} />
+          Download
+        </button>
+      </div>
+
+
       <div
         id="revco-desktop-receipt"
-        className="w-[804px] shadow-sm border border-gray-200 flex flex-col bg-white text-black"
+        className="w-[804px] font-poppins shadow-sm border border-gray-200 flex flex-col bg-white text-black"
       >
-        <div className="w-full h-full bg-[url('../../assets/Background.png')] bg-center bg-cover bg-no-repeat relative">
+        <div className="w-full h-full bg-[url('.././assets/Background.png')] bg-center bg-cover bg-no-repeat relative">
           <p className="text-[8px] font-medium left-5 top-3 absolute">
             E-Receipt
           </p>
@@ -439,12 +461,8 @@ const Paid: FC<{ receipt: iPaidReceiptData }> = ({ receipt }) => {
           </div>
         </div>
       </div>
-      <button
-        onClick={downloadReceipt}
-        className="my-12 bg-primary lg:h-12 xs:h-10 rounded-full w-[250px] text-white font-semibold"
-      >
-        Download Receipt
-      </button>
+
+      <div className="h-20" />
     </div>
   )
 }

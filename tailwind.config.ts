@@ -32,6 +32,11 @@ const config: Config = {
         "3xl": "2560px", // Ultra-wide screens
         "4xl": "3200px", // Extra-large screens
       },
+      fontFamily: {
+        inter: ["var(--font-inter)", "serif"],
+        podkova: ["var(--font-podkova)", "serif"],
+        poppins: ["var(--font-poppins)", "sans-serif"],
+      },
       boxShadow: {
         custom: "0 0 10px rgba(0, 0, 0, 0.07)",
         "custom-1": "0 0 10px rgba(0, 0, 0, 0.25)",

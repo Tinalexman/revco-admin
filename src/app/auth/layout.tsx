@@ -5,7 +5,7 @@ import Preview from "@/assets/auth/preview.png";
 
 const AuthLayout: FC<{ children: React.ReactNode }> = ({ children }) => {
   return (
-    <div className="w-[100vw] h-[100vh] flex bg-white">
+    <div className="w-[100vw] h-[100vh] flex bg-white font-inter">
       <div className="w-[50vw] h-[100vh] bg-[url('.././assets/auth/side.png')] bg-no-repeat bg-cover flex flex-col gap-5 items-center justify-center">
         <Image src={Preview} alt="preview" className="w-[55%] h-auto object-cover" />
         <div className="w-[55%] gap-3 flex flex-col">
