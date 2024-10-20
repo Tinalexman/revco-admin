@@ -9,7 +9,7 @@ interface iResponse {
 }
 
 export const useAxios = () => {
-  const baseURL = "https://core.revco.ng:8080";
+  const baseURL = "https://core.revco.ng:9000";
   const api = axios.create({
     baseURL,
   });

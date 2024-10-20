@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import Filters from "./Filters";
+import React, { useState, FC } from "react";
+import Filters from "../Filters";
 import { Loader } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { IoIosArrowDown } from "react-icons/io";
@@ -16,7 +16,7 @@ import Link from "next/link";
 
 
 
-const OrganizationList = () => {
+const ViewOrganizationTypesList: FC<{ organizationName: string }> = ({ organizationName }) => {
   const [expanded, setExpanded] = useState<boolean>(false);
 
 
@@ -48,7 +48,7 @@ const OrganizationList = () => {
     <>
       <div className="w-full bg-white p-5 flex flex-col gap-3 rounded-xl">
         <div className="w-full flex justify-between items-center">
-          <h2 className="text-black text-med-button">List of Organizations</h2>
+          <h2 className="text-black text-med-button">{organizationName}</h2>
           <h2
             onClick={() => setExpanded(!expanded)}
             className="cursor-pointer text-med-button text-[#007AFF]"
@@ -104,7 +104,7 @@ const OrganizationList = () => {
                     </td>
                     <td className="flex gap-1 p-4">
                       <Link
-                        href={`/dashboard/organizations/view-organization?organizationId=${org.mdaId}`}
+                        href={`/dashboard/organizations/view-organization?organizationId=${org.officeId}`}
                         className="cursor-pointer bg-[#FCEAE8] rounded size-6 grid place-content-center text-[#292D32]"
                       >
                         <IoEye size={16} />
@@ -130,4 +130,4 @@ const OrganizationList = () => {
   );
 };
 
-export default OrganizationList;
+export default ViewOrganizationTypesList;

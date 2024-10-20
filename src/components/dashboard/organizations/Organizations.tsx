@@ -5,9 +5,10 @@ import React, { useState } from "react";
 import { Profile, Profile2User } from "iconsax-react";
 import { VscTools } from "react-icons/vsc";
 import Dropdown from "@/components/reusable/Dropdown";
-import Details from "./OrganizationList";
+import OrganizationList from "./OrganizationList";
 import { Drawer } from "@mantine/core";
 import AddGroup from "./AddGroup";
+import { useRouter } from "next/navigation";
 
 interface iOrganizationData {
   value: number;
@@ -15,12 +16,13 @@ interface iOrganizationData {
   icon: any;
   individual: number;
   corporate: number;
+  link?: string;
 }
 
 const Organizations = () => {
   const [addGroup, shouldAddGroup] = useState<boolean>(false);
   const [filter, setFilter] = useState<string>("");
-
+  const router = useRouter();
   const [organizations, setOrganization] = useState<iOrganizationData[]>([
     {
       title: "Total Organizations",
@@ -35,6 +37,7 @@ const Organizations = () => {
       icon: <Profile2User size={20} className="text-primary" variant="Bold" />,
       individual: 90,
       corporate: 30,
+      link: "/dashboard/organizations/type?type=Banks",
     },
     {
       title: "Ministries",
@@ -42,6 +45,7 @@ const Organizations = () => {
       icon: <Profile2User size={20} className="text-primary" variant="Bold" />,
       individual: 90,
       corporate: 30,
+      link: "/dashboard/organizations/type?type=Ministries",
     },
     {
       title: "Others",
@@ -49,6 +53,7 @@ const Organizations = () => {
       icon: <Profile2User size={20} className="text-primary" variant="Bold" />,
       individual: 90,
       corporate: 30,
+      link: "/dashboard/organizations/type?type=Others",
     },
   ]);
 
@@ -91,47 +96,56 @@ const Organizations = () => {
             </div>
           </div>
           <div className="w-full grid grid-cols-4 gap-2.5">
-            {organizations.map((org, i) => (
-              <div
-                className="relative overflow-hidden bg-white w-full rounded-xl px-6 pt-3 pb-4 gap-6 h-44 flex flex-col justify-end items-start"
-                key={i}
-              >
-                <div className="bg-primary-accent rounded-full p-2">
-                  {org.icon}
-                </div>
-                <div className="w-[70%] flex justify-between">
-                  <div className="w-fit flex flex-col">
-                    <h3 className="text-med-button text-[#9EA4AA]">
-                      {org.title}
-                    </h3>
-                    <h2 className="text-dash-intro-header font-bold text-gray-5">
-                      {org.value}
-                    </h2>
+            {organizations.map((org, i) => {
+              const hasLink: boolean = org.link !== undefined;
+
+              return (
+                <div
+                  onClick={() => {
+                    if (hasLink) {
+                      router.push(org.link!);
+                    }
+                  }}
+                  className={`relative overflow-hidden ${hasLink && "cursor-pointer"} bg-white w-full rounded-xl px-6 pt-3 pb-4 gap-6 h-44 flex flex-col justify-end items-start`}
+                  key={i}
+                >
+                  <div className="bg-primary-accent rounded-full p-2">
+                    {org.icon}
+                  </div>
+                  <div className="w-[70%] flex justify-between">
+                    <div className="w-fit flex flex-col">
+                      <h3 className="text-med-button text-[#9EA4AA]">
+                        {org.title}
+                      </h3>
+                      <h2 className="text-dash-intro-header font-bold text-gray-5">
+                        {org.value}
+                      </h2>
+                    </div>
+                  </div>
+                  <div className="w-fit flex gap-2 items-center absolute bottom-4 right-2">
+                    <div className="flex flex-col w-fit">
+                      <h3 className="text-[0.49rem] leading-[0.7rem] text-gray-5 font-medium">
+                        {i === 0 ? "Individual" : "Active"}
+                      </h3>
+                      <h2 className="text-[0.78rem] leading-[0.8rem] font-semibold text-gray-5">
+                        {org.individual}
+                      </h2>
+                    </div>
+                    <div className="w-[1px] h-6 bg-[#8E8E93]" />
+                    <div className="flex flex-col w-fit">
+                      <h3 className="text-[0.49rem] leading-[0.7rem] text-gray-5 font-medium">
+                        {i === 0 ? "Corporate" : "Inactive"}
+                      </h3>
+                      <h2 className="text-[0.78rem] leading-[0.8rem] font-semibold text-gray-5">
+                        {org.corporate}
+                      </h2>
+                    </div>
                   </div>
                 </div>
-                <div className="w-fit flex gap-2 items-center absolute bottom-4 right-2">
-                  <div className="flex flex-col w-fit">
-                    <h3 className="text-[0.49rem] leading-[0.7rem] text-gray-5 font-medium">
-                      {i === 0 ? "Individual" : "Active"}
-                    </h3>
-                    <h2 className="text-[0.78rem] leading-[0.8rem] font-semibold text-gray-5">
-                      {org.individual}
-                    </h2>
-                  </div>
-                  <div className="w-[1px] h-6 bg-[#8E8E93]" />
-                  <div className="flex flex-col w-fit">
-                    <h3 className="text-[0.49rem] leading-[0.7rem] text-gray-5 font-medium">
-                      {i === 0 ? "Corporate" : "Inactive"}
-                    </h3>
-                    <h2 className="text-[0.78rem] leading-[0.8rem] font-semibold text-gray-5">
-                      {org.corporate}
-                    </h2>
-                  </div>
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
-          <Details />
+          <OrganizationList />
         </div>
       </div>
       {addGroup && (

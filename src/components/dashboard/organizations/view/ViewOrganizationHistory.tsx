@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import Filters from "./Filters";
+import Filters from "../Filters";
 import { Loader } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { IoIosArrowDown } from "react-icons/io";
@@ -7,7 +7,6 @@ import { convertDateWithDashesAndTime } from "@/functions/dateFunctions";
 import { IoEye } from "react-icons/io5";
 import StatusContainer, {
   STATE_SUCCESS,
-  STATE_PENDING,
   STATE_NULL,
 } from "@/components/reusable/StatusContainer";
 import { iOrganizationResponse, useGetOrganizations } from "@/hooks/organizationHooks";
@@ -16,24 +15,8 @@ import Link from "next/link";
 
 
 
-const OrganizationList = () => {
+const ViewOrganizationHistory = () => {
   const [expanded, setExpanded] = useState<boolean>(false);
-
-
-  const [opened, { open, close }] = useDisclosure(false);
-  const [currentTransaction, setCurrentTransaction] =
-    useState<iOrganizationResponse | null>(null);
-
-  const openDrawer = (transaction: iOrganizationResponse) => {
-    setCurrentTransaction(transaction);
-    open();
-  };
-
-  const closeDrawer = () => {
-    setCurrentTransaction(null);
-    close();
-  };
-
   const { loading, getOrganizations, data } = useGetOrganizations();
   const [currentPage, setCurrentPage] = useState<number>(1);
   const totalPages = Math.ceil(data.count / 10);
@@ -48,7 +31,7 @@ const OrganizationList = () => {
     <>
       <div className="w-full bg-white p-5 flex flex-col gap-3 rounded-xl">
         <div className="w-full flex justify-between items-center">
-          <h2 className="text-black text-med-button">List of Organizations</h2>
+          <h2 className="text-black text-med-button">Transaction History</h2>
           <h2
             onClick={() => setExpanded(!expanded)}
             className="cursor-pointer text-med-button text-[#007AFF]"
@@ -104,7 +87,7 @@ const OrganizationList = () => {
                     </td>
                     <td className="flex gap-1 p-4">
                       <Link
-                        href={`/dashboard/organizations/view-organization?organizationId=${org.mdaId}`}
+                        href={`/dashboard/organizations/view-organization?organizationId=${org.officeId}`}
                         className="cursor-pointer bg-[#FCEAE8] rounded size-6 grid place-content-center text-[#292D32]"
                       >
                         <IoEye size={16} />
@@ -130,4 +113,4 @@ const OrganizationList = () => {
   );
 };
 
-export default OrganizationList;
+export default ViewOrganizationHistory;
