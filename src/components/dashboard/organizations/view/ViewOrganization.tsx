@@ -14,6 +14,7 @@ import {
 } from "iconsax-react";
 import Link from 'next/link';
 import AddGroup from '../AddGroup';
+import { useGetOrganizationTransactionHistory } from '@/hooks/organizationHooks';
 
 interface iOrganizationData {
   value: number;
@@ -41,6 +42,7 @@ const ViewOrganizationContent = () => {
   const searchParams = useSearchParams();
   const router = useRouter();
   const organizationId = searchParams.get('organizationId');
+  const organizationName = searchParams.get('name');
   const [addGroup, shouldAddGroup] = useState<boolean>(false);
 
   const organization: iOrganizationData = {
@@ -65,14 +67,12 @@ const ViewOrganizationContent = () => {
   ];
 
   useEffect(() => {
-    if (organizationId === null) {
+    if (organizationId === null || organizationName === null) {
       router.back();
-    } else {
-
     }
   }, [router]);
 
-  const organizationName = "Some Name";
+
   const isOrganizationActive = true;
 
 
@@ -125,7 +125,7 @@ const ViewOrganizationContent = () => {
                 </div>
               </div>
             </div>
-            <Link href={`/dashboard/organizations/view-organization-users?organizationId=${organizationId}`}
+            <Link href={`/dashboard/organizations/view-organization-users?name=${organizationName}&organizationId=${organizationId}`}
               className="bg-[#E9F3FA] text-[#2085C9] rounded-lg h-9 gap-2 px-3 text-[0.825rem] flex items-center leading-[0.98rem]"
             >
               <BsPeopleFill size={18} fill="#2085C9" />
@@ -191,7 +191,7 @@ const ViewOrganizationContent = () => {
               })
             }
           </div>
-          <ViewOrganizationHistory />
+          <ViewOrganizationHistory id={organizationId!} name={organizationName!} />
         </div>
       </div>
       {addGroup && (

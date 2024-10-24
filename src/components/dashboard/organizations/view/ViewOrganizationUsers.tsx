@@ -47,20 +47,21 @@ const ViewOrganizationContent = () => {
   const router = useRouter();
   const [expanded, setExpanded] = useState<boolean>(false);
   const organizationId = searchParams.get('organizationId');
-  const { data, loading, getUsers } = useGetOrganizationUsers(organizationId!);
+  const organizationName = searchParams.get("name");
+  const { data, loading, getUsers } = useGetOrganizationUsers();
   const [currentPage, setCurrentPage] = useState<number>(1);
   const totalPages = Math.ceil(data.count / 10);
 
   function handlePageChange(page: number) {
     setCurrentPage(page);
-    getUsers(`${page}`);
+    getUsers(organizationId!, `${page}`);
   }
 
   useEffect(() => {
-    if (organizationId === null) {
+    if (organizationId === null || organizationName === null) {
       router.back();
     } else {
-
+      getUsers(organizationId, "1")
     }
   }, [router]);
 
@@ -79,7 +80,7 @@ const ViewOrganizationContent = () => {
             </p>
             <IoIosArrowForward className="text-gray-5" size={24} />
             <p className="font-medium text-reg-caption text-gray-5">
-              Some Name
+              {organizationName}
             </p>
             <IoIosArrowForward className="text-gray-5" size={24} />
             <p className="font-normal text-reg-caption text-gray-5">

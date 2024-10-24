@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { FC, useState } from "react";
 import Filters from "../Filters";
 import { Loader } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
@@ -9,21 +9,24 @@ import StatusContainer, {
   STATE_SUCCESS,
   STATE_NULL,
 } from "@/components/reusable/StatusContainer";
-import { iOrganizationResponse, useGetOrganizations } from "@/hooks/organizationHooks";
+import { iOrganizationResponse, useGetOrganizations, useGetOrganizationTransactionHistory } from "@/hooks/organizationHooks";
 import Paginator from "@/components/reusable/paginator/Paginator";
 import Link from "next/link";
 
 
 
-const ViewOrganizationHistory = () => {
+const ViewOrganizationHistory: FC<{ name: string, id: string }> = ({ id, name }) => {
+
+  const { loading, getHistory, data } = useGetOrganizationTransactionHistory(id);
   const [expanded, setExpanded] = useState<boolean>(false);
-  const { loading, getOrganizations, data } = useGetOrganizations();
   const [currentPage, setCurrentPage] = useState<number>(1);
   const totalPages = Math.ceil(data.count / 10);
 
+
+
   function handlePageChange(page: number) {
     setCurrentPage(page);
-    getOrganizations(`${page}`);
+    getHistory(`${page}`);
   }
 
 
@@ -57,11 +60,11 @@ const ViewOrganizationHistory = () => {
           <table className="w-[150%]">
             <thead className="w-full bg-[#F3F7FC] h-14">
               <tr className="text-[#3A3A3A] font-medium text-[0.75rem] leading-[1.125rem]">
-                <th scope="col" className="text-left px-4">User ID</th>
-                <th scope="col" className="text-left px-4">Name</th>
-                <th scope="col" className="text-left px-4">Category</th>
-                <th scope="col" className="text-left px-4">Organization Name</th>
-                <th scope="col" className="text-left px-4">Created Date</th>
+                <th scope="col" className="text-left px-4">Transaction ID</th>
+                <th scope="col" className="text-left px-4">Customer Name</th>
+                <th scope="col" className="text-left px-4">Amount Paid</th>
+                <th scope="col" className="text-left px-4">Payment Channel</th>
+                <th scope="col" className="text-left px-4">Transaction Date</th>
                 <th scope="col" className="text-left px-4">Status</th>
                 <th scope="col" className="text-left px-4">Actions</th>
               </tr>
@@ -74,20 +77,20 @@ const ViewOrganizationHistory = () => {
                     key={i}
                     className="odd:bg-white even:bg-slate-50 text-[#3A3A3A] text-[0.75rem] leading-[1.125rem] justify-around"
                   >
-                    <td className="p-4">{org.mdaId}</td>
-                    <td className="p-4">{org.mdaName}</td>
-                    <td className="p-4">{org.category}</td>
-                    <td className="p-4">{org.organizationName}</td>
+                    <td className="p-4">{org.id}</td>
+                    <td className="p-4">{org.customerName}</td>
+                    <td className="p-4">₦{org.totalAmountPaid.toLocaleString("en-US")}</td>
+                    <td className="p-4">{org.channel}</td>
                     <td className="p-4">{convertDateWithDashesAndTime(org.createdDate)}</td>
                     <td className="p-4">
                       <StatusContainer
-                        text={org.active ? "Active" : "Inactive"}
-                        status={org.active ? STATE_SUCCESS : STATE_NULL}
+                        text={"Paid"}
+                        status={STATE_SUCCESS}
                       />
                     </td>
                     <td className="flex gap-1 p-4">
                       <Link
-                        href={`/dashboard/organizations/view-organization?organizationId=${org.officeId}`}
+                        href={`/dashboard/organizations/view-organization?name=${name}&organizationId=${id}`}
                         className="cursor-pointer bg-[#FCEAE8] rounded size-6 grid place-content-center text-[#292D32]"
                       >
                         <IoEye size={16} />

@@ -74,10 +74,10 @@ const OrganizationList = () => {
           <table className="w-[150%]">
             <thead className="w-full bg-[#F3F7FC] h-14">
               <tr className="text-[#3A3A3A] font-medium text-[0.75rem] leading-[1.125rem]">
-                <th scope="col" className="text-left px-4">User ID</th>
+                <th scope="col" className="text-left px-4">MDA ID</th>
                 <th scope="col" className="text-left px-4">Name</th>
                 <th scope="col" className="text-left px-4">Category</th>
-                <th scope="col" className="text-left px-4">Organization Name</th>
+                <th scope="col" className="text-left px-4">Abbreviation</th>
                 <th scope="col" className="text-left px-4">Created Date</th>
                 <th scope="col" className="text-left px-4">Status</th>
                 <th scope="col" className="text-left px-4">Actions</th>
@@ -91,10 +91,10 @@ const OrganizationList = () => {
                     key={i}
                     className="odd:bg-white even:bg-slate-50 text-[#3A3A3A] text-[0.75rem] leading-[1.125rem] justify-around"
                   >
-                    <td className="p-4">{org.mdaId}</td>
-                    <td className="p-4">{org.mdaName}</td>
+                    <td className="p-4">{org.id}</td>
+                    <td className="p-4">{org.name}</td>
                     <td className="p-4">{org.category}</td>
-                    <td className="p-4">{org.organizationName}</td>
+                    <td className="p-4">{org.abbreviation}</td>
                     <td className="p-4">{convertDateWithDashesAndTime(org.createdDate)}</td>
                     <td className="p-4">
                       <StatusContainer
@@ -104,7 +104,7 @@ const OrganizationList = () => {
                     </td>
                     <td className="flex gap-1 p-4">
                       <Link
-                        href={`/dashboard/organizations/view-organization?organizationId=${org.mdaId}`}
+                        href={`/dashboard/organizations/view-organization?name=${org.name}&organizationId=${org.id}`}
                         className="cursor-pointer bg-[#FCEAE8] rounded size-6 grid place-content-center text-[#292D32]"
                       >
                         <IoEye size={16} />

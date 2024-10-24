@@ -12,8 +12,6 @@ import StatusContainer, {
   STATE_NULL,
 } from "@/components/reusable/StatusContainer";
 
-import { RiEdit2Fill } from "react-icons/ri";
-import { TiCancel } from "react-icons/ti";
 import { convertDateWithDashesAndTime } from "@/functions/dateFunctions";
 import GenerateInvoice from "./GenerateInvoice";
 import { useGetRecentInvoices } from "@/hooks/paymentHooks";
