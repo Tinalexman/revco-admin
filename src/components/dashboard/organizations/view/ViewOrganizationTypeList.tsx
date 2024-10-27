@@ -91,7 +91,7 @@ const ViewOrganizationTypesList: FC<{ organizationName: string }> = ({ organizat
                     key={i}
                     className="odd:bg-white even:bg-slate-50 text-[#3A3A3A] text-[0.75rem] leading-[1.125rem] justify-around"
                   >
-                    <td className="p-4">{org.mdaId}</td>
+                    {/* <td className="p-4">{org.id}</td>
                     <td className="p-4">{org.mdaName}</td>
                     <td className="p-4">{org.category}</td>
                     <td className="p-4">{org.organizationName}</td>
@@ -109,7 +109,7 @@ const ViewOrganizationTypesList: FC<{ organizationName: string }> = ({ organizat
                       >
                         <IoEye size={16} />
                       </Link>
-                    </td>
+                    </td> */}
                   </tr>
                 ))}
             </tbody>
