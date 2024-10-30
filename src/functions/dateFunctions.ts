@@ -113,6 +113,16 @@ export function convertDateWithDashesAndTime(other: Date | string) {
   }:${minutes < 10 ? "0" : ""}${minutes} ${isPM ? "PM" : "AM"}`;
 }
 
+export const allFilters: string[] = [
+  "Today",
+  "Yesterday",
+  "This Week",
+  "Last Week",
+  "This Month",
+  "Last Month",
+  "This Year",
+];
+
 export const getDateRange = (filter: string) => {
   const today = new Date();
   let startDate, endDate;

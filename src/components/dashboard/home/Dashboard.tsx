@@ -20,7 +20,7 @@ const Dashboard = () => {
         </div>
       </div>
       <div className="py-5 px-10 w-full flex flex-col gap-2.5">
-        {/* <Details /> */}
+        <Details />
         <Statistics />
         {/* <Activity /> */}
       </div>

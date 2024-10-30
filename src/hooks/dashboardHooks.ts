@@ -30,7 +30,12 @@ export interface iTransactionSummaryChartDataResponse {
 export interface iStatisticsSummaryResponse {
   totalRevenue: number;
   totalInvoiceGeneratedInNaira: number;
-  totalCommissionInNaira: number;
+  totalCommissionInNaira: {
+    total: number;
+    Paysure: number;
+    "Participant 1": number;
+    "Participant 2": number;
+  };
   totalAmountRemitted: number;
 }
 
@@ -101,7 +106,17 @@ export const useGetRecentActivity = () => {
 
 export const useGetStatisticsSummary = () => {
   const [loading, setLoading] = useState<boolean>(false);
-  const [data, setData] = useState<iStatisticsSummaryResponse | null>(null);
+  const [data, setData] = useState<iStatisticsSummaryResponse>({
+    totalAmountRemitted: 0,
+    totalCommissionInNaira: {
+      "Participant 1": 0,
+      "Participant 2": 0,
+      Paysure: 0,
+      total: 0,
+    },
+    totalInvoiceGeneratedInNaira: 0,
+    totalRevenue: 0,
+  });
   const { requestApi } = useAxios();
   const token = useToken().getToken();
 
@@ -246,13 +261,13 @@ export const useGetUserActivity = () => {
   const { requestApi } = useAxios();
   const token = useToken().getToken();
 
-  let getActivity = async (type: string) => {
+  let getActivity = async (start: string, end: string) => {
     if (loading) return;
 
     setLoading(true);
 
     const { data, status } = await requestApi(
-      `/mda-report/user-activity?type=${type}`,
+      `/mda-report/user-activity?from=${start}&to=${end}`,
       "GET",
       {},
       {
@@ -273,7 +288,8 @@ export const useGetUserActivity = () => {
 
   useEffect(() => {
     if (token) {
-      getActivity("Y");
+      const currentDate = new Date().toISOString().split("T")[0];
+      getActivity(currentDate, currentDate);
     }
   }, [token]);
 
