@@ -8,7 +8,7 @@ const transactionDataColorList: string[] = [
   "#27AE60",
   "#F2994A",
   "#EB5757",
-  "#32ADE6",
+  "#6500E0",
 ];
 
 export interface iTransactionData {

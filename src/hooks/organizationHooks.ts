@@ -109,10 +109,6 @@ export const useGetOrganizations = () => {
       }
     );
 
-    setData({
-      data: data.data,
-      count: data.count,
-    });
     setLoading(false);
     setSuccess(status);
 
@@ -120,6 +116,8 @@ export const useGetOrganizations = () => {
       toast.error(
         data?.response?.data?.data ?? "An error occurred. Please try again"
       );
+    } else {
+      setData(data);
     }
   };
 
@@ -165,35 +163,6 @@ export const useGetOrganizationsOverview = () => {
       }
     );
 
-    const totalDetail: iDetail = {
-      name: "Total",
-      active: data.TOTAL.active,
-      inactive: data.TOTAL.inactive,
-      count: data.TOTAL.count,
-    };
-
-    const ministryDetail: iDetail = {
-      name: "Ministries",
-      active: data.Ministry.active,
-      inactive: data.Ministry.inactive,
-      count: data.Ministry.count,
-    };
-
-    const commerceDetail: iDetail = {
-      name: "Commerce",
-      active: data.Commerce.active,
-      inactive: data.Commerce.inactive,
-      count: data.Commerce.count,
-    };
-
-    const otherDetail: iDetail = {
-      name: "Others",
-      active: data.Other.active,
-      inactive: data.Other.inactive,
-      count: data.Other.count,
-    };
-
-    setData([totalDetail, ministryDetail, commerceDetail, otherDetail]);
     setLoading(false);
     setSuccess(status);
 
@@ -201,6 +170,36 @@ export const useGetOrganizationsOverview = () => {
       toast.error(
         data?.response?.data?.data ?? "An error occurred. Please try again"
       );
+    } else {
+      const totalDetail: iDetail = {
+        name: "Total",
+        active: data.TOTAL.active,
+        inactive: data.TOTAL.inactive,
+        count: data.TOTAL.count,
+      };
+
+      const ministryDetail: iDetail = {
+        name: "Ministries",
+        active: data.Ministry.active,
+        inactive: data.Ministry.inactive,
+        count: data.Ministry.count,
+      };
+
+      const commerceDetail: iDetail = {
+        name: "Commerce",
+        active: data.Commerce.active,
+        inactive: data.Commerce.inactive,
+        count: data.Commerce.count,
+      };
+
+      const otherDetail: iDetail = {
+        name: "Others",
+        active: data.Other.active,
+        inactive: data.Other.inactive,
+        count: data.Other.count,
+      };
+
+      setData([totalDetail, ministryDetail, commerceDetail, otherDetail]);
     }
   };
 
@@ -242,10 +241,6 @@ export const useGetOrganizationUsers = () => {
       }
     );
 
-    setData({
-      data: data.data,
-      count: data.count,
-    });
     setLoading(false);
     setSuccess(status);
 
@@ -253,6 +248,8 @@ export const useGetOrganizationUsers = () => {
       toast.error(
         data?.response?.data?.data ?? "An error occurred. Please try again"
       );
+    } else {
+      setData(data);
     }
   };
 
@@ -288,10 +285,6 @@ export const useGetOrganizationTransactionHistory = (mdaId: string) => {
       }
     );
 
-    setData({
-      data: data.data,
-      count: data.count,
-    });
     setLoading(false);
     setSuccess(status);
 
@@ -299,6 +292,8 @@ export const useGetOrganizationTransactionHistory = (mdaId: string) => {
       toast.error(
         data?.response?.data?.data ?? "An error occurred. Please try again"
       );
+    } else {
+      setData(data);
     }
   };
 

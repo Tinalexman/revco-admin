@@ -67,10 +67,6 @@ export const useGetTaxPayers = () => {
       }
     );
 
-    setData({
-      data: data.data,
-      count: data.count,
-    });
     setLoading(false);
     setSuccess(status);
 
@@ -78,6 +74,8 @@ export const useGetTaxPayers = () => {
       toast.error(
         data?.response?.data?.data ?? "An error occurred. Please try again"
       );
+    } else {
+      setData(data);
     }
   };
 
@@ -119,10 +117,6 @@ export const useGetUserTransactions = (name: string, phoneNumber: string) => {
       }
     );
 
-    setData({
-      data: data.data,
-      count: data.count,
-    });
     setLoading(false);
     setSuccess(status);
 
@@ -130,6 +124,8 @@ export const useGetUserTransactions = (name: string, phoneNumber: string) => {
       toast.error(
         data?.response?.data?.data ?? "An error occurred. Please try again"
       );
+    } else {
+      setData(data);
     }
   };
 

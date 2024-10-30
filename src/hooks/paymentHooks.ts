@@ -97,7 +97,6 @@ export const useGetPaymentChannels = () => {
       }
     );
 
-    setData(data.data);
     setLoading(false);
     setSuccess(status);
 
@@ -105,6 +104,8 @@ export const useGetPaymentChannels = () => {
       toast.error(
         data?.response?.data?.data ?? "An error occurred. Please try again"
       );
+    } else {
+      setData(data.data);
     }
   };
 
@@ -150,10 +151,6 @@ export const useGetRecentInvoices = () => {
       }
     );
 
-    setData({
-      data: data.data,
-      count: data.count,
-    });
     setLoading(false);
     setSuccess(status);
 
@@ -161,6 +158,8 @@ export const useGetRecentInvoices = () => {
       toast.error(
         data?.response?.data?.data ?? "An error occurred. Please try again"
       );
+    } else {
+      setData(data);
     }
   };
 

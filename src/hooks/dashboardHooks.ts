@@ -11,12 +11,14 @@ export interface iRecentActivity {
 export interface iRecentActivityResponse {
   txid: string;
   mda: string;
-  amountPaid: number;
+  invoiceAmount: number;
   paymentDate: string;
   username: string;
   description: string;
-  channel: string;
+  channel: any;
   type: string;
+  phoneNumber: string;
+  paid: boolean;
 }
 
 export interface iTransactionSummaryChartDataResponse {
@@ -27,10 +29,22 @@ export interface iTransactionSummaryChartDataResponse {
   totalRev: number;
 }
 
+export interface iTransactionChannelChartDataResponse {
+  channel: string;
+  percentage: string;
+}
+
 export interface iTransactionStatusChartDataResponse {
   total: number;
   success: number;
   pending: number;
+}
+
+export interface iTransactionRevenueChartDataResponse {
+  "TARABA STATE INTERNAL REVENUE SERVICE ": number;
+  Paysure: number;
+  "Participant 1": number;
+  "Participant 2": number;
 }
 
 export interface iStatisticsSummaryResponse {
@@ -71,13 +85,13 @@ export const useGetRecentActivity = () => {
   const { requestApi } = useAxios();
   const token = useToken().getToken();
 
-  let getActivity = async (pageNo: string) => {
+  let getActivity = async (start: string, end: string, pageNo: string) => {
     if (loading) return;
 
     setLoading(true);
 
     const { data, status } = await requestApi(
-      `/mda-report/transaction-activity?pageNo=${pageNo}&pageSize=50&type=Y`,
+      `/mda-report/transaction-activity?pageNumber=${pageNo}&pageSize=50&from=${start}&to=${end}`,
       "GET",
       {},
       {
@@ -85,9 +99,12 @@ export const useGetRecentActivity = () => {
       }
     );
 
-    setData(data);
     setLoading(false);
     setSuccess(status);
+
+    if (status) {
+      setData(data);
+    }
 
     if (!status) {
       toast.error(
@@ -98,7 +115,8 @@ export const useGetRecentActivity = () => {
 
   useEffect(() => {
     if (token) {
-      getActivity("1");
+      const currentDate = new Date().toISOString().split("T")[0];
+      getActivity(currentDate, currentDate, "1");
     }
   }, [token]);
 
@@ -140,13 +158,14 @@ export const useGetStatisticsSummary = () => {
       }
     );
 
-    setData(data);
     setLoading(false);
 
     if (!status) {
       toast.error(
         data?.response?.data?.data ?? "An error occurred. Please try again"
       );
+    } else {
+      setData(data);
     }
   };
 
@@ -188,8 +207,6 @@ export const useGetTransactionSummary = () => {
         Authorization: `Bearer ${token}`,
       }
     );
-
-    setData(data.data.data);
     setLoading(false);
     setSuccess(status);
 
@@ -197,6 +214,8 @@ export const useGetTransactionSummary = () => {
       toast.error(
         data?.response?.data?.data ?? "An error occurred. Please try again"
       );
+    } else {
+      setData(data.data.data);
     }
   };
 
@@ -235,7 +254,6 @@ export const useGetMetrics = () => {
       }
     );
 
-    setData(data);
     setLoading(false);
     setSuccess(status);
 
@@ -243,6 +261,8 @@ export const useGetMetrics = () => {
       toast.error(
         data?.response?.data?.data ?? "An error occurred. Please try again"
       );
+    } else {
+      setData(data);
     }
   };
 
@@ -281,7 +301,6 @@ export const useGetUserActivity = () => {
       }
     );
 
-    setData(data);
     setLoading(false);
     setSuccess(status);
 
@@ -289,6 +308,8 @@ export const useGetUserActivity = () => {
       toast.error(
         data?.response?.data?.data ?? "An error occurred. Please try again"
       );
+    } else {
+      setData(data);
     }
   };
 
@@ -310,17 +331,17 @@ export const useGetUserActivity = () => {
 export const useGetTransactionChannelsPieData = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [success, setSuccess] = useState<boolean>(false);
-  const [data, setData] = useState<iTransactionSummaryChartDataResponse[]>([]);
+  const [data, setData] = useState<iTransactionChannelChartDataResponse[]>([]);
   const { requestApi } = useAxios();
   const token = useToken().getToken();
 
-  let getPieChannelsData = async (start: string, end: string) => {
+  let getPieChannelsData = async (type: string) => {
     if (loading) return;
 
     setLoading(true);
 
     const { data, status } = await requestApi(
-      `/mda-report/getChannelMetrics?from=${start}&to=${end}`,
+      `/mda-report/getChannelMetrics?type=${type}`,
       "GET",
       {},
       {
@@ -328,7 +349,6 @@ export const useGetTransactionChannelsPieData = () => {
       }
     );
 
-    setData(data.data);
     setLoading(false);
     setSuccess(status);
 
@@ -336,13 +356,14 @@ export const useGetTransactionChannelsPieData = () => {
       toast.error(
         data?.response?.data?.data ?? "An error occurred. Please try again"
       );
+    } else {
+      setData(data.data);
     }
   };
 
   useEffect(() => {
     if (token) {
-      const currentDate = new Date().toISOString().split("T")[0];
-      getPieChannelsData(currentDate, currentDate);
+      getPieChannelsData("D");
     }
   }, [token]);
 
@@ -379,7 +400,6 @@ export const useGetTransactionStatusPieData = () => {
       }
     );
 
-    setData(data.data);
     setLoading(false);
     setSuccess(status);
 
@@ -387,6 +407,8 @@ export const useGetTransactionStatusPieData = () => {
       toast.error(
         data?.response?.data?.data ?? "An error occurred. Please try again"
       );
+    } else {
+      setData(data.data);
     }
   };
 
@@ -400,6 +422,58 @@ export const useGetTransactionStatusPieData = () => {
     loading,
     success,
     getPieStatusData,
+    data,
+  };
+};
+
+export const useGetTransactionRevenuePieData = () => {
+  const [loading, setLoading] = useState<boolean>(false);
+  const [success, setSuccess] = useState<boolean>(false);
+  const [data, setData] = useState<iTransactionRevenueChartDataResponse>({
+    "Participant 1": 0,
+    "Participant 2": 0,
+    "TARABA STATE INTERNAL REVENUE SERVICE ": 0,
+    Paysure: 0,
+  });
+  const { requestApi } = useAxios();
+  const token = useToken().getToken();
+
+  let getPieRevenueData = async (type: string) => {
+    if (loading) return;
+
+    setLoading(true);
+
+    const { data, status } = await requestApi(
+      `/notifications/total-revenue/pie?type=${type}`,
+      "GET",
+      {},
+      {
+        Authorization: `Bearer ${token}`,
+      }
+    );
+
+    setLoading(false);
+    setSuccess(status);
+
+    if (!status) {
+      toast.error(
+        data?.response?.data?.data ?? "An error occurred. Please try again"
+      );
+    } else {
+      setData(data.data);
+    }
+  };
+
+  useEffect(() => {
+    if (token) {
+      getPieRevenueData("D");
+    }
+  }, [token]);
+
+  return {
+    loading,
+    success,
+    getPieRevenueData,
     data,
   };
 };
@@ -425,7 +499,6 @@ export const useGetRecentTransaction = (txid: string) => {
       }
     );
 
-    setData(data);
     setLoading(false);
     setSuccess(status);
 
@@ -433,6 +506,8 @@ export const useGetRecentTransaction = (txid: string) => {
       toast.error(
         data?.response?.data?.data ?? "An error occurred. Please try again"
       );
+    } else {
+      setData(data);
     }
   };
 

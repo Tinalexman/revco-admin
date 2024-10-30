@@ -7,6 +7,7 @@ import {
   useGetTransactionChannelsPieData,
   useGetMetrics,
   useGetTransactionStatusPieData,
+  useGetTransactionRevenuePieData,
 } from "@/hooks/dashboardHooks";
 import { Loader } from "@mantine/core";
 import { getDateRange } from "@/functions/dateFunctions";
@@ -30,26 +31,29 @@ const Statistics = () => {
     getPieStatusData,
   } = useGetTransactionStatusPieData();
 
-  const totalChannelsCount = transactionChannels.reduce((acc, tnc) => {
-    return acc + tnc.count;
-  }, 0);
+  const {
+    loading: loadingTransactionRevenuePieData,
+    data: transactionRevenue,
+    getPieRevenueData,
+  } = useGetTransactionRevenuePieData();
 
-  const totalChannelsRevenue = transactionChannels.reduce((acc, tnc) => {
-    return acc + tnc.totalRev;
-  }, 0);
+  const totalRevenue: number =
+    transactionRevenue["TARABA STATE INTERNAL REVENUE SERVICE "] +
+    transactionRevenue["Participant 1"] +
+    transactionRevenue["Participant 2"] +
+    transactionRevenue.Paysure;
 
   const transactionData: iTransactionData[] = [
     {
       title: "Transaction Channels",
       label: "Total Transactions",
-      subLabel: totalChannelsRevenue,
+      subLabel: 100,
       children: transactionChannels.map((tnc, i) => {
-        const frac =
-          totalChannelsCount === 0 ? 0 : tnc.count / totalChannelsCount;
+        const frac = Number.parseFloat(tnc.percentage);
         return {
           name: tnc.channel,
           fraction: frac,
-          value: `${(frac * 100).toFixed(0)}%`,
+          value: `${frac}%`,
         };
       }),
     },
@@ -79,22 +83,38 @@ const Statistics = () => {
     {
       title: "Transaction Revenue",
       label: "Total Revenue",
-      subLabel: 3000000,
+      subLabel: 0,
       children: [
         {
-          name: "Taraba",
-          fraction: 0.6,
-          value: new Number(2000000).toLocaleString("en-US"),
+          name: "Taraba IRS",
+          value: `${transactionRevenue["TARABA STATE INTERNAL REVENUE SERVICE "]}`,
+          fraction:
+            totalRevenue === 0
+              ? 0
+              : transactionRevenue["TARABA STATE INTERNAL REVENUE SERVICE "] /
+                totalRevenue,
+        },
+        {
+          name: "Participant 1",
+          value: `${transactionRevenue["Participant 1"]}`,
+          fraction:
+            totalRevenue === 0
+              ? 0
+              : transactionRevenue["Participant 1"] / totalRevenue,
+        },
+        {
+          name: "Participant 2",
+          value: `${transactionRevenue["Participant 2"]}`,
+          fraction:
+            totalRevenue === 0
+              ? 0
+              : transactionRevenue["Participant 2"] / totalRevenue,
         },
         {
           name: "Paysure",
-          value: new Number(500000).toLocaleString("en-US"),
-          fraction: 0.2,
-        },
-        {
-          name: "Partners",
-          value: new Number(500000).toLocaleString("en-US"),
-          fraction: 0.2,
+          value: `${transactionRevenue.Paysure}`,
+          fraction:
+            totalRevenue === 0 ? 0 : transactionRevenue.Paysure / totalRevenue,
         },
       ],
     },
@@ -187,14 +207,15 @@ const Statistics = () => {
                 ? loadingTransactionChannelsPieData
                 : i === 1
                 ? loadingTransactionStatusPieData
-                : false
+                : loadingTransactionRevenuePieData
             }
             onFilterChanged={(value) => {
               if (i === 0) {
-                // getPieChannelsData(value)
-                const dateRange = getDateRange(value);
+                getPieChannelsData(value);
               } else if (i === 1) {
                 getPieStatusData(value);
+              } else if (i === 2) {
+                getPieRevenueData(value);
               }
             }}
           />

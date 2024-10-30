@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 
 import Details from "./Details";
 import Activity from "../common/Activity";
@@ -22,7 +22,7 @@ const Dashboard = () => {
       <div className="py-5 px-10 w-full flex flex-col gap-2.5">
         <Details />
         <Statistics />
-        {/* <Activity /> */}
+        <Activity />
       </div>
     </div>
   );

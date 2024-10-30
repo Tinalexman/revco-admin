@@ -12,11 +12,16 @@ import { Loader } from "@mantine/core";
 import ResponsivePagination from "react-responsive-pagination";
 import "react-responsive-pagination/themes/classic.css";
 import Paginator from "@/components/reusable/paginator/Paginator";
+import { iDateRange } from "@/functions/dateFunctions";
 
 const Activity = () => {
   const [expanded, setExpanded] = useState<boolean>(false);
   const { loading, data: transactions, getActivity } = useGetRecentActivity();
-
+  const currentDate = new Date().toISOString().split("T")[0];
+  const [dateRange, setDateRange] = useState<iDateRange>({
+    start: currentDate,
+    end: currentDate,
+  });
   const [opened, { open, close }] = useDisclosure(false);
   const [currentTransaction, setCurrentTransaction] = useState<string | null>(
     null
@@ -37,7 +42,7 @@ const Activity = () => {
 
   function handlePageChange(page: number) {
     setCurrentPage(page);
-    getActivity(`${page}`);
+    getActivity(dateRange.start, dateRange.end, `${page}`);
   }
 
   return (
@@ -67,7 +72,7 @@ const Activity = () => {
           </button>
         </div>
         <div className="relative overflow-x-auto scrollbar-thin scrollbar-webkit w-full">
-          <table className="w-[150%] ">
+          <table className="w-[120%] ">
             <thead className=" bg-[#F3F7FC] h-14">
               <tr className="text-[#3A3A3A] font-medium text-[0.75rem] leading-[1.125rem] text-left">
                 <th scope="col" className="px-4">
@@ -108,7 +113,7 @@ const Activity = () => {
                       <td className="p-4">{txn.mda}</td>
                       <td className="p-4">{txn.type}</td>
                       <td className="p-4">
-                        ₦{txn.amountPaid.toLocaleString("en-US")}
+                        ₦{txn.invoiceAmount.toLocaleString("en-US")}
                       </td>
                       <td className="p-4">{txn.paymentDate}</td>
                       <td className="flex gap-1 p-4">

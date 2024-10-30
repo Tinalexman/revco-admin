@@ -91,11 +91,11 @@ export const useRegister = () => {
       payload
     );
 
-    setData(data);
     setLoading(false);
     setSuccess(status);
 
     if (status) {
+      setData(data);
       toast.success("User created");
     } else {
       toast.error(
