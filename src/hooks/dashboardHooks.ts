@@ -35,10 +35,10 @@ export interface iStatisticsSummaryResponse {
 }
 
 export interface iMdaMetricsResponse {
-  amount: number;
+  amount: any;
   referenceName: string;
   invoiceTotal: number;
-  others: number;
+  invoicePaid: number;
 }
 
 export interface iUserActivityResponse {
@@ -66,7 +66,7 @@ export const useGetRecentActivity = () => {
     setLoading(true);
 
     const { data, status } = await requestApi(
-      `/mda-report/transaction-activity?pageNo=${pageNo}&pageSize=10&type=Y`,
+      `/mda-report/transaction-activity?pageNo=${pageNo}&pageSize=50&type=Y`,
       "GET",
       {},
       {
@@ -105,13 +105,13 @@ export const useGetStatisticsSummary = () => {
   const { requestApi } = useAxios();
   const token = useToken().getToken();
 
-  let getStatisticsSummary = async (type: string) => {
+  let getStatisticsSummary = async (start: string, end: string) => {
     if (loading) return;
 
     setLoading(true);
 
     const { data, status } = await requestApi(
-      `/mda-report/statistics-summary?type=${type}`,
+      `/mda-report/statistics-summary?from=${start}&to=${end}`,
       "GET",
       {},
       {
@@ -131,7 +131,8 @@ export const useGetStatisticsSummary = () => {
 
   useEffect(() => {
     if (token) {
-      getStatisticsSummary("Y");
+      const currentDate = new Date().toISOString().split("T")[0];
+      getStatisticsSummary(currentDate, currentDate);
     }
   }, [token]);
 

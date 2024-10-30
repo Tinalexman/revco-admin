@@ -112,3 +112,62 @@ export function convertDateWithDashesAndTime(other: Date | string) {
     hours === 0 || hours % 12 === 0 ? "12" : hours % 12
   }:${minutes < 10 ? "0" : ""}${minutes} ${isPM ? "PM" : "AM"}`;
 }
+
+export const getDateRange = (filter: string) => {
+  const today = new Date();
+  let startDate, endDate;
+
+  switch (filter) {
+    case "Today":
+      startDate = endDate = today.toISOString().split("T")[0];
+      break;
+    case "Yesterday":
+      const yesterday = new Date(today);
+      yesterday.setDate(today.getDate() - 1);
+      startDate = endDate = yesterday.toISOString().split("T")[0];
+      break;
+    case "This Week":
+      const weekStart = new Date(today);
+      weekStart.setDate(today.getDate() - today.getDay()); // Sunday as the first day of the week
+      startDate = weekStart.toISOString().split("T")[0];
+      endDate = today.toISOString().split("T")[0];
+      break;
+    case "Last Week":
+      const lastWeekStart = new Date(today);
+      lastWeekStart.setDate(today.getDate() - today.getDay() - 7);
+      const lastWeekEnd = new Date(today);
+      lastWeekEnd.setDate(lastWeekStart.getDate() + 6); // End of last week
+      startDate = lastWeekStart.toISOString().split("T")[0];
+      endDate = lastWeekEnd.toISOString().split("T")[0];
+      break;
+    case "This Month":
+      startDate = new Date(today.getFullYear(), today.getMonth(), 1)
+        .toISOString()
+        .split("T")[0];
+      endDate = today.toISOString().split("T")[0];
+      break;
+    case "Last Month":
+      const lastMonth = new Date(today);
+      lastMonth.setMonth(today.getMonth() - 1);
+      startDate = new Date(lastMonth.getFullYear(), lastMonth.getMonth(), 1)
+        .toISOString()
+        .split("T")[0];
+      const lastMonthEnd = new Date(
+        lastMonth.getFullYear(),
+        lastMonth.getMonth() + 1,
+        0
+      );
+      endDate = lastMonthEnd.toISOString().split("T")[0];
+      break;
+    case "This Year":
+      startDate = new Date(today.getFullYear(), 0, 1)
+        .toISOString()
+        .split("T")[0];
+      endDate = today.toISOString().split("T")[0];
+      break;
+    default:
+      startDate = endDate = today.toISOString().split("T")[0];
+  }
+
+  return [startDate, endDate];
+};

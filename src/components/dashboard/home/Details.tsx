@@ -7,8 +7,16 @@ import { Profile, Profile2User } from "iconsax-react";
 import Image, { StaticImageData } from "next/image";
 import TaxPayersImage from "@/assets/dashboard/tax payers.png";
 import TotalUsersImage from "@/assets/dashboard/total users.png";
-import { useGetStatisticsSummary, useGetUserActivity } from "@/hooks/dashboardHooks";
+import {
+  useGetStatisticsSummary,
+  useGetUserActivity,
+} from "@/hooks/dashboardHooks";
 import { Loader } from "@mantine/core";
+import { getDateRange } from "@/functions/dateFunctions";
+import { IoReceiptSharp } from "react-icons/io5";
+import { PiWalletFill } from "react-icons/pi";
+import { AiOutlineFileDone } from "react-icons/ai";
+import { FaHandshakeSimple } from "react-icons/fa6";
 
 interface iRevenueItem {
   value: number;
@@ -26,42 +34,57 @@ interface iPersonItem {
   background: StaticImageData;
 }
 
+interface iDateRange {
+  start: string;
+  end: string;
+}
+
 const Details = () => {
   const [filter, setFilter] = useState<string>("Yearly");
+
+  const currentDate = new Date().toISOString().split("T")[0];
+  const [dateRange, setDateRange] = useState<iDateRange>({
+    start: currentDate,
+    end: currentDate,
+  });
 
   const {
     loading: loadingSummary,
     getStatisticsSummary,
-    data: statsSummary, } = useGetStatisticsSummary();
+    data: statsSummary,
+  } = useGetStatisticsSummary();
   const revenueItems: iRevenueItem[] = [
     {
-      title: "Total Revenue",
-      value: statsSummary?.totalRevenue || 0,
-      subtitle: 3000,
-      icon: <RiMoneyDollarCircleFill size={20} className="text-primary" />,
-    },
-    {
-      title: "Total Invoice Generated",
+      title: "Total Amount on Invoice Generated",
       value: statsSummary?.totalInvoiceGeneratedInNaira || 0,
       subtitle: 3000,
-      icon: <RiMoneyDollarCircleFill size={20} className="text-primary" />,
+      icon: <PiWalletFill size={20} className="text-primary" />,
     },
     {
       title: "Total Commission",
-      value: statsSummary?.totalCommissionInNaira || 0,
+      value: statsSummary?.totalRevenue || 0,
       subtitle: 3000,
-      icon: <RiMoneyDollarCircleFill size={20} className="text-primary" />,
+      icon: <IoReceiptSharp size={20} className="text-primary" />,
     },
     {
       title: "Total Amount Remitted",
       value: statsSummary?.totalAmountRemitted || 0,
       subtitle: 3000,
-      icon: <RiMoneyDollarCircleFill size={20} className="text-primary" />,
+      icon: <AiOutlineFileDone size={20} className="text-primary" />,
+    },
+    {
+      title: "Total Invoice Generated",
+      value: statsSummary?.totalCommissionInNaira || 0,
+      subtitle: 3000,
+      icon: <FaHandshakeSimple size={20} className="text-primary" />,
     },
   ];
 
-
-  const { data: userActivity, loading: loadingActivity, getActivity } = useGetUserActivity();
+  const {
+    data: userActivity,
+    loading: loadingActivity,
+    getActivity,
+  } = useGetUserActivity();
   const personItems: iPersonItem[] = [
     {
       title: "Total Tax Payers",
@@ -87,14 +110,23 @@ const Details = () => {
         <p className="font-semibold text-dash-header text-gray-5">
           Dashboard Overview
         </p>
-        <div className="w-[90px]">
+        <div className="w-[110px]">
           <Dropdown
-            menus={["Daily", "Monthly", "Yearly"].map((v, i) => ({
+            menus={[
+              "Today",
+              "Yesterday",
+              "This Week",
+              "Last Week",
+              "This Month",
+              "Last Month",
+              "This Year",
+            ].map((v, i) => ({
               name: v,
               onClick: () => {
                 setFilter(v);
-                getStatisticsSummary(v.substring(0, 1))
-                getActivity(v.substring(0, 1))
+                const dates = getDateRange(v);
+                getStatisticsSummary(dates[0], dates[1]);
+                // getActivity(v.substring(0, 1));
               },
             }))}
             value={filter}
@@ -111,12 +143,13 @@ const Details = () => {
             <div className="bg-primary-accent rounded-full p-2">{it.icon}</div>
             <div className="w-full flex flex-col">
               <h3 className="text-med-button text-[#9EA4AA]">{it.title}</h3>
-              {
-                loadingSummary ? <Loader color="primary.6" size={24} /> : <h2 className="text-dash-intro-header font-semibold text-gray-5">
+              {loadingSummary ? (
+                <Loader color="primary.6" size={24} />
+              ) : (
+                <h2 className="text-dash-intro-header font-semibold text-gray-5">
                   ₦{it.value.toLocaleString("en-US")}
                 </h2>
-              }
-
+              )}
             </div>
           </div>
         ))}
@@ -131,35 +164,39 @@ const Details = () => {
             <div className="w-[70%] flex justify-between">
               <div className="w-fit flex flex-col">
                 <h3 className="text-med-button text-[#9EA4AA]">{pt.title}</h3>
-                {
-                  loadingActivity ? <Loader color="primary.6" size={24} /> : <h2 className="text-dash-intro-header font-semibold text-gray-5">
+                {loadingActivity ? (
+                  <Loader color="primary.6" size={24} />
+                ) : (
+                  <h2 className="text-dash-intro-header font-semibold text-gray-5">
                     {pt.value}
                   </h2>
-                }
-
+                )}
               </div>
               <div className="w-fit flex gap-2 items-center">
                 <div className="flex flex-col w-fit">
                   <h3 className="text-[0.69rem] leading-[1.085rem] text-gray-5 font-medium">
                     Individual
                   </h3>
-                  {
-                    loadingActivity ? <Loader color="primary.6" size={24} /> : <h2 className="text-[1.185rem] leading-[1.4rem] font-semibold text-gray-5">
+                  {loadingActivity ? (
+                    <Loader color="primary.6" size={24} />
+                  ) : (
+                    <h2 className="text-[1.185rem] leading-[1.4rem] font-semibold text-gray-5">
                       {pt.individual}
                     </h2>
-                  }
-
+                  )}
                 </div>
                 <div className="w-[1px] h-full bg-[#8E8E93]" />
                 <div className="flex flex-col w-fit">
                   <h3 className="text-[0.69rem] leading-[1.085rem] text-gray-5 font-medium">
                     Corporate
                   </h3>
-                  {
-                    loadingActivity ? <Loader color="primary.6" size={24} /> : <h2 className="text-[1.185rem] leading-[1.4rem] font-semibold text-gray-5">
+                  {loadingActivity ? (
+                    <Loader color="primary.6" size={24} />
+                  ) : (
+                    <h2 className="text-[1.185rem] leading-[1.4rem] font-semibold text-gray-5">
                       {pt.corporate}
                     </h2>
-                  }
+                  )}
                 </div>
               </div>
             </div>
@@ -168,8 +205,9 @@ const Details = () => {
               alt={pt.title}
               width={300}
               height={200}
-              className={`absolute bottom-0 right-0 ${i === 0 ? "w-[30%]" : "w-[25%]"
-                } h-auto`}
+              className={`absolute bottom-0 right-0 ${
+                i === 0 ? "w-[30%]" : "w-[25%]"
+              } h-auto`}
             />
           </div>
         ))}

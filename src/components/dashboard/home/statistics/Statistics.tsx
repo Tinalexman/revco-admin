@@ -3,27 +3,31 @@ import React, { useState } from "react";
 import TransactionCard, { iTransactionData } from "./TransactionCard";
 
 import { AreaChart, getFilteredChartTooltipPayload } from "@mantine/charts";
-import { useGetTransactionChannelsPieData, useGetMetrics } from "@/hooks/dashboardHooks";
+import {
+  useGetTransactionChannelsPieData,
+  useGetMetrics,
+} from "@/hooks/dashboardHooks";
 import { Loader } from "@mantine/core";
 
-
-
 const Statistics = () => {
+  const {
+    data: metrics,
+    getMetrics,
+    loading: loadingMetrics,
+  } = useGetMetrics();
 
-  const { data: metrics, getMetrics, loading: loadingMetrics } = useGetMetrics();
-
-
-  const { loading: loadingTransactionChannelsPieData,
-    data: transactionChannels, } = useGetTransactionChannelsPieData();
+  const {
+    loading: loadingTransactionChannelsPieData,
+    data: transactionChannels,
+  } = useGetTransactionChannelsPieData();
 
   const totalChannelsCount = transactionChannels.reduce((acc, tnc) => {
-    return acc + tnc.count
-  }, 0)
+    return acc + tnc.count;
+  }, 0);
 
   const totalChannelsRevenue = transactionChannels.reduce((acc, tnc) => {
-    return acc + tnc.totalRev
-  }, 0)
-
+    return acc + tnc.totalRev;
+  }, 0);
 
   const transactionData: iTransactionData[] = [
     {
@@ -36,19 +40,18 @@ const Statistics = () => {
             name: "None",
             fraction: 0.0,
             value: `0%`,
-          }
+          },
         ],
-        ...(transactionChannels.map((tnc, i) => {
-          const frac = totalChannelsCount === 0 ? 0 : tnc.count / totalChannelsCount;
+        ...transactionChannels.map((tnc, i) => {
+          const frac =
+            totalChannelsCount === 0 ? 0 : tnc.count / totalChannelsCount;
           return {
             name: tnc.channel,
             fraction: frac,
             value: `${(frac * 100).toFixed(0)}%`,
           };
-        })),
-
-
-      ]
+        }),
+      ],
     },
     {
       title: "Transaction Status",
@@ -121,6 +124,16 @@ const Statistics = () => {
               Financial Metrics
             </h2>
           </div>
+          <div className="w-fit gap-4 flex items-center text-[#1E1B39] text-[0.65rem] leading-[0.8rem]">
+            <div className="flex w-fit items-center gap-1 px-2 py-1.5 rounded-lg border border-[#E5E5EF]">
+              <div className="bg-primary rounded-full size-1.5" />
+              <p>Completed Payment</p>
+            </div>
+            <div className="flex w-fit items-center gap-1 px-2 py-1.5 rounded-lg border border-[#E5E5EF]">
+              <div className="bg-[#FF718B] rounded-full size-1.5" />
+              <p>Invoice Generated</p>
+            </div>
+          </div>
           <div className="w-fit h-fit bg-[#F8F8FF] rounded-xl py-2 px-6 flex items-center gap-2.5">
             {filters.map((f, i) => (
               <div
@@ -131,38 +144,46 @@ const Statistics = () => {
                   if (i === 1) getMetrics("M");
                   if (i === 2) getMetrics("Y");
                 }}
-                className={`${filterIndex === i
-                  ? "text-white bg-[#1E1B39]"
-                  : "text-[#9291A5]"
-                  } transition-colors duration-300 ease-out rounded-xl cursor-pointer py-2 px-3 text-[0.76rem] leading-[0.865rem]`}
+                className={`${
+                  filterIndex === i
+                    ? "text-white bg-[#1E1B39]"
+                    : "text-[#9291A5]"
+                } transition-colors duration-300 ease-out rounded-xl cursor-pointer py-2 px-3 text-[0.76rem] leading-[0.865rem]`}
               >
                 {f}
               </div>
             ))}
           </div>
         </div>
-        {
-          loadingMetrics ? <div className="w-full h-[300px] grid place-content-center">
+        {loadingMetrics ? (
+          <div className="w-full h-[300px] grid place-content-center">
             <Loader color="primary.6" />
-
-          </div> : <AreaChart
+          </div>
+        ) : (
+          <AreaChart
             h={300}
             data={metrics.map((mt, i) => ({
               month: mt.referenceName,
-              amount: mt.amount,
+              completedPayment: mt.invoicePaid,
+              invoiceGenerated: mt.invoiceTotal,
             }))}
             dataKey="month"
-            series={[{ name: "amount", color: "primary.5" }]}
+            series={[
+              { name: "completedPayment", color: "primary.5" },
+              { name: "invoiceGenerated", color: "red.5" },
+            ]}
             curveType="bump"
             gridAxis="x"
             tooltipProps={{
-              content: ({ label, payload }) => <ChartTooltip label={label} payload={payload} />,
+              content: ({ label, payload }) => (
+                <ChartTooltip label={label} payload={payload} />
+              ),
             }}
             valueFormatter={formatValue}
             withXAxis={true}
             withYAxis={true}
           />
-        }
+        )}
       </div>
 
       <div className="w-full grid grid-cols-3 gap-2.5">
@@ -173,7 +194,6 @@ const Statistics = () => {
     </div>
   );
 };
-
 
 function formatValue(value: number): string {
   if (value < 999) return value.toLocaleString("en-US");
@@ -195,14 +215,16 @@ interface ChartTooltipProps {
 function ChartTooltip({ label, payload }: ChartTooltipProps) {
   if (!payload) return null;
 
-  return <div className="flex flex-col gap-2 p-3 bg-white shadow-custom rounded">
-    <h2 className="text-reg-caption text-[#555555] font-semibold">{label}</h2>
-    {getFilteredChartTooltipPayload(payload).map((item: any) => (
-      <h3 key={item.name} className="text-dash-slider text-monokai font-bold">
-        {formatValue(item.value)}
-      </h3>
-    ))}
-  </div>
+  return (
+    <div className="flex flex-col gap-2 p-3 bg-white shadow-custom rounded">
+      <h2 className="text-reg-caption text-[#555555] font-semibold">{label}</h2>
+      {getFilteredChartTooltipPayload(payload).map((item: any) => (
+        <h3 key={item.name} className="text-dash-slider text-monokai font-bold">
+          {formatValue(item.value)}
+        </h3>
+      ))}
+    </div>
+  );
 }
 
 export default Statistics;

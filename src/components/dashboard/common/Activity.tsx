@@ -9,8 +9,8 @@ import ViewTransaction from "./ViewTransaction";
 import { useGetRecentActivity } from "@/hooks/dashboardHooks";
 import { Loader } from "@mantine/core";
 
-import ResponsivePagination from 'react-responsive-pagination';
-import 'react-responsive-pagination/themes/classic.css';
+import ResponsivePagination from "react-responsive-pagination";
+import "react-responsive-pagination/themes/classic.css";
 import Paginator from "@/components/reusable/paginator/Paginator";
 
 const Activity = () => {
@@ -18,8 +18,9 @@ const Activity = () => {
   const { loading, data: transactions, getActivity } = useGetRecentActivity();
 
   const [opened, { open, close }] = useDisclosure(false);
-  const [currentTransaction, setCurrentTransaction] =
-    useState<string | null>(null);
+  const [currentTransaction, setCurrentTransaction] = useState<string | null>(
+    null
+  );
 
   const openDrawer = (transaction: string) => {
     setCurrentTransaction(transaction);
@@ -31,7 +32,7 @@ const Activity = () => {
     close();
   };
 
-  const totalPages = Math.ceil(transactions.count / 10);
+  const totalPages = Math.ceil(transactions.count / 50);
   const [currentPage, setCurrentPage] = useState<number>(1);
 
   function handlePageChange(page: number) {
@@ -57,7 +58,7 @@ const Activity = () => {
             <Paginator
               totalPages={totalPages}
               currentPage={currentPage}
-              handlePageChange={page => handlePageChange(page)}
+              handlePageChange={(page) => handlePageChange(page)}
             />
           </div>
           <button className="bg-[#F0E6FC] rounded text-primary flex gap-3 items-center px-3 h-10">
@@ -69,61 +70,73 @@ const Activity = () => {
           <table className="w-[150%] ">
             <thead className=" bg-[#F3F7FC] h-14">
               <tr className="text-[#3A3A3A] font-medium text-[0.75rem] leading-[1.125rem] text-left">
-                <th scope="col" className="px-4">Transaction ID</th>
-                <th scope="col" className="px-4">Payer Name</th>
-                <th scope="col" className="px-4">MDA</th>
-                <th scope="col" className="px-4">Service Type</th>
-                <th scope="col" className="px-4">Amount Paid</th>
-                <th scope="col" className="px-4">Payment Date</th>
-                <th scope="col" className="px-4">Actions</th>
+                <th scope="col" className="px-4">
+                  Transaction ID
+                </th>
+                <th scope="col" className="px-4">
+                  Payer Name
+                </th>
+                <th scope="col" className="px-4">
+                  MDA
+                </th>
+                <th scope="col" className="px-4">
+                  Service Type
+                </th>
+                <th scope="col" className="px-4">
+                  Amount Paid
+                </th>
+                <th scope="col" className="px-4">
+                  Payment Date
+                </th>
+                <th scope="col" className="px-4">
+                  Actions
+                </th>
               </tr>
             </thead>
             <tbody>
-              {!loading && transactions.data.length > 0 && transactions.data
-                .slice(0, expanded ? transactions.data.length : 5)
-                .map((txn, i) => (
-                  <tr
-                    key={i}
-                    className="odd:bg-white even:bg-slate-50 text-[#3A3A3A] text-[0.75rem] leading-[1.125rem] justify-around max-h-[15rem]"
-                  >
-                    <td className="p-4">
-                      {txn.txid}
-                    </td>
-                    <td className="p-4">{txn.username}</td>
-                    <td className="p-4">{txn.mda}</td>
-                    <td className="p-4">{txn.type}</td>
-                    <td className="p-4">
-                      ₦{txn.amountPaid.toLocaleString("en-US")}
-                    </td>
-                    <td className="p-4">
-                      {txn.paymentDate}
-                    </td>
-                    <td className="flex gap-1 p-4">
-                      <div
-                        onClick={() => openDrawer(txn.txid)}
-                        className="cursor-pointer bg-[#FCEAE8] rounded size-6 grid place-content-center text-[#292D32]"
-                      >
-                        <IoEye size={16} />
-                      </div>
-                      <div className="cursor-pointer bg-[#E99E104D] rounded size-6 grid place-content-center text-[#E94410]">
-                        <HiReceiptRefund size={16} />
-                      </div>
-                    </td>
-                  </tr>
-                ))}
+              {!loading &&
+                transactions.data.length > 0 &&
+                transactions.data
+                  .slice(0, expanded ? transactions.data.length : 10)
+                  .map((txn, i) => (
+                    <tr
+                      key={i}
+                      className="odd:bg-white even:bg-slate-50 text-[#3A3A3A] text-[0.75rem] leading-[1.125rem] justify-around max-h-[15rem]"
+                    >
+                      <td className="p-4">{txn.txid}</td>
+                      <td className="p-4">{txn.username}</td>
+                      <td className="p-4">{txn.mda}</td>
+                      <td className="p-4">{txn.type}</td>
+                      <td className="p-4">
+                        ₦{txn.amountPaid.toLocaleString("en-US")}
+                      </td>
+                      <td className="p-4">{txn.paymentDate}</td>
+                      <td className="flex gap-1 p-4">
+                        <div
+                          onClick={() => openDrawer(txn.txid)}
+                          className="cursor-pointer bg-[#FCEAE8] rounded size-6 grid place-content-center text-[#292D32]"
+                        >
+                          <IoEye size={16} />
+                        </div>
+                        <div className="cursor-pointer bg-[#E99E104D] rounded size-6 grid place-content-center text-[#E94410]">
+                          <HiReceiptRefund size={16} />
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
             </tbody>
           </table>
 
-          {
-            loading && <div className="w-full h-60 grid place-content-center">
+          {loading && (
+            <div className="w-full h-60 grid place-content-center">
               <Loader color="primary.6" />
             </div>
-          }
-          {
-            !loading && transactions.data.length === 0 && <div className="w-full h-60 grid place-content-center text-[#3A3A3A] font-medium text-[1rem] leading-[1.125rem]">
+          )}
+          {!loading && transactions.data.length === 0 && (
+            <div className="w-full h-60 grid place-content-center text-[#3A3A3A] font-medium text-[1rem] leading-[1.125rem]">
               No recent activity
             </div>
-          }
+          )}
         </div>
       </div>
       {currentTransaction !== null && (
