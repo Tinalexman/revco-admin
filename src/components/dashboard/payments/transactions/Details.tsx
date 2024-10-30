@@ -1,9 +1,14 @@
 import React, { useState } from "react";
 
-import { RiMoneyDollarCircleFill } from "react-icons/ri";
 import Dropdown from "@/components/reusable/Dropdown";
 import { useGetStatisticsSummary } from "@/hooks/dashboardHooks";
 import { Loader } from "@mantine/core";
+import { allFilters, getDateRange } from "@/functions/dateFunctions";
+
+import { IoReceiptSharp } from "react-icons/io5";
+import { PiWalletFill } from "react-icons/pi";
+import { AiOutlineFileDone } from "react-icons/ai";
+import { FaHandshakeSimple } from "react-icons/fa6";
 
 interface iRevenueItem {
   value: number;
@@ -20,30 +25,31 @@ const Details = () => {
     getStatisticsSummary,
     data: statsSummary,
   } = useGetStatisticsSummary();
+
   const revenueItems: iRevenueItem[] = [
     {
-      title: "Total Revenue",
-      value: statsSummary.totalRevenue,
-      subtitle: 3000,
-      icon: <RiMoneyDollarCircleFill size={20} className="text-primary" />,
-    },
-    {
-      title: "Total Invoice Generated",
+      title: "Total Amount on Invoice Generated",
       value: statsSummary.totalInvoiceGeneratedInNaira,
       subtitle: 3000,
-      icon: <RiMoneyDollarCircleFill size={20} className="text-primary" />,
+      icon: <PiWalletFill size={20} className="text-primary" />,
     },
     {
-      title: "Total Commission",
-      value: statsSummary.totalCommissionInNaira.total,
+      title: "Total Amount on Invoice Collected",
+      value: statsSummary.totalRevenue,
       subtitle: 3000,
-      icon: <RiMoneyDollarCircleFill size={20} className="text-primary" />,
+      icon: <IoReceiptSharp size={20} className="text-primary" />,
     },
     {
-      title: "Total Amount Remitted",
+      title: "Total Amount due to State Government",
       value: statsSummary.totalAmountRemitted,
       subtitle: 3000,
-      icon: <RiMoneyDollarCircleFill size={20} className="text-primary" />,
+      icon: <AiOutlineFileDone size={20} className="text-primary" />,
+    },
+    {
+      title: "Total Amount due to Paysure (4.6%)",
+      value: statsSummary.totalCommissionInNaira.Paysure,
+      subtitle: 3000,
+      icon: <FaHandshakeSimple size={20} className="text-primary" />,
     },
   ];
 
@@ -53,11 +59,15 @@ const Details = () => {
         <p className="font-semibold text-dash-header text-gray-5">
           Transactions
         </p>
-        <div className="w-[90px]">
+        <div className="w-[110px]">
           <Dropdown
-            menus={["Daily", "Monthly", "Yearly"].map((v, i) => ({
+            menus={allFilters.map((v, i) => ({
               name: v,
-              onClick: () => setFilter(v),
+              onClick: () => {
+                setFilter(v);
+                const dateRange = getDateRange(v);
+                getStatisticsSummary(dateRange[0], dateRange[1]);
+              },
             }))}
             value={filter}
             hint={"Select"}

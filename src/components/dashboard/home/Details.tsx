@@ -98,7 +98,7 @@ const Details = () => {
           <p className="font-semibold text-dash-header text-gray-5">
             Dashboard Overview
           </p>
-          <div className="w-[110px]">
+          <div className="w-[115px]">
             <Dropdown
               menus={allFilters.map((v, i) => ({
                 name: v,

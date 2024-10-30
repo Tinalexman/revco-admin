@@ -40,7 +40,7 @@ const TransactionCard: FC<{
             {transactionData.title}
           </h3>
         </div>
-        <div className="w-[90px]">
+        <div className="w-[95px]">
           <Dropdown
             menus={["Daily", "Monthly", "Yearly"].map((v, i) => ({
               name: v,

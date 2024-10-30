@@ -62,7 +62,15 @@ const Activity = () => {
           </h2>
         </div>
         <div className="w-full justify-between items-center flex">
-          <Filters />
+          <Filters
+            onDatesChanged={(start: string, end: string) => {
+              setDateRange({
+                start,
+                end,
+              });
+              getActivity(start, end, `${currentPage}`);
+            }}
+          />
           <div className="w-[35%]">
             <Paginator
               totalPages={totalPages}

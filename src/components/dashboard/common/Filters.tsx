@@ -1,20 +1,24 @@
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import Dropdown from "@/components/reusable/Dropdown";
 import { SearchNormal1, Calendar } from "iconsax-react";
 import React, { useState, FC } from "react";
-import { convertDateWithDayAndMonth } from "@/functions/dateFunctions";
+import {
+  allFilters,
+  convertDateWithDayAndMonth,
+  getDateRange,
+  iDateRange,
+} from "@/functions/dateFunctions";
 import toast from "react-hot-toast";
+import Dropdown from "@/components/reusable/Dropdown";
 
-interface DateRange {
-  start: string;
-  end: string;
-}
-
-const Filters: FC<{ onDatesChanged?: (startDate: string, endDate: string) => void, showDatePicker?: boolean, onSearch?: (search: string) => void }> = ({ onDatesChanged, showDatePicker, onSearch }) => {
+const Filters: FC<{
+  onDatesChanged?: (startDate: string, endDate: string) => void;
+  showDatePicker?: boolean;
+  onSearch?: (search: string) => void;
+}> = ({ onDatesChanged, showDatePicker, onSearch }) => {
   const [search, setSearch] = useState<string>("");
-  // const [type, setType] = useState<string>("");
-  const [dateRange, setDateRange] = useState<DateRange>({
+  const [filter, setFilter] = useState<string>("Today");
+  const [dateRange, setDateRange] = useState<iDateRange>({
     start: new Date().toISOString().split("T")[0],
     end: new Date().toISOString().split("T")[0],
   });
@@ -82,26 +86,22 @@ const Filters: FC<{ onDatesChanged?: (startDate: string, endDate: string) => voi
           color="#292D32"
         />
       </div>
-      {/* <div className="w-40 h-10 flex gap-2 items-center rounded border border-gray-4 pl-2">
-        <p className=" text-[#10101266] text-[0.815rem] leading-[0.975rem]">
-          Showing:
-        </p>
-        <div className="w-24">
-          <Dropdown
-            menus={["Users"].map((v, i) => ({
-              name: v,
-              onClick: () => {
-                setType(v);
-              },
-            }))}
-            hint="Select"
-            bare={true}
-            value={type}
-          />
-        </div>
-      </div> */}
-      {
-        showDatePicker && showDatePicker && <div className="max-w-[17rem] w-fit h-10 flex gap-2 items-center rounded border border-gray-4 px-2">
+      <div className="w-[115px] h-10">
+        <Dropdown
+          menus={allFilters.map((v, i) => ({
+            name: v,
+            onClick: () => {
+              setFilter(v);
+              const dateRange = getDateRange(v);
+              onDatesChanged?.(dateRange[0], dateRange[1]);
+            },
+          }))}
+          hint="Select"
+          value={filter}
+        />
+      </div>
+      {showDatePicker && showDatePicker && (
+        <div className="max-w-[17rem] w-fit h-10 flex gap-2 items-center rounded border border-gray-4 px-2">
           <p className=" text-[#10101266] text-[0.815rem] leading-[0.975rem]">
             From:
           </p>
@@ -138,7 +138,7 @@ const Filters: FC<{ onDatesChanged?: (startDate: string, endDate: string) => voi
             }
           />
         </div>
-      }
+      )}
     </div>
   );
 };
