@@ -18,29 +18,30 @@ const Details = () => {
   const {
     loading: loadingSummary,
     getStatisticsSummary,
-    data: statsSummary, } = useGetStatisticsSummary();
+    data: statsSummary,
+  } = useGetStatisticsSummary();
   const revenueItems: iRevenueItem[] = [
     {
       title: "Total Revenue",
-      value: statsSummary?.totalRevenue || 0,
+      value: statsSummary.totalRevenue,
       subtitle: 3000,
       icon: <RiMoneyDollarCircleFill size={20} className="text-primary" />,
     },
     {
       title: "Total Invoice Generated",
-      value: statsSummary?.totalInvoiceGeneratedInNaira || 0,
+      value: statsSummary.totalInvoiceGeneratedInNaira,
       subtitle: 3000,
       icon: <RiMoneyDollarCircleFill size={20} className="text-primary" />,
     },
     {
       title: "Total Commission",
-      value: statsSummary?.totalCommissionInNaira || 0,
+      value: statsSummary.totalCommissionInNaira.total,
       subtitle: 3000,
       icon: <RiMoneyDollarCircleFill size={20} className="text-primary" />,
     },
     {
       title: "Total Amount Remitted",
-      value: statsSummary?.totalAmountRemitted || 0,
+      value: statsSummary.totalAmountRemitted,
       subtitle: 3000,
       icon: <RiMoneyDollarCircleFill size={20} className="text-primary" />,
     },
@@ -72,11 +73,13 @@ const Details = () => {
             <div className="bg-primary-accent rounded-full p-2">{it.icon}</div>
             <div className="w-full flex flex-col">
               <h3 className="text-med-button text-[#9EA4AA]">{it.title}</h3>
-              {
-                loadingSummary ? <Loader color="primary.6" size={24} /> : <h2 className="text-dash-intro-header font-semibold text-gray-5">
+              {loadingSummary ? (
+                <Loader color="primary.6" size={24} />
+              ) : (
+                <h2 className="text-dash-intro-header font-semibold text-gray-5">
                   ₦{it.value.toLocaleString("en-US")}
                 </h2>
-              }
+              )}
             </div>
           </div>
         ))}
