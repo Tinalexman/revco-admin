@@ -302,6 +302,7 @@ export const useGetUserActivity = () => {
   return {
     loading,
     success,
+    getActivity,
     data,
   };
 };

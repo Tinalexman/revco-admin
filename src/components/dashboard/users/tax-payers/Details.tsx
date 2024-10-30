@@ -21,7 +21,11 @@ interface iPersonItem {
 
 const Details = () => {
   const [filter, setFilter] = useState<string>("Yearly");
-  const { data: userActivity, loading: loadingActivity, getActivity } = useGetUserActivity();
+  const {
+    data: userActivity,
+    loading: loadingActivity,
+    getActivity,
+  } = useGetUserActivity();
   const personItems: iPersonItem[] = [
     {
       title: "Total Tax Payers",
@@ -51,7 +55,7 @@ const Details = () => {
               name: v,
               onClick: () => {
                 setFilter(v);
-                getActivity(v.substring(0, 1));
+                // getActivity(v.substring(0, 1));
               },
             }))}
             value={filter}
@@ -69,33 +73,39 @@ const Details = () => {
             <div className="w-[70%] flex justify-between">
               <div className="w-fit flex flex-col">
                 <h3 className="text-med-button text-[#9EA4AA]">{pt.title}</h3>
-                {
-                  loadingActivity ? <Loader color="primary.6" size={24} /> : <h2 className="text-dash-intro-header font-semibold text-gray-5">
+                {loadingActivity ? (
+                  <Loader color="primary.6" size={24} />
+                ) : (
+                  <h2 className="text-dash-intro-header font-semibold text-gray-5">
                     {pt.value}
                   </h2>
-                }
+                )}
               </div>
               <div className="w-fit flex gap-2 items-center">
                 <div className="flex flex-col w-fit">
                   <h3 className="text-[0.69rem] leading-[1.085rem] text-gray-5 font-medium">
                     Individual
                   </h3>
-                  {
-                    loadingActivity ? <Loader color="primary.6" size={24} /> : <h2 className="text-[1.185rem] leading-[1.4rem] font-semibold text-gray-5">
+                  {loadingActivity ? (
+                    <Loader color="primary.6" size={24} />
+                  ) : (
+                    <h2 className="text-[1.185rem] leading-[1.4rem] font-semibold text-gray-5">
                       {pt.individual}
                     </h2>
-                  }
+                  )}
                 </div>
                 <div className="w-[1px] h-full bg-[#8E8E93]" />
                 <div className="flex flex-col w-fit">
                   <h3 className="text-[0.69rem] leading-[1.085rem] text-gray-5 font-medium">
                     Corporate
                   </h3>
-                  {
-                    loadingActivity ? <Loader color="primary.6" size={24} /> : <h2 className="text-[1.185rem] leading-[1.4rem] font-semibold text-gray-5">
+                  {loadingActivity ? (
+                    <Loader color="primary.6" size={24} />
+                  ) : (
+                    <h2 className="text-[1.185rem] leading-[1.4rem] font-semibold text-gray-5">
                       {pt.corporate}
                     </h2>
-                  }
+                  )}
                 </div>
               </div>
             </div>
@@ -104,8 +114,9 @@ const Details = () => {
               alt={pt.title}
               width={300}
               height={200}
-              className={`absolute bottom-0 right-0 ${i === 0 ? "w-[30%]" : "w-[25%]"
-                } h-auto`}
+              className={`absolute bottom-0 right-0 ${
+                i === 0 ? "w-[30%]" : "w-[25%]"
+              } h-auto`}
             />
           </div>
         ))}
