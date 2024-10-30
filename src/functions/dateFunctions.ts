@@ -181,3 +181,43 @@ export const getDateRange = (filter: string) => {
 
   return [startDate, endDate];
 };
+
+export const getDateRangeFromDMYFilter = (filter: string) => {
+  const today = new Date();
+  let startDate, endDate;
+
+  switch (filter) {
+    case "D":
+      startDate = endDate = today.toISOString().split("T")[0];
+      break;
+    case "This Month":
+      startDate = new Date(today.getFullYear(), today.getMonth(), 1)
+        .toISOString()
+        .split("T")[0];
+      endDate = today.toISOString().split("T")[0];
+      break;
+    case "Last Month":
+      const lastMonth = new Date(today);
+      lastMonth.setMonth(today.getMonth() - 1);
+      startDate = new Date(lastMonth.getFullYear(), lastMonth.getMonth(), 1)
+        .toISOString()
+        .split("T")[0];
+      const lastMonthEnd = new Date(
+        lastMonth.getFullYear(),
+        lastMonth.getMonth() + 1,
+        0
+      );
+      endDate = lastMonthEnd.toISOString().split("T")[0];
+      break;
+    case "This Year":
+      startDate = new Date(today.getFullYear(), 0, 1)
+        .toISOString()
+        .split("T")[0];
+      endDate = today.toISOString().split("T")[0];
+      break;
+    default:
+      startDate = endDate = today.toISOString().split("T")[0];
+  }
+
+  return [startDate, endDate];
+};

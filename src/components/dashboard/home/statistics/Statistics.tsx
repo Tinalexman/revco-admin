@@ -6,8 +6,10 @@ import { AreaChart, getFilteredChartTooltipPayload } from "@mantine/charts";
 import {
   useGetTransactionChannelsPieData,
   useGetMetrics,
+  useGetTransactionStatusPieData,
 } from "@/hooks/dashboardHooks";
 import { Loader } from "@mantine/core";
+import { getDateRange } from "@/functions/dateFunctions";
 
 const Statistics = () => {
   const {
@@ -19,7 +21,14 @@ const Statistics = () => {
   const {
     loading: loadingTransactionChannelsPieData,
     data: transactionChannels,
+    getPieChannelsData,
   } = useGetTransactionChannelsPieData();
+
+  const {
+    loading: loadingTransactionStatusPieData,
+    data: transactionStatus,
+    getPieStatusData,
+  } = useGetTransactionStatusPieData();
 
   const totalChannelsCount = transactionChannels.reduce((acc, tnc) => {
     return acc + tnc.count;
@@ -34,49 +43,36 @@ const Statistics = () => {
       title: "Transaction Channels",
       label: "Total Transactions",
       subLabel: totalChannelsRevenue,
-      children: [
-        ...[
-          {
-            name: "None",
-            fraction: 0.0,
-            value: `0%`,
-          },
-        ],
-        ...transactionChannels.map((tnc, i) => {
-          const frac =
-            totalChannelsCount === 0 ? 0 : tnc.count / totalChannelsCount;
-          return {
-            name: tnc.channel,
-            fraction: frac,
-            value: `${(frac * 100).toFixed(0)}%`,
-          };
-        }),
-      ],
+      children: transactionChannels.map((tnc, i) => {
+        const frac =
+          totalChannelsCount === 0 ? 0 : tnc.count / totalChannelsCount;
+        return {
+          name: tnc.channel,
+          fraction: frac,
+          value: `${(frac * 100).toFixed(0)}%`,
+        };
+      }),
     },
     {
       title: "Transaction Status",
       label: "Total Transactions",
-      subLabel: 5060,
+      subLabel: transactionStatus.total,
       children: [
         {
-          name: "None",
-          value: "0",
-          fraction: 0,
-        },
-        {
           name: "Successful",
-          fraction: 0.6,
-          value: "5000",
+          value: `${transactionStatus.success}`,
+          fraction:
+            transactionStatus.total === 0
+              ? 0
+              : transactionStatus.success / transactionStatus.total,
         },
         {
           name: "Pending",
-          value: "50",
-          fraction: 0.28,
-        },
-        {
-          name: "Failed",
-          value: "10",
-          fraction: 0.12,
+          value: `${transactionStatus.pending}`,
+          fraction:
+            transactionStatus.total === 0
+              ? 0
+              : transactionStatus.pending / transactionStatus.total,
         },
       ],
     },
@@ -85,11 +81,6 @@ const Statistics = () => {
       label: "Total Revenue",
       subLabel: 3000000,
       children: [
-        {
-          name: "None",
-          value: "0",
-          fraction: 0,
-        },
         {
           name: "Taraba",
           fraction: 0.6,
@@ -188,7 +179,25 @@ const Statistics = () => {
 
       <div className="w-full grid grid-cols-3 gap-2.5">
         {transactionData.map((data, i) => (
-          <TransactionCard key={i} data={data} />
+          <TransactionCard
+            key={i}
+            data={data}
+            loading={
+              i === 0
+                ? loadingTransactionChannelsPieData
+                : i === 1
+                ? loadingTransactionStatusPieData
+                : false
+            }
+            onFilterChanged={(value) => {
+              if (i === 0) {
+                // getPieChannelsData(value)
+                const dateRange = getDateRange(value);
+              } else if (i === 1) {
+                getPieStatusData(value);
+              }
+            }}
+          />
         ))}
       </div>
     </div>

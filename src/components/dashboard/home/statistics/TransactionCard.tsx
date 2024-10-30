@@ -1,8 +1,8 @@
 import Dropdown from "@/components/reusable/Dropdown";
+import { Loader } from "@mantine/core";
 import React, { useState, FC } from "react";
 
 import DonutChart from "react-donut-chart";
-
 
 const transactionDataColorList: string[] = [
   "#27AE60",
@@ -22,25 +22,12 @@ export interface iTransactionData {
   }[];
 }
 
-const TransactionCard: FC<{ data: iTransactionData }> = ({
-  data: transactionData,
-}) => {
-  const [filter, setFilter] = useState<string>("");
-
-  const getDonutColor = (i: number) => {
-    if (transactionData.children[0].fraction === 0) {
-      return transactionDataColorList[i <= 1 ? 0 : i - 1];
-    }
-    return transactionDataColorList[i];
-  };
-
-  const getLegendColor = (i: number) => {
-    if (transactionData.children[0].fraction === 0) {
-      if (i === 0) return "#FFFFFF";
-      return transactionDataColorList[i - 1];
-    }
-    return transactionDataColorList[i];
-  };
+const TransactionCard: FC<{
+  data: iTransactionData;
+  loading: boolean;
+  onFilterChanged: (value: string) => void;
+}> = ({ data: transactionData, loading, onFilterChanged }) => {
+  const [filter, setFilter] = useState<string>("Daily");
 
   return (
     <div className="bg-white w-full rounded-xl p-5 h-[400px] gap-5 flex flex-col items-center">
@@ -57,67 +44,78 @@ const TransactionCard: FC<{ data: iTransactionData }> = ({
           <Dropdown
             menus={["Daily", "Monthly", "Yearly"].map((v, i) => ({
               name: v,
-              onClick: () => setFilter(v),
+              onClick: () => {
+                setFilter(v);
+                onFilterChanged(v.substring(0, 1));
+              },
             }))}
             value={filter}
             hint={"Select"}
           />
         </div>
       </div>
-      <div className="size-[180px]">
-        <DonutChart
-          height={180}
-          width={180}
-          innerRadius={0.6}
-          legend={false}
-          formatValues={(v) => new Number(v).toLocaleString("en-US")}
-          data={transactionData.children.map((ch, i) => ({
-            label: transactionData.label,
-            value: ch.fraction,
-            isEmpty: false,
-          }))}
-          strokeColor=""
-          interactive={false}
-          colorFunction={(v, i) => getDonutColor(i)}
-          className="text-gray-950"
-        />
-      </div>
-      <div className="w-full flex flex-col gap-2.5">
-        {transactionData.children.map((ch, i) => (
-          <div key={i} className="w-full justify-between items-center flex">
-            <div className="w-fit flex items-center gap-2.5">
-              <div
-                className="size-2 rounded-full"
-                style={{
-                  backgroundColor: getLegendColor(i),
-                }}
-              />
-              <h5
-                className="text-[0.76rem] leading-[0.965rem] font-semibold"
-                style={{
-                  color:
-                    transactionData.children[i].fraction === 0
-                      ? "#FFFFFF"
-                      : "#615E83",
-                }}
-              >
-                {ch.name}
-              </h5>
-            </div>
-            <h5
-              className="text-[0.65rem] leading-[0.72rem]"
-              style={{
-                color:
-                  transactionData.children[i].fraction === 0
-                    ? "#FFFFFF"
-                    : "#4F4F4F",
-              }}
-            >
-              {ch.value}
-            </h5>
+      {loading ? (
+        <div className="w-full h-40 grid place-content-center">
+          <Loader color="primary.6" />
+        </div>
+      ) : (
+        <>
+          <div className="size-[180px]">
+            <DonutChart
+              height={180}
+              width={180}
+              innerRadius={0.6}
+              legend={false}
+              formatValues={(v) => new Number(v).toLocaleString("en-US")}
+              data={transactionData.children.map((ch, i) => ({
+                label: transactionData.label,
+                value: ch.fraction,
+                isEmpty: false,
+              }))}
+              strokeColor=""
+              interactive={false}
+              colors={transactionDataColorList}
+              className="text-gray-950"
+            />
           </div>
-        ))}
-      </div>
+          <div className="w-full flex flex-col gap-2.5">
+            {transactionData.children.map((ch, i) => (
+              <div key={i} className="w-full justify-between items-center flex">
+                <div className="w-fit flex items-center gap-2.5">
+                  <div
+                    className="size-2 rounded-full"
+                    style={{
+                      backgroundColor: transactionDataColorList[i],
+                    }}
+                  />
+                  <h5
+                    className="text-[0.76rem] leading-[0.965rem] font-semibold"
+                    style={{
+                      color:
+                        transactionData.children[i].fraction === -1
+                          ? "#FFFFFF"
+                          : "#615E83",
+                    }}
+                  >
+                    {ch.name}
+                  </h5>
+                </div>
+                <h5
+                  className="text-[0.65rem] leading-[0.72rem]"
+                  style={{
+                    color:
+                      transactionData.children[i].fraction === -1
+                        ? "#FFFFFF"
+                        : "#4F4F4F",
+                  }}
+                >
+                  {ch.value}
+                </h5>
+              </div>
+            ))}
+          </div>
+        </>
+      )}
     </div>
   );
 };

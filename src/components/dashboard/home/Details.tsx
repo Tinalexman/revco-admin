@@ -74,17 +74,13 @@ const Details = () => {
     },
     {
       title: "Total Amount due to Paysure (4.6%)",
-      value: statsSummary.totalCommissionInNaira.total,
+      value: statsSummary.totalCommissionInNaira.Paysure,
       subtitle: 3000,
       icon: <FaHandshakeSimple size={20} className="text-primary" />,
     },
   ];
 
-  const {
-    data: userActivity,
-    loading: loadingActivity,
-    getActivity,
-  } = useGetUserActivity();
+  const { data: userActivity, loading: loadingActivity } = useGetUserActivity();
 
   const personItem: iPersonItem = {
     title: "Total Tax Payers",
@@ -110,7 +106,6 @@ const Details = () => {
                   setFilter(v);
                   const dates = getDateRange(v);
                   getStatisticsSummary(dates[0], dates[1]);
-                  getActivity(dates[0], dates[1]);
                 },
               }))}
               value={filter}
@@ -125,6 +120,7 @@ const Details = () => {
                 onClick={() => {
                   setActiveMode(md);
                 }}
+                key={i}
                 className={`${
                   md === activeMode ? "text-primary bg-white" : "text-[#A9A9A9]"
                 } cursor-pointer py-1 px-2 ${

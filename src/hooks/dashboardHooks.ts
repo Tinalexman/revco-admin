@@ -27,6 +27,12 @@ export interface iTransactionSummaryChartDataResponse {
   totalRev: number;
 }
 
+export interface iTransactionStatusChartDataResponse {
+  total: number;
+  success: number;
+  pending: number;
+}
+
 export interface iStatisticsSummaryResponse {
   totalRevenue: number;
   totalInvoiceGeneratedInNaira: number;
@@ -296,7 +302,6 @@ export const useGetUserActivity = () => {
   return {
     loading,
     success,
-    getActivity,
     data,
   };
 };
@@ -308,16 +313,13 @@ export const useGetTransactionChannelsPieData = () => {
   const { requestApi } = useAxios();
   const token = useToken().getToken();
 
-  let getPieData = async (
-    projectId: string | number,
-    mdaId: string | number
-  ) => {
+  let getPieChannelsData = async (start: string, end: string) => {
     if (loading) return;
 
     setLoading(true);
 
     const { data, status } = await requestApi(
-      `/mda-report/transactionsummary-monthly-channel?formProjectId=${projectId}&formMdaId=&${mdaId}&isLastMonth=false`,
+      `/mda-report/getChannelMetrics?from=${start}&to=${end}`,
       "GET",
       {},
       {
@@ -338,14 +340,65 @@ export const useGetTransactionChannelsPieData = () => {
 
   useEffect(() => {
     if (token) {
-      getPieData(1, "");
+      const currentDate = new Date().toISOString().split("T")[0];
+      getPieChannelsData(currentDate, currentDate);
     }
   }, [token]);
 
   return {
     loading,
     success,
-    getPieData,
+    getPieChannelsData,
+    data,
+  };
+};
+
+export const useGetTransactionStatusPieData = () => {
+  const [loading, setLoading] = useState<boolean>(false);
+  const [success, setSuccess] = useState<boolean>(false);
+  const [data, setData] = useState<iTransactionStatusChartDataResponse>({
+    pending: 0,
+    success: 0,
+    total: 0,
+  });
+  const { requestApi } = useAxios();
+  const token = useToken().getToken();
+
+  let getPieStatusData = async (type: string) => {
+    if (loading) return;
+
+    setLoading(true);
+
+    const { data, status } = await requestApi(
+      `/notifications/status/pie?type=${type}`,
+      "GET",
+      {},
+      {
+        Authorization: `Bearer ${token}`,
+      }
+    );
+
+    setData(data.data);
+    setLoading(false);
+    setSuccess(status);
+
+    if (!status) {
+      toast.error(
+        data?.response?.data?.data ?? "An error occurred. Please try again"
+      );
+    }
+  };
+
+  useEffect(() => {
+    if (token) {
+      getPieStatusData("D");
+    }
+  }, [token]);
+
+  return {
+    loading,
+    success,
+    getPieStatusData,
     data,
   };
 };
