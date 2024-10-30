@@ -8,7 +8,11 @@ import StatusContainer, {
   STATE_PENDING,
   STATE_SUCCESS,
 } from "@/components/reusable/StatusContainer";
-import { iRecentActivityResponse, useGetRecentTransaction } from "@/hooks/dashboardHooks";
+import {
+  iRecentActivityResponse,
+  useGetRecentTransactionDetails,
+} from "@/hooks/dashboardHooks";
+import { Loader } from "@mantine/core";
 
 const ViewTransaction: FC<{
   txid: string;
@@ -16,7 +20,8 @@ const ViewTransaction: FC<{
   shouldPrint?: boolean;
   shouldRefund?: boolean;
 }> = ({ txid, onClose, shouldPrint, shouldRefund }) => {
-  const { } = useGetRecentTransaction(txid);
+  const { loading, data } = useGetRecentTransactionDetails(txid);
+  const isPaid = data.payment.length > 0;
 
   return (
     <div className="w-full bg-[#FEFEFE] px-5 py-8 flex flex-col items-center gap-6 overflow-y-scroll scrollbar-custom">
@@ -38,68 +43,93 @@ const ViewTransaction: FC<{
         height={56}
         className="size-14 object-cover"
       />
-      { /*
-      <div className="w-full flex flex-col">
-        <div className="w-full bg-[#F6F6F7] h-10 flex items-center px-5">
-          <h3 className="text-[#595959] text-[0.875rem] leading-[1.3125rem]">
-            Payer Information
-          </h3>
+      {loading ? (
+        <Loader color="primary.6" />
+      ) : (
+        <div className="w-full flex flex-col">
+          <div className="w-full bg-[#F6F6F7] h-10 flex items-center px-5">
+            <h3 className="text-[#595959] text-[0.875rem] leading-[1.3125rem]">
+              Payer Information
+            </h3>
+          </div>
+          <div className="w-full flex flex-col text-black text-[0.875rem] leading-[1.06rem]">
+            <div className="flex justify-between items-center w-full h-10 px-5 border-b border-[#F2F2F7]">
+              <h2>Payer&apos;s Name:</h2>
+              <h2 className="font-medium">
+                {data.userDetails.firstname} {data.userDetails.lastname}
+              </h2>
+            </div>
+            <div className="flex justify-between items-center w-full h-10 px-5 border-b border-[#F2F2F7]">
+              <h2>MDA:</h2>
+              <h2 className="font-medium">
+                {data.organizationDetails.mdaName}
+              </h2>
+            </div>
+            <div className="flex justify-between items-center w-full h-10 px-5 border-b border-[#F2F2F7]">
+              <h2>Revenue Head:</h2>
+              <h2 className="font-medium">
+                {data.organizationDetails.serviceDescription}
+              </h2>
+            </div>
+            {isPaid && (
+              <div className="flex justify-between items-center w-full h-10 px-5 border-b border-[#F2F2F7]">
+                <h2>Channel:</h2>
+                <h2 className="font-medium">
+                  {data.transactionDetails.channel}
+                </h2>
+              </div>
+            )}
+            <div className="flex justify-between items-center w-full h-10 px-5 border-b border-[#F2F2F7]">
+              <h2>Service Type:</h2>
+              <h2 className="font-medium">INV</h2>
+            </div>
+            <div className="flex justify-between items-center w-full h-10 px-5 border-b border-[#F2F2F7]">
+              <h2>Payment Status:</h2>
+              <StatusContainer
+                text={isPaid ? "Successful" : "Pending"}
+                status={isPaid ? STATE_SUCCESS : STATE_PENDING}
+              />
+            </div>
+            <div className="flex justify-between items-center w-full h-10 px-5 border-b border-[#F2F2F7]">
+              <h2>PIN:</h2>
+              <h2 className="font-medium">
+                {data.transactionDetails.invoiceNumber}
+              </h2>
+            </div>
+            <div className="flex justify-between items-center w-full h-10 px-5 border-b border-[#F2F2F7]">
+              <h2>Payer ID:</h2>
+              <h2 className="font-medium">{data.payerId}</h2>
+            </div>
+            {isPaid && (
+              <div className="flex justify-between items-center w-full h-10 px-5 border-b border-[#F2F2F7]">
+                <h2>External Ref No:</h2>
+                <h2 className="font-medium">
+                  {data.payment[0].transactionReference}
+                </h2>
+              </div>
+            )}
+            {isPaid && (
+              <div className="flex justify-between items-center w-full h-10 px-5">
+                <h2>TIN:</h2>
+                <h2 className="font-medium">
+                  {data.payment[0].corporatePayerTempTin}
+                </h2>
+              </div>
+            )}
+          </div>
+          <div className="w-full bg-[#F6F6F7] h-16 flex justify-between items-center px-5">
+            <h3 className="text-[#202224] text-[1rem] leading-[1.3125rem] font-semibold">
+              Total
+            </h3>
+            <h3 className="text-[#202224] text-[1rem] leading-[1.3125rem] font-semibold">
+              ₦
+              {Number.parseFloat(
+                data.transactionDetails.totalAmount
+              ).toLocaleString("en-US")}
+            </h3>
+          </div>
         </div>
-        <div className="w-full flex flex-col text-black text-[0.875rem] leading-[1.06rem]">
-          <div className="flex justify-between items-center w-full h-10 px-5 border-b border-[#F2F2F7]">
-            <h2>Payer&apos;s Name:</h2>
-            <h2 className="font-medium">{transaction.payer}</h2>
-          </div>
-          <div className="flex justify-between items-center w-full h-10 px-5 border-b border-[#F2F2F7]">
-            <h2>MDA:</h2>
-            <h2 className="font-medium">{transaction.mda}</h2>
-          </div>
-          <div className="flex justify-between items-center w-full h-10 px-5 border-b border-[#F2F2F7]">
-            <h2>Revenue Head:</h2>
-            <h2 className="font-medium">{transaction.assesedService}</h2>
-          </div>
-          <div className="flex justify-between items-center w-full h-10 px-5 border-b border-[#F2F2F7]">
-            <h2>Channel:</h2>
-            <h2 className="font-medium">{transaction.paymentChannel}</h2>
-          </div>
-          <div className="flex justify-between items-center w-full h-10 px-5 border-b border-[#F2F2F7]">
-            <h2>Service Type:</h2>
-            <h2 className="font-medium">{transaction.serviceType}</h2>
-          </div> 
-          <div className="flex justify-between items-center w-full h-10 px-5 border-b border-[#F2F2F7]">
-            <h2>Payment Status:</h2>
-            <StatusContainer
-              text={transaction.paid ? "Successful" : "Pending"}
-              status={transaction.paid ? STATE_SUCCESS : STATE_PENDING}
-            />
-
-          </div>
-          <div className="flex justify-between items-center w-full h-10 px-5 border-b border-[#F2F2F7]">
-            <h2>PIN:</h2>
-            <h2 className="font-medium">{transaction.invoiceNo}</h2>
-          </div>
-          <div className="flex justify-between items-center w-full h-10 px-5 border-b border-[#F2F2F7]">
-            <h2>Payer ID:</h2>
-            <h2 className="font-medium">{transaction.payerId ?? ""}</h2>
-          </div>
-          <div className="flex justify-between items-center w-full h-10 px-5 border-b border-[#F2F2F7]">
-            <h2>External Ref No:</h2>
-            <h2 className="font-medium">{transaction.refNo}</h2>
-          </div> 
-          <div className="flex justify-between items-center w-full h-10 px-5">
-            <h2>TIN:</h2>
-            <h2 className="font-medium">{transaction.payerTin ?? ""}</h2>
-          </div>
-        </div>
-        <div className="w-full bg-[#F6F6F7] h-16 flex justify-between items-center px-5">
-          <h3 className="text-[#202224] text-[1rem] leading-[1.3125rem] font-semibold">
-            Total
-          </h3>
-          <h3 className="text-[#202224] text-[1rem] leading-[1.3125rem] font-semibold">
-            ₦{transaction.invoiceAmount.toLocaleString("en-US")}
-          </h3>
-        </div>
-      </div> */}
+      )}
 
       {shouldPrint && shouldPrint && (
         <button className="w-full hover:bg-primary hover:text-white hover:border-0 transition-all duration-200 ease-out text-[#222222] border-2 border-[#F6F6F7] h-11 flex justify-center gap-2 items-center rounded-lg">

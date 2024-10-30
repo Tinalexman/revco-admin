@@ -75,6 +75,70 @@ export interface iUserActivityResponse {
   nsCorporations: number;
 }
 
+export interface iRecentActivityDetailsResponse {
+  userDetails: {
+    lastname: string; //
+    firstname: string; //
+    email: string; //
+    tin: any;
+    tinType: string; //
+    businessName: any;
+    phone: string; //
+  };
+  transactionDetails: {
+    invoiceNumber: string; //
+    createdDate: string; //
+    modifiedDate: string; //
+    paymentStatus: string; //
+    totalAmount: string; //
+    channel: string; //
+    paymentDate: string; ///
+  };
+  organizationDetails: {
+    mdaName: string; //
+    mdaCode: string; //
+    serviceDescription: string; //
+  };
+  payment: {
+    transactionId: string; //
+    transactionReference: string; //;
+    transactionDate: string; //
+    transactionDescription: string; //
+    totalAmountPaid: number; //
+    serviceAmount: number; //
+    fee: number; ///
+    commission: number; //
+    channel: string; //
+    customerName: string; //
+    customerPhone: string; //
+    customerEmail: string; //
+    terminalId: string; //
+    pan: string; //
+    mdaId: number; //
+    mdaName: string; //
+    mdaOfficeId: number; //
+    mdaOfficeName: string; //
+    project: string; //
+    individualPayerTempTin: any;
+    individualPayerJtbTin: any;
+    corporatePayerTempTin: string; //
+    corporatePayerJtbTin: any;
+    agentId: number; //
+    agentName: string; //
+    payerId: number; //
+    cashTransactionId: any;
+  }[];
+  payerId: string; //
+  assessment: {
+    assessmentId: string; //
+    taxAmount: string; //
+    amountPaid: string; //
+    balance: string; //
+    grossIncomeAmount: string; //
+    isSettled: string; //
+  };
+}
+
 export const useGetRecentActivity = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [success, setSuccess] = useState<boolean>(false);
@@ -478,10 +542,44 @@ export const useGetTransactionRevenuePieData = () => {
   };
 };
 
-export const useGetRecentTransaction = (txid: string) => {
+export const useGetRecentTransactionDetails = (txid: string) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [success, setSuccess] = useState<boolean>(false);
-  const [data, setData] = useState<iUserActivityResponse | null>(null);
+  const [data, setData] = useState<iRecentActivityDetailsResponse>({
+    userDetails: {
+      lastname: "",
+      firstname: "",
+      email: "",
+      tin: null,
+      tinType: "",
+      businessName: null,
+      phone: "",
+    },
+    transactionDetails: {
+      invoiceNumber: "",
+      createdDate: "",
+      modifiedDate: "",
+      paymentStatus: "",
+      totalAmount: "",
+      channel: "",
+      paymentDate: "",
+    },
+    organizationDetails: {
+      mdaName: "",
+      mdaCode: "",
+      serviceDescription: "",
+    },
+    payment: [],
+    payerId: "",
+    assessment: {
+      assessmentId: "",
+      taxAmount: "",
+      amountPaid: "",
+      balance: "",
+      grossIncomeAmount: "",
+      isSettled: "",
+    },
+  });
   const { requestApi } = useAxios();
   const token = useToken().getToken();
 
@@ -491,7 +589,7 @@ export const useGetRecentTransaction = (txid: string) => {
     setLoading(true);
 
     const { data, status } = await requestApi(
-      `/mda-report/transaction?ref=${txid}`,
+      `/enroll/invoice?invoiceNumber=${txid}`,
       "GET",
       {},
       {
@@ -507,7 +605,7 @@ export const useGetRecentTransaction = (txid: string) => {
         data?.response?.data?.data ?? "An error occurred. Please try again"
       );
     } else {
-      setData(data);
+      setData(data.data);
     }
   };
 

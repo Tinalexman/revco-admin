@@ -13,6 +13,10 @@ import ResponsivePagination from "react-responsive-pagination";
 import "react-responsive-pagination/themes/classic.css";
 import Paginator from "@/components/reusable/paginator/Paginator";
 import { iDateRange } from "@/functions/dateFunctions";
+import StatusContainer, {
+  STATE_PENDING,
+  STATE_SUCCESS,
+} from "@/components/reusable/StatusContainer";
 
 const Activity = () => {
   const [expanded, setExpanded] = useState<boolean>(false);
@@ -72,9 +76,12 @@ const Activity = () => {
           </button>
         </div>
         <div className="relative overflow-x-auto scrollbar-thin scrollbar-webkit w-full">
-          <table className="w-[120%] ">
+          <table className="w-[150%] ">
             <thead className=" bg-[#F3F7FC] h-14">
               <tr className="text-[#3A3A3A] font-medium text-[0.75rem] leading-[1.125rem] text-left">
+                <th scope="col" className="px-4">
+                  S/N
+                </th>
                 <th scope="col" className="px-4">
                   Transaction ID
                 </th>
@@ -88,10 +95,13 @@ const Activity = () => {
                   Service Type
                 </th>
                 <th scope="col" className="px-4">
-                  Amount Paid
+                  Invoice Amount
                 </th>
                 <th scope="col" className="px-4">
                   Payment Date
+                </th>
+                <th scope="col" className="px-4">
+                  Status
                 </th>
                 <th scope="col" className="px-4">
                   Actions
@@ -108,6 +118,7 @@ const Activity = () => {
                       key={i}
                       className="odd:bg-white even:bg-slate-50 text-[#3A3A3A] text-[0.75rem] leading-[1.125rem] justify-around max-h-[15rem]"
                     >
+                      <td className="p-4">{i + 1}</td>
                       <td className="p-4">{txn.txid}</td>
                       <td className="p-4">{txn.username}</td>
                       <td className="p-4">{txn.mda}</td>
@@ -116,15 +127,18 @@ const Activity = () => {
                         ₦{txn.invoiceAmount.toLocaleString("en-US")}
                       </td>
                       <td className="p-4">{txn.paymentDate}</td>
+                      <td className="p-4">
+                        <StatusContainer
+                          status={txn.paid ? STATE_SUCCESS : STATE_PENDING}
+                          text={txn.paid ? "Paid" : "Pending"}
+                        />
+                      </td>
                       <td className="flex gap-1 p-4">
                         <div
                           onClick={() => openDrawer(txn.txid)}
                           className="cursor-pointer bg-[#FCEAE8] rounded size-6 grid place-content-center text-[#292D32]"
                         >
                           <IoEye size={16} />
-                        </div>
-                        <div className="cursor-pointer bg-[#E99E104D] rounded size-6 grid place-content-center text-[#E94410]">
-                          <HiReceiptRefund size={16} />
                         </div>
                       </td>
                     </tr>
