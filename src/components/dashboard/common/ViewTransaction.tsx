@@ -22,7 +22,7 @@ const ViewTransaction: FC<{
   shouldPrint?: boolean;
   shouldRefund?: boolean;
 }> = ({ txid, onClose, shouldPrint, shouldRefund }) => {
-  const { loading, data } = useGetRecentTransactionDetails(txid);
+  const { loading, data, success } = useGetRecentTransactionDetails(txid);
   const isPaid = data.payment.length > 0;
 
   const generateReceiptData = () => {
@@ -87,7 +87,9 @@ const ViewTransaction: FC<{
         className="size-14 object-cover"
       />
       {loading ? (
-        <Loader color="primary.6" />
+        <div className="w-full h-80 grid place-content-center">
+          <Loader color="primary.6" />
+        </div>
       ) : (
         <div className="w-full flex flex-col">
           <div className="w-full bg-[#F6F6F7] h-10 flex items-center px-5">
@@ -174,7 +176,7 @@ const ViewTransaction: FC<{
         </div>
       )}
 
-      {shouldPrint && shouldPrint && (
+      {!loading && success && shouldPrint && shouldPrint && (
         <button
           onClick={generateReceiptData}
           className="w-full hover:bg-primary hover:text-white hover:border-0 transition-all duration-200 ease-out text-[#222222] border-2 border-[#F6F6F7] h-11 flex justify-center gap-2 items-center rounded-lg"
@@ -183,7 +185,7 @@ const ViewTransaction: FC<{
           <BiSolidReceipt size={16} />
         </button>
       )}
-      {shouldRefund && shouldRefund && (
+      {!loading && success && shouldRefund && shouldRefund && (
         <button className="w-full hover:bg-[#E94410] hover:text-white hover:border-0 transition-all duration-200 ease-out text-[#E94410] border-2 border-[#E94410] h-11 flex justify-center gap-2 items-center rounded-lg">
           <h4 className="text-reg-caption font-medium">Refund</h4>
           <HiReceiptRefund size={16} />

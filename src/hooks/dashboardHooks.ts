@@ -542,7 +542,7 @@ export const useGetTransactionRevenuePieData = () => {
   };
 };
 
-export const useGetRecentTransactionDetails = (txid: string) => {
+export const useGetRecentTransactionDetails = (txid?: string) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [success, setSuccess] = useState<boolean>(false);
   const [data, setData] = useState<iRecentActivityDetailsResponse>({
@@ -583,13 +583,16 @@ export const useGetRecentTransactionDetails = (txid: string) => {
   const { requestApi } = useAxios();
   const token = useToken().getToken();
 
-  let getTransaction = async () => {
-    if (loading) return;
+  let getTransaction = async (invoiceNo?: string) => {
+    if (txid === undefined && invoiceNo === undefined) return;
 
+    if (loading) return;
     setLoading(true);
 
+    const query = txid !== undefined ? txid : invoiceNo!;
+
     const { data, status } = await requestApi(
-      `/enroll/invoice?invoiceNumber=${txid}`,
+      `/enroll/invoice?invoiceNumber=${query}`,
       "GET",
       {},
       {
@@ -610,7 +613,7 @@ export const useGetRecentTransactionDetails = (txid: string) => {
   };
 
   useEffect(() => {
-    if (token) {
+    if (token && txid !== undefined) {
       getTransaction();
     }
   }, [token]);
@@ -618,6 +621,7 @@ export const useGetRecentTransactionDetails = (txid: string) => {
   return {
     loading,
     success,
+    getTransaction,
     data,
   };
 };

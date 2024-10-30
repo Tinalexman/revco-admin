@@ -13,67 +13,16 @@ export interface iRecentInvoice {
   count: number;
 }
 export interface iRecentInvoiceData {
-  userDetails: {
-    lastname: string;
-    firstname: string;
-    email: string;
-    tin: any;
-    tinType: string;
-    businessName: any;
-    phone: string;
-  };
-  transactionDetails: {
-    invoiceNumber: string;
-    createdDate: string;
-    modifiedDate: string;
-    paymentStatus: string;
-    totalAmount: string;
-    channel: any;
-    paymentDate: string;
-  };
-  organizationDetails: {
-    mdaName: string;
-    mdaCode: string;
-    serviceDescription: string;
-  };
-  payment: {
-    transactionId: string;
-    transactionReference: string;
-    transactionDate: string;
-    transactionDescription: string;
-    totalAmountPaid: number;
-    serviceAmount: number;
-    fee: number;
-    commission: number;
-    channel: string;
-    customerName: string;
-    customerPhone: string;
-    customerEmail: any;
-    terminalId: any;
-    pan: any;
-    mdaId: number;
-    mdaName: string;
-    mdaOfficeId: number;
-    mdaOfficeName: string;
-    project: string;
-    individualPayerTempTin: any;
-    individualPayerJtbTin: any;
-    corporatePayerTempTin: string;
-    corporatePayerJtbTin: any;
-    agentId: number;
-    agentName: string;
-    payerId: number;
-    cashTransactionId: any;
-  }[];
-  payerId: string;
-  assessment: {
-    assessmentId: string;
-    taxAmount: string;
-    amountPaid: string;
-    balance: string;
-    grossIncomeAmount: string;
-    isSettled: string;
-  };
+  invoiceNumber: string;
+  payer: string;
+  mdaName: string;
+  mdaId: number;
+  invoiceAmount: number;
+  serviceCode: string;
+  mdaService: string;
+  email: string;
+  tin: string;
+  paid: boolean;
 }
 
 export const useGetPaymentChannels = () => {
@@ -143,7 +92,7 @@ export const useGetRecentInvoices = () => {
     setLoading(true);
 
     const { data, status } = await requestApi(
-      `/mda-report/getInvoices?from=${fromDate}&to=${endDate}&pageNo=${pageNo}`,
+      `/mda-report/generated-invoices?from=${fromDate}&to=${endDate}&pageNumber=${pageNo}&pageSize=50&mdaId=1`,
       "GET",
       {},
       {

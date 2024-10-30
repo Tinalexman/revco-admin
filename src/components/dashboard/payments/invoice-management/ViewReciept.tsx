@@ -1,40 +1,94 @@
-"use client"
+"use client";
 
-import React, { ReactNode, Suspense, useEffect, useState } from 'react'
-import { useRouter, useSearchParams } from "next/navigation"
-import Paid from "@/components/reusable/receipts/Paid";
-import Pending from "@/components/reusable/receipts/Pending";
+import React, { ReactNode, Suspense, useEffect, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import Paid, { iPaidReceiptData } from "@/components/reusable/receipts/Paid";
+import Pending, {
+  iPendingReceiptData,
+} from "@/components/reusable/receipts/Pending";
 import { Loader } from "@mantine/core";
-
+import { useGetRecentTransactionDetails } from "@/hooks/dashboardHooks";
+import toast from "react-hot-toast";
 
 const ViewReceipt = () => {
-  return <Suspense fallback={<Loader color="primary.6" />}>
-    <ViewRecieptContent />
-  </Suspense>
-}
+  return (
+    <Suspense fallback={<Loader color="primary.6" />}>
+      <ViewRecieptContent />
+    </Suspense>
+  );
+};
 
 const ViewRecieptContent = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const status = searchParams.get("status");
   const data = searchParams.get("data");
-  const [child, setChild] = useState<ReactNode | null>(null)
+  const invoiceNumber = searchParams.get("invoice");
+  const [child, setChild] = useState<ReactNode | null>(null);
+
+  const {
+    loading,
+    data: transactionDetail,
+    success,
+    getTransaction,
+  } = useGetRecentTransactionDetails();
 
   useEffect(() => {
-    if (status === null || data === null) {
+    if (status === null || (data === null && invoiceNumber === null)) {
       router.back();
-    } else {
-      const payload: any = JSON.parse(Buffer.from(data!, "base64").toString("utf-8"))
+    } else if (status !== "paid" && status !== "pending") {
+      toast.error("Invalid query");
+      router.back();
+    } else if (data !== null) {
+      const payload: any = JSON.parse(
+        Buffer.from(data!, "base64").toString("utf-8")
+      );
       if (status === "paid") {
-        setChild(<Paid receipt={payload} />)
+        setChild(<Paid receipt={payload} />);
       } else if (status === "pending") {
-        setChild(<Pending receipt={payload} />)
+        setChild(<Pending receipt={payload} />);
+      }
+    } else if (invoiceNumber !== null) {
+      getTransaction(invoiceNumber);
+    }
+  }, [router]);
+
+  useEffect(() => {
+    if (!loading && success) {
+      if (status! === "paid") {
+        const payload: iPaidReceiptData = {
+          invoiceNo: transactionDetail.transactionDetails.invoiceNumber,
+          transactionDate: transactionDetail.payment[0].transactionDate,
+          payer: `${transactionDetail.userDetails.firstname} ${transactionDetail.userDetails.lastname}`,
+          payerEmail: transactionDetail.userDetails.email,
+          payerPhone: transactionDetail.userDetails.phone,
+          billerItem: "Payment Bill",
+          mda: transactionDetail.organizationDetails.mdaName,
+          revenueHead: transactionDetail.organizationDetails.serviceDescription,
+          paymentRef: transactionDetail.payment[0].transactionReference,
+          amount: Number.parseFloat(
+            transactionDetail.transactionDetails.totalAmount
+          ),
+          paymentChannel: transactionDetail.transactionDetails.channel,
+        };
+        setChild(<Paid receipt={payload} />);
+      } else if (status! === "pending") {
+        const payload: iPendingReceiptData = {
+          invoiceNo: transactionDetail.transactionDetails.invoiceNumber,
+          payer: `${transactionDetail.userDetails.firstname} ${transactionDetail.userDetails.lastname}`,
+          payerEmail: transactionDetail.userDetails.email,
+          payerPhone: transactionDetail.userDetails.phone,
+          billerItem: "Payment Bill",
+          mda: transactionDetail.organizationDetails.mdaName,
+          revenueHead: transactionDetail.organizationDetails.serviceDescription,
+          amount: Number.parseFloat(
+            transactionDetail.transactionDetails.totalAmount
+          ),
+        };
+        setChild(<Pending receipt={payload} />);
       }
     }
-  }, [router])
-
-
-
+  }, [success, transactionDetail, loading]);
 
   return (
     <div className="w-full flex flex-col gap-5">
@@ -48,11 +102,16 @@ const ViewRecieptContent = () => {
           </h3>
         </div>
       </div>
-      <div className='w-full grid place-content-center'>
-        {child}
-      </div>
+      {!loading && (
+        <div className="w-full grid place-content-center">{child}</div>
+      )}
+      {loading && (
+        <div className="w-full h-80 grid place-content-center">
+          <Loader color="primary.6" />
+        </div>
+      )}
     </div>
-  )
-}
+  );
+};
 
-export default ViewReceipt
+export default ViewReceipt;

@@ -10,6 +10,7 @@ import { useDisclosure } from "@mantine/hooks";
 import StatusContainer, {
   STATE_SUCCESS,
   STATE_NULL,
+  STATE_PENDING,
 } from "@/components/reusable/StatusContainer";
 
 import { convertDateWithDashesAndTime } from "@/functions/dateFunctions";
@@ -19,7 +20,6 @@ import Paginator from "@/components/reusable/paginator/Paginator";
 import Link from "next/link";
 import { iPaidReceiptData } from "@/components/reusable/receipts/Paid";
 import { iPendingReceiptData } from "@/components/reusable/receipts/Pending";
-
 
 interface iDateData {
   start: string;
@@ -35,15 +35,17 @@ const InvoiceManagement = () => {
 
   const currentDate = new Date().toISOString().split("T")[0];
   const { loading, data, getInvoices } = useGetRecentInvoices();
-  const totalPages = Math.ceil(data.count / 10);
+  const totalPages = Math.ceil(data.count / 50);
   const [currentPage, setCurrentPage] = useState<number>(1);
-  const [dateData, setDateData] = useState<iDateData>({ start: currentDate, end: currentDate });
+  const [dateData, setDateData] = useState<iDateData>({
+    start: currentDate,
+    end: currentDate,
+  });
 
   function handlePageChange(page: number) {
     setCurrentPage(page);
     getInvoices(dateData.start, dateData.end, `${page}`);
   }
-
 
   return (
     <>
@@ -81,15 +83,17 @@ const InvoiceManagement = () => {
               </h2>
             </div>
             <div className="w-full justify-between items-center flex">
-              <Filters onDatesChanged={(start, end) => {
-                setDateData({ start, end });
-                getInvoices(start, end, `${currentPage}`)
-              }} showDatePicker={true} />
+              <Filters
+                onDatesChanged={(start, end) => {
+                  setDateData({ start, end });
+                  getInvoices(start, end, `${currentPage}`);
+                }}
+              />
               <div className="w-[35%]">
                 <Paginator
                   totalPages={totalPages}
                   currentPage={currentPage}
-                  handlePageChange={page => handlePageChange(page)}
+                  handlePageChange={(page) => handlePageChange(page)}
                 />
               </div>
               <button className="bg-[#F0E6FC] rounded text-primary flex gap-3 items-center px-3 h-10">
@@ -108,13 +112,13 @@ const InvoiceManagement = () => {
                       Payer Name
                     </th>
                     <th scope="col" className="text-start px-4">
-                      Service Type
+                      MDA
                     </th>
                     <th scope="col" className="text-start px-4">
-                      Amount Paid
+                      Revenue Head
                     </th>
                     <th scope="col" className="text-start px-4">
-                      Payment Date
+                      Invoice Amount
                     </th>
                     <th scope="col" className="text-start px-4">
                       Status
@@ -125,88 +129,58 @@ const InvoiceManagement = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {!loading && data.data
-                    .slice(0, expanded ? data.data.length : 5)
-                    .map((inv, i) => {
-                      let data: string = "";
-                      let status: string = "";
+                  {!loading &&
+                    data.data
+                      .slice(0, expanded ? data.data.length : 10)
+                      .map((inv, i) => {
+                        const status: string = inv.paid ? "paid" : "pending";
 
-                      if (inv.payment.length === 0) {
-                        status = "pending";
-                        const pendingData: iPendingReceiptData = {
-                          amount: Number.parseFloat(inv.transactionDetails.totalAmount),
-                          invoiceNo: inv.transactionDetails.invoiceNumber,
-                          mda: inv.organizationDetails.mdaName,
-                          payer: `${inv.userDetails.firstname} ${inv.userDetails.lastname}`,
-                          payerEmail: inv.userDetails.email,
-                          payerPhone: inv.userDetails.phone,
-                          revenueHead: inv.organizationDetails.serviceDescription,
-                          billerItem: "Payment Bill",
-                        };
-                        data = Buffer.from(JSON.stringify(pendingData)).toString("base64")
+                        return (
+                          <tr
+                            key={i}
+                            className="odd:bg-white even:bg-slate-50 text-[#3A3A3A] text-[0.75rem] leading-[1.125rem] justify-around"
+                          >
+                            <td className="p-4">{inv.invoiceNumber}</td>
+                            <td className="p-4">{inv.payer}</td>
+                            <td className="p-4">{inv.mdaName}</td>
+                            <td className="p-4">{inv.mdaService}</td>
+                            <td className="p-4">
+                              ₦{inv.invoiceAmount.toLocaleString("en-US")}
+                            </td>
 
-                      } else {
-                        status = "paid"
-                        const paidData: iPaidReceiptData = {
-                          amount: Number.parseFloat(inv.transactionDetails.totalAmount),
-                          invoiceNo: inv.transactionDetails.invoiceNumber,
-                          mda: inv.organizationDetails.mdaName,
-                          payer: `${inv.userDetails.firstname} ${inv.userDetails.lastname}`,
-                          payerEmail: inv.userDetails.email,
-                          payerPhone: inv.userDetails.phone,
-                          revenueHead: inv.organizationDetails.serviceDescription,
-                          billerItem: "Payment Bill",
-                          transactionDate: inv.payment[0].transactionDate,
-                          paymentRef: inv.payment[0].transactionReference,
-                          paymentChannel: inv.payment[0].channel,
-                        };
+                            <td className="p-4">
+                              <StatusContainer
+                                status={
+                                  inv.paid ? STATE_SUCCESS : STATE_PENDING
+                                }
+                                text={inv.paid ? "Paid" : "Pending"}
+                              />
+                            </td>
 
-                        data = Buffer.from(JSON.stringify(paidData)).toString("base64")
-                      }
-
-
-                      return <tr
-                        key={i}
-                        className="odd:bg-white even:bg-slate-50 text-[#3A3A3A] text-[0.75rem] leading-[1.125rem] justify-around"
-                      >
-                        <td className="p-4">{inv.transactionDetails.invoiceNumber}</td>
-                        <td className="p-4">{inv.userDetails.firstname} {inv.userDetails.lastname}</td>
-                        <td className="p-4">{inv.organizationDetails.serviceDescription}</td>
-                        <td className="p-4">
-                          ₦{Number.parseFloat(inv.transactionDetails.totalAmount).toLocaleString("en-US")}
-                        </td>
-                        <td className="p-4">
-                          {
-                            inv.payment.length === 0 ? "N/A" : (convertDateWithDashesAndTime(inv.payment[0].transactionDate))
-                          }
-                        </td>
-                        <td className="p-4">
-                          <StatusContainer
-                            status={inv.payment.length !== 0 ? STATE_SUCCESS : STATE_NULL}
-                            text={inv.payment.length === 0 ? "Unpaid" : "Paid"}
-                          />
-                        </td>
-
-                        <td className="p-4">
-                          <Link href={`/dashboard/payments/invoice-management/receipt?status=${status}&data=${data}`} className="cursor-pointer bg-[#FCEAE8] rounded size-6 grid place-content-center text-[#292D32]">
-                            <IoEye size={16} />
-                          </Link>
-                        </td>
-                      </tr>
-                    })}
+                            <td className="p-4">
+                              <Link
+                                href={`/dashboard/payments/invoice-management/receipt?status=${status}&invoice=${inv.invoiceNumber}`}
+                                className="cursor-pointer bg-[#FCEAE8] rounded size-6 grid place-content-center text-[#292D32]"
+                              >
+                                <IoEye size={16} />
+                              </Link>
+                            </td>
+                          </tr>
+                        );
+                      })}
                 </tbody>
               </table>
 
-              {
-                loading && <div className="w-full h-60 grid place-content-center">
+              {loading && (
+                <div className="w-full h-60 grid place-content-center">
                   <Loader color="primary.6" />
                 </div>
-              }
-              {
-                !loading && data.data.length === 0 && <div className="w-full h-60 grid place-content-center text-[#3A3A3A] font-medium text-[1rem] leading-[1.125rem]">
+              )}
+              {!loading && data.data.length === 0 && (
+                <div className="w-full h-60 grid place-content-center text-[#3A3A3A] font-medium text-[1rem] leading-[1.125rem]">
                   No recent invoices
                 </div>
-              }
+              )}
             </div>
           </div>
         </div>
