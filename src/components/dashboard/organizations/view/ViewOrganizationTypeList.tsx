@@ -60,7 +60,7 @@ const ViewOrganizationTypesList: FC<{ organizationCategory: string }> = ({
           </button>
         </div>
         <div className="relative overflow-x-auto scrollbar-thin scrollbar-webkit">
-          <table className="w-[120%]">
+          <table className="w-[100%]">
             <thead className="w-full bg-[#F3F7FC] h-14">
               <tr className="text-[#3A3A3A] font-medium text-[0.75rem] leading-[1.125rem]">
                 <th scope="col" className="text-left px-4">

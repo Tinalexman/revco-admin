@@ -130,7 +130,13 @@ const Organizations = () => {
           <Drawer.Overlay />
           <Drawer.Content>
             <Drawer.Body>
-              <AddGroup onClose={() => shouldAddGroup(false)} />
+              <AddGroup
+                onClose={() => shouldAddGroup(false)}
+                onCreated={() => {
+                  shouldAddGroup(false);
+                  window.location.reload();
+                }}
+              />
             </Drawer.Body>
           </Drawer.Content>
         </Drawer.Root>

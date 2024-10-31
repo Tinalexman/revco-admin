@@ -1,4 +1,5 @@
 import { useAxios } from "@/api/base";
+import { useToken } from "@/providers/AuthProvider";
 import { useState, useEffect } from "react";
 import toast from "react-hot-toast";
 
@@ -33,6 +34,11 @@ export interface iMdaService {
 export interface iProjectHead {
   projectId: number;
   projectName: string;
+}
+
+export interface iGroup {
+  id: number;
+  groupType: string;
 }
 
 export const useGetMDAs = () => {
@@ -137,6 +143,88 @@ export const useGetProjectHeads = () => {
 
   useEffect(() => {
     getProjectHeads();
+  }, []);
+
+  return {
+    loading,
+    data,
+    success,
+  };
+};
+
+export const useGetOrganizationGroups = () => {
+  const [loading, setLoading] = useState<boolean>(false);
+  const [data, setData] = useState<iGroup[]>([]);
+  const [success, setSuccess] = useState<boolean>(false);
+  const { requestApi } = useAxios();
+  const token = useToken().getToken();
+
+  let getGroups = async () => {
+    if (loading) return;
+    setLoading(true);
+
+    const { data, status } = await requestApi(
+      `/mda/service/groups`,
+      "GET",
+      {},
+      {
+        Authorization: `Bearer ${token}`,
+      }
+    );
+
+    setLoading(false);
+    setSuccess(status);
+
+    if (!status) {
+      toast.error("An error occurred. Please try again");
+    } else {
+      setData(data);
+    }
+  };
+
+  useEffect(() => {
+    getGroups();
+  }, []);
+
+  return {
+    loading,
+    data,
+    success,
+  };
+};
+
+export const useGetOrganizationServiceTypes = () => {
+  const [loading, setLoading] = useState<boolean>(false);
+  const [data, setData] = useState<string[]>([]);
+  const [success, setSuccess] = useState<boolean>(false);
+  const { requestApi } = useAxios();
+  const token = useToken().getToken();
+
+  let getServiceTypes = async () => {
+    if (loading) return;
+    setLoading(true);
+
+    const { data, status } = await requestApi(
+      `/mda/service/types`,
+      "GET",
+      {},
+      {
+        Authorization: `Bearer ${token}`,
+      }
+    );
+
+    setLoading(false);
+    setSuccess(status);
+
+    if (!status) {
+      toast.error("An error occurred. Please try again");
+    } else {
+      setData(data);
+    }
+  };
+
+  useEffect(() => {
+    getServiceTypes();
   }, []);
 
   return {

@@ -68,6 +68,18 @@ export interface iOrganizationTypeOverviewResponse {
   TotalInvoiceUnpaid: number;
 }
 
+export interface iCreateOrganizationPayload {
+  businessId: number;
+  name: string;
+  abbreviation: string;
+  mdaCode: string;
+  isRetaining: false;
+  isRetainingByPercentage: false;
+  retainingValue: number;
+  businessServiceType: string;
+  groupType: string;
+}
+
 export const useGetOrganizations = (category?: string) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [success, setSuccess] = useState<boolean>(false);
@@ -120,6 +132,40 @@ export const useGetOrganizations = (category?: string) => {
     success,
     getOrganizations,
     data,
+  };
+};
+
+export const useCreateOrganization = () => {
+  const [loading, setLoading] = useState<boolean>(false);
+  const [success, setSuccess] = useState<boolean>(false);
+  const { requestApi } = useAxios();
+  const token = useToken().getToken();
+
+  let createOrganization = async (payload: iCreateOrganizationPayload) => {
+    if (loading) return;
+
+    setLoading(true);
+
+    const { data, status } = await requestApi(`/mda/addmda`, "POST", payload, {
+      Authorization: `Bearer ${token}`,
+    });
+
+    setLoading(false);
+    setSuccess(status);
+
+    if (!status) {
+      toast.error(
+        data?.response?.data?.data ?? "An error occurred. Please try again"
+      );
+    } else {
+      toast.success("Organization Created Successfully");
+    }
+  };
+
+  return {
+    loading,
+    success,
+    createOrganization,
   };
 };
 
@@ -215,7 +261,7 @@ export const useGetOrganizationUsers = () => {
   const { requestApi } = useAxios();
   const token = useToken().getToken();
 
-  let getUsers = async (mdaId: string, pageNo: string) => {
+  let getUsers = async (mdaId: string | number, pageNo: string) => {
     if (loading) return;
 
     setLoading(true);

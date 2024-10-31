@@ -17,6 +17,7 @@ import {
   useGetOrganizationTypeOverview,
 } from "@/hooks/organizationHooks";
 import { MdPayments } from "react-icons/md";
+import { capitalize } from "@/functions/stringFunctions";
 
 interface iOrganizationData {
   value: number;
@@ -152,7 +153,13 @@ const ViewOrganizationContent = () => {
               </div>
             </div>
             <Link
-              href={`/dashboard/organizations/view-organization-users?name=${organizationName}&organizationId=${organizationId}`}
+              href={`/dashboard/organizations/view-organization-users?data=${Buffer.from(
+                JSON.stringify({
+                  name: organizationName,
+                  category: capitalize(organizationCategory),
+                  id: organizationId,
+                })
+              ).toString("base64")}`}
               className="bg-[#E9F3FA] text-[#2085C9] rounded-lg h-9 gap-2 px-3 text-[0.825rem] flex items-center leading-[0.98rem]"
             >
               <BsPeopleFill size={18} fill="#2085C9" />
@@ -205,7 +212,13 @@ const ViewOrganizationContent = () => {
           <Drawer.Overlay />
           <Drawer.Content>
             <Drawer.Body>
-              <AddGroup onClose={() => shouldAddGroup(false)} />
+              <AddGroup
+                onClose={() => shouldAddGroup(false)}
+                onCreated={() => {
+                  shouldAddGroup(false);
+                  window.location.reload();
+                }}
+              />
             </Drawer.Body>
           </Drawer.Content>
         </Drawer.Root>
