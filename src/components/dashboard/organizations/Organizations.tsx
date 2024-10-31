@@ -25,7 +25,6 @@ const Organizations = () => {
   const router = useRouter();
   const { data, loading } = useGetOrganizationsOverview();
 
-
   return (
     <>
       <div className="w-full flex flex-col gap-2.5">
@@ -36,7 +35,7 @@ const Organizations = () => {
                 Organizations
               </h2>
               <h3 className="text-primary text-reg-caption">
-                Manage all group information
+                Manage all organization information
               </h3>
             </div>
             <button
@@ -44,7 +43,7 @@ const Organizations = () => {
               className="bg-primary text-white rounded-lg h-9 gap-2 px-3 text-[0.825rem] flex items-center leading-[0.98rem]"
             >
               <VscTools size={18} color="#FFFFFF" />
-              <h3>New Group</h3>
+              <h3>New Organization</h3>
             </button>
           </div>
         </div>
@@ -62,26 +61,35 @@ const Organizations = () => {
                 <div
                   onClick={() => {
                     if (hasLink) {
-                      router.push(`/dashboard/organizations/type?type=${org.name}`);
+                      router.push(
+                        `/dashboard/organizations/type?type=${org.name}`
+                      );
                     }
                   }}
-                  className={`relative overflow-hidden ${hasLink && "cursor-pointer"} bg-white w-full rounded-xl px-6 pt-3 pb-4 gap-6 h-44 flex flex-col justify-end items-start`}
+                  className={`relative overflow-hidden ${
+                    hasLink && "cursor-pointer"
+                  } bg-white w-full rounded-xl px-6 pt-3 pb-4 gap-6 h-44 flex flex-col justify-end items-start`}
                   key={i}
                 >
                   <div className="bg-primary-accent rounded-full p-2">
-                    <Profile2User size={20} className="text-primary" variant="Bold" />
+                    <Profile2User
+                      size={20}
+                      className="text-primary"
+                      variant="Bold"
+                    />
                   </div>
                   <div className="w-[70%] flex justify-between">
                     <div className="w-fit flex flex-col">
                       <h3 className="text-med-button text-[#9EA4AA]">
                         {org.name}
                       </h3>
-                      {
-                        loading ? <Loader color="primary.6" size={24} /> : <h2 className="text-dash-intro-header font-bold text-gray-5">
+                      {loading ? (
+                        <Loader color="primary.6" size={24} />
+                      ) : (
+                        <h2 className="text-dash-intro-header font-bold text-gray-5">
                           {org.count}
                         </h2>
-                      }
-
+                      )}
                     </div>
                   </div>
                   <div className="w-fit flex gap-2 items-center absolute bottom-4 right-2">
@@ -89,23 +97,26 @@ const Organizations = () => {
                       <h3 className="text-[0.49rem] leading-[0.7rem] text-gray-5 font-medium">
                         Active
                       </h3>
-                      {
-                        loading ? <Loader color="primary.6" size={24} /> : <h2 className="text-[0.78rem] leading-[0.8rem] font-semibold text-gray-5">
+                      {loading ? (
+                        <Loader color="primary.6" size={24} />
+                      ) : (
+                        <h2 className="text-[0.78rem] leading-[0.8rem] font-semibold text-gray-5">
                           {org.active}
                         </h2>
-                      }
-
+                      )}
                     </div>
                     <div className="w-[1px] h-6 bg-[#8E8E93]" />
                     <div className="flex flex-col w-fit">
                       <h3 className="text-[0.49rem] leading-[0.7rem] text-gray-5 font-medium">
                         Inactive
                       </h3>
-                      {
-                        loading ? <Loader color="primary.6" size={24} /> : <h2 className="text-[0.78rem] leading-[0.8rem] font-semibold text-gray-5">
+                      {loading ? (
+                        <Loader color="primary.6" size={24} />
+                      ) : (
+                        <h2 className="text-[0.78rem] leading-[0.8rem] font-semibold text-gray-5">
                           {org.inactive}
                         </h2>
-                      }
+                      )}
                     </div>
                   </div>
                 </div>

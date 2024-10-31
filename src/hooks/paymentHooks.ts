@@ -196,7 +196,7 @@ export const useGetRecentInvoices = () => {
     setLoading(true);
 
     const { data, status } = await requestApi(
-      `/mda-report/generated-invoices?from=${fromDate}&to=${endDate}&pageNumber=${pageNo}&pageSize=50&mdaId=1`,
+      `/mda-report/generated-invoices?from=${fromDate}&to=${endDate}&pageNumber=${pageNo}&pageSize=50`,
       "GET",
       {},
       {

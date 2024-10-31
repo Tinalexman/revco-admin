@@ -106,6 +106,10 @@ const InvoiceManagement = () => {
                 <thead className="w-full bg-[#F3F7FC] h-14">
                   <tr className="text-[#3A3A3A] font-medium text-[0.75rem] leading-[1.125rem]">
                     <th scope="col" className="text-start px-4">
+                      S/N
+                    </th>
+
+                    <th scope="col" className="text-start px-4">
                       Invoice Number
                     </th>
                     <th scope="col" className="text-start px-4">
@@ -140,6 +144,7 @@ const InvoiceManagement = () => {
                             key={i}
                             className="odd:bg-white even:bg-slate-50 text-[#3A3A3A] text-[0.75rem] leading-[1.125rem] justify-around"
                           >
+                            <td className="p-4">{i + 1}</td>
                             <td className="p-4">{inv.invoiceNumber}</td>
                             <td className="p-4">{inv.payer}</td>
                             <td className="p-4">{inv.mdaName}</td>

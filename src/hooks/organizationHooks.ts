@@ -180,26 +180,29 @@ export const useGetOrganizationsOverview = () => {
 
       const ministryDetail: iDetail = {
         name: "Ministries",
-        active: data.Ministry.active,
-        inactive: data.Ministry.inactive,
-        count: data.Ministry.count,
-      };
-
-      const commerceDetail: iDetail = {
-        name: "Commerce",
-        active: data.Commerce.active,
-        inactive: data.Commerce.inactive,
-        count: data.Commerce.count,
+        active: data.MINISTRY.active,
+        inactive: data.MINISTRY.inactive,
+        count: data.MINISTRY.count,
       };
 
       const otherDetail: iDetail = {
         name: "Others",
-        active: data.Other.active,
-        inactive: data.Other.inactive,
-        count: data.Other.count,
+        active: data.OTHERS.active,
+        inactive: data.OTHERS.inactive,
+        count: data.OTHERS.count,
       };
 
-      setData([totalDetail, ministryDetail, commerceDetail, otherDetail]);
+      setData([
+        totalDetail,
+        ministryDetail,
+        otherDetail,
+        {
+          name: "",
+          active: 0,
+          inactive: 0,
+          count: 0,
+        },
+      ]);
     }
   };
 
