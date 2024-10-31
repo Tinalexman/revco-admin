@@ -105,6 +105,30 @@ export interface iGenerateNonIndividualInvoice {
   projectId: number;
 }
 
+export interface iGenerateInvoiceResponse {
+  invoiceNo: string;
+  invoiceAmount: number;
+  assesedService: string;
+  paymentChannel: any;
+  businessId: number;
+  business: any;
+  serviceId: number;
+  mda: string;
+  month: number;
+  year: string;
+  customerId: number;
+  payerFirstName: any;
+  payerLastName: any;
+  tinType: any;
+  payerId: string | null;
+  payerTin: string | null;
+  payer: any;
+  payerEmail: string;
+  payerPhone: string;
+  payerType: any;
+  paid: boolean;
+}
+
 export const useGetPaymentChannels = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [success, setSuccess] = useState<boolean>(false);
@@ -210,7 +234,7 @@ export const useGetRecentInvoices = () => {
 export const useGenerateIndividualInvoice = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [success, setSuccess] = useState<boolean>(false);
-
+  const [data, setData] = useState<iGenerateInvoiceResponse | null>(null);
   const { requestApi } = useAxios();
   const token = useToken().getToken();
 
@@ -221,8 +245,8 @@ export const useGenerateIndividualInvoice = () => {
 
     const { data, status } = await requestApi(
       `/self-service/generate-invoice/individual`,
-      "GET",
-      {},
+      "POST",
+      payload,
       {
         Authorization: `Bearer ${token}`,
       }
@@ -235,12 +259,16 @@ export const useGenerateIndividualInvoice = () => {
       toast.error(
         data?.response?.data?.data ?? "An error occurred. Please try again"
       );
+    } else {
+      toast.success("Invoice generated");
+      setData(data.data);
     }
   };
 
   return {
     loading,
     success,
+    data,
     generate,
   };
 };
@@ -248,7 +276,7 @@ export const useGenerateIndividualInvoice = () => {
 export const useGenerateNonIndividualInvoice = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [success, setSuccess] = useState<boolean>(false);
-
+  const [data, setData] = useState<iGenerateInvoiceResponse | null>(null);
   const { requestApi } = useAxios();
   const token = useToken().getToken();
 
@@ -259,8 +287,8 @@ export const useGenerateNonIndividualInvoice = () => {
 
     const { data, status } = await requestApi(
       `/self-service/generate-invoice/nonindividual`,
-      "GET",
-      {},
+      "POST",
+      payload,
       {
         Authorization: `Bearer ${token}`,
       }
@@ -273,6 +301,9 @@ export const useGenerateNonIndividualInvoice = () => {
       toast.error(
         data?.response?.data?.data ?? "An error occurred. Please try again"
       );
+    } else {
+      toast.success("Invoice generated");
+      setData(data.data);
     }
   };
 
@@ -280,5 +311,6 @@ export const useGenerateNonIndividualInvoice = () => {
     loading,
     success,
     generate,
+    data,
   };
 };

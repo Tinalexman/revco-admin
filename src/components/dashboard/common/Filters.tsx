@@ -86,7 +86,7 @@ const Filters: FC<{
           color="#292D32"
         />
       </div>
-      <div className="w-[115px] h-10">
+      <div className="w-[120px] h-10">
         <Dropdown
           menus={allFilters.map((v, i) => ({
             name: v,

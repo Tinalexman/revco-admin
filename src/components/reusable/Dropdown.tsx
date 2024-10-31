@@ -11,7 +11,8 @@ const Dropdown: FC<{
   value: string;
   hint: string;
   bare?: boolean;
-}> = ({ menus, value, hint, bare }) => {
+  loading?: boolean;
+}> = ({ menus, value, hint, bare, loading }) => {
   const [open, setOpen] = useState<boolean>(false);
   const dropdownRef = useRef<HTMLDivElement | null>(null);
 
@@ -35,7 +36,10 @@ const Dropdown: FC<{
   return (
     <div ref={dropdownRef} className="relative w-full h-full">
       <div
-        onClick={() => setOpen(!open)}
+        onClick={() => {
+          if (loading && loading) return;
+          setOpen(!open);
+        }}
         className={`
           ${
             bare && bare
@@ -49,14 +53,20 @@ const Dropdown: FC<{
         <div
           className={`relative flex items-center justify-start w-full h-full`}
         >
-          {value === "" && <p className="text-gray-3">{hint}</p>}
-          <p className="line-clamp-1 text-gray-2 font-medium">{value}</p>
-          <IoMdArrowDropdown
-            size={16}
-            className={`${
-              open ? "text-purple-300" : "text-gray-3"
-            } absolute top-1/2 -translate-y-1/2 right-0`}
-          />
+          {loading && loading ? (
+            <p className="text-gray-2 font-medium">Loading</p>
+          ) : (
+            <>
+              {value === "" && <p className="text-gray-3">{hint}</p>}
+              <p className="line-clamp-1 text-gray-2 font-medium">{value}</p>
+              <IoMdArrowDropdown
+                size={16}
+                className={`${
+                  open ? "text-purple-300" : "text-gray-3"
+                } absolute top-1/2 -translate-y-1/2 right-0`}
+              />
+            </>
+          )}
         </div>
       </div>
       {open && (
@@ -64,7 +74,7 @@ const Dropdown: FC<{
           className={`flex justify-start items-center bg-white absolute z-50 p-2 w-fit left-0 right-0 rounded-lg top-8 shadow-custom`}
         >
           <div
-            className={`w-full flex flex-col overflow-y-auto gap-1 scrollbar-thin scrollbar-webkit `}
+            className={`w-full flex flex-col max-h-[200px] overflow-y-scroll gap-1 scrollbar-thin scrollbar-webkit `}
           >
             {menus.map((menu, i) => (
               <div

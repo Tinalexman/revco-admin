@@ -8,10 +8,7 @@ import StatusContainer, {
   STATE_PENDING,
   STATE_SUCCESS,
 } from "@/components/reusable/StatusContainer";
-import {
-  iRecentActivityResponse,
-  useGetRecentTransactionDetails,
-} from "@/hooks/dashboardHooks";
+import { useGetRecentTransactionDetails } from "@/hooks/dashboardHooks";
 import { Loader } from "@mantine/core";
 import { iPendingReceiptData } from "@/components/reusable/receipts/Pending";
 import { iPaidReceiptData } from "@/components/reusable/receipts/Paid";

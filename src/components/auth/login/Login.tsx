@@ -26,13 +26,11 @@ const Login = () => {
   const { success, loading, login } = useLogin();
   const router = useRouter();
 
-
   useEffect(() => {
     if (success && !loading) {
       router.replace("/dashboard");
     }
-
-  }, [success, loading])
+  }, [success, loading]);
 
   return (
     <div className="h-fit w-[27.5rem] flex flex-col items-center justify-center gap-10">
@@ -152,10 +150,14 @@ const Login = () => {
                 type="submit"
                 className={`bg-primary rounded-lg w-full  h-10 flex justify-center items-center gap-2 text-med-button text-white `}
               >
-                {
-                  loading ? <Loader color="white.6" size={24} /> : <><p>Log in</p>
-                    <ArrowRight size="26" color="#FFFFFF" variant="Broken" /></>
-                }
+                {loading ? (
+                  <Loader color="white.6" size={24} />
+                ) : (
+                  <>
+                    <p>Log in</p>
+                    <ArrowRight size="26" color="#FFFFFF" variant="Broken" />
+                  </>
+                )}
               </button>
             </Form>
           )}
