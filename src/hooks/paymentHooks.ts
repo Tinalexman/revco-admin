@@ -25,6 +25,86 @@ export interface iRecentInvoiceData {
   paid: boolean;
 }
 
+export interface iGenerateIndividualInvoice {
+  enumerate: {
+    title: string;
+    dateOfBirth: string;
+    maritalStatus: string;
+    nationality: string;
+    residenceLga: number;
+    residenceState: number;
+    residentialAddress: string;
+    occupation: string;
+    officeAddress: string;
+    employerName: string;
+    temporaryTin: string;
+    jtbTin: string;
+    nin: string;
+    customer: {
+      firstName: string;
+      lastName: string;
+      phone: string;
+      email: string;
+      role: string;
+    };
+  };
+  invoice: {
+    invoiceAmount: number;
+    isAssessment: boolean;
+    assessmentId: number;
+    serviceId: number;
+    businessId: number;
+    mdaId: number;
+    Month: number;
+    year: string;
+    userId: number;
+    month: number;
+    assessment: boolean;
+  };
+  projectId: number;
+}
+
+export interface iGenerateNonIndividualInvoice {
+  enumerate: {
+    cacRegNo: string;
+    companyName: string;
+    companyAddress: string;
+    city: string;
+    lgaId: number;
+    phoneNumber1: string;
+    phoneNumber2: string;
+    email: string;
+    nin: string;
+    website: string;
+    temporaryTin: string;
+    jtbTin: string;
+    companyRegistrationDate: string;
+    companyCommencementDate: string;
+    businessType: string;
+    customer: {
+      firstName: string;
+      lastName: string;
+      phone: string;
+      email: string;
+      role: string;
+    };
+  };
+  invoice: {
+    invoiceAmount: number;
+    isAssessment: boolean;
+    assessmentId: number;
+    serviceId: number;
+    businessId: number;
+    mdaId: number;
+    Month: number;
+    year: string;
+    userId: number;
+    month: number;
+    assessment: boolean;
+  };
+  projectId: number;
+}
+
 export const useGetPaymentChannels = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [success, setSuccess] = useState<boolean>(false);
@@ -124,5 +204,81 @@ export const useGetRecentInvoices = () => {
     success,
     getInvoices,
     data,
+  };
+};
+
+export const useGenerateIndividualInvoice = () => {
+  const [loading, setLoading] = useState<boolean>(false);
+  const [success, setSuccess] = useState<boolean>(false);
+
+  const { requestApi } = useAxios();
+  const token = useToken().getToken();
+
+  let generate = async (payload: iGenerateIndividualInvoice) => {
+    if (loading) return;
+
+    setLoading(true);
+
+    const { data, status } = await requestApi(
+      `/self-service/generate-invoice/individual`,
+      "GET",
+      {},
+      {
+        Authorization: `Bearer ${token}`,
+      }
+    );
+
+    setLoading(false);
+    setSuccess(status);
+
+    if (!status) {
+      toast.error(
+        data?.response?.data?.data ?? "An error occurred. Please try again"
+      );
+    }
+  };
+
+  return {
+    loading,
+    success,
+    generate,
+  };
+};
+
+export const useGenerateNonIndividualInvoice = () => {
+  const [loading, setLoading] = useState<boolean>(false);
+  const [success, setSuccess] = useState<boolean>(false);
+
+  const { requestApi } = useAxios();
+  const token = useToken().getToken();
+
+  let generate = async (payload: iGenerateNonIndividualInvoice) => {
+    if (loading) return;
+
+    setLoading(true);
+
+    const { data, status } = await requestApi(
+      `/self-service/generate-invoice/nonindividual`,
+      "GET",
+      {},
+      {
+        Authorization: `Bearer ${token}`,
+      }
+    );
+
+    setLoading(false);
+    setSuccess(status);
+
+    if (!status) {
+      toast.error(
+        data?.response?.data?.data ?? "An error occurred. Please try again"
+      );
+    }
+  };
+
+  return {
+    loading,
+    success,
+    generate,
   };
 };
