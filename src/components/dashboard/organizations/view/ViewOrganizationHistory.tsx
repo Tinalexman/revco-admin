@@ -11,6 +11,7 @@ import { IoEye } from "react-icons/io5";
 import StatusContainer, {
   STATE_SUCCESS,
   STATE_NULL,
+  STATE_PENDING,
 } from "@/components/reusable/StatusContainer";
 import {
   iOrganizationResponse,
@@ -33,7 +34,7 @@ const ViewOrganizationHistory: FC<{ name: string; id: string | number }> = ({
   });
   const [expanded, setExpanded] = useState<boolean>(false);
   const [currentPage, setCurrentPage] = useState<number>(1);
-  const totalPages = Math.ceil(data.count / 50);
+  const totalPages = Math.ceil(data.totalItems / 50);
 
   function handlePageChange(page: number) {
     setCurrentPage(page);
@@ -73,20 +74,20 @@ const ViewOrganizationHistory: FC<{ name: string; id: string | number }> = ({
           </button>
         </div>
         <div className="relative overflow-x-auto scrollbar-thin scrollbar-webkit">
-          <table className="w-[150%]">
+          <table className="w-[100%]">
             <thead className="w-full bg-[#F3F7FC] h-14">
               <tr className="text-[#3A3A3A] font-medium text-[0.75rem] leading-[1.125rem]">
                 <th scope="col" className="text-left px-4">
-                  Transaction ID
+                  S/N
                 </th>
                 <th scope="col" className="text-left px-4">
-                  Customer Name
+                  Invoice Number
                 </th>
                 <th scope="col" className="text-left px-4">
                   Amount Paid
                 </th>
                 <th scope="col" className="text-left px-4">
-                  Payment Channel
+                  Type
                 </th>
                 <th scope="col" className="text-left px-4">
                   Transaction Date
@@ -103,26 +104,34 @@ const ViewOrganizationHistory: FC<{ name: string; id: string | number }> = ({
               {!loading &&
                 data.data
                   .slice(0, expanded ? data.data.length : 10)
-                  .map((org, i) => (
+                  .map((inv, i) => (
                     <tr
                       key={i}
                       className="odd:bg-white even:bg-slate-50 text-[#3A3A3A] text-[0.75rem] leading-[1.125rem] justify-around"
                     >
-                      <td className="p-4">{org.id}</td>
-                      <td className="p-4">{org.customerName}</td>
+                      <td className="p-4">{i + 1}</td>
+                      <td className="p-4">{inv.number}</td>
                       <td className="p-4">
-                        ₦{org.totalAmountPaid.toLocaleString("en-US")}
+                        ₦
+                        {Number.parseFloat(inv.totalAmount).toLocaleString(
+                          "en-US"
+                        )}
                       </td>
-                      <td className="p-4">{org.channel}</td>
+                      <td className="p-4">{inv.type}</td>
                       <td className="p-4">
-                        {convertDateWithDashesAndTime(org.createdDate)}
+                        {convertDateWithDashesAndTime(inv.createdDate)}
                       </td>
                       <td className="p-4">
-                        <StatusContainer text={"Paid"} status={STATE_SUCCESS} />
+                        <StatusContainer
+                          text={inv.paid ? "Paid" : "Pending"}
+                          status={inv.paid ? STATE_SUCCESS : STATE_PENDING}
+                        />
                       </td>
                       <td className="flex gap-1 p-4">
                         <Link
-                          href={`/dashboard/organizations/view-organization?name=${name}&organizationId=${id}`}
+                          href={`/dashboard/payments/invoice-management/receipt?status=${
+                            inv.paid ? "paid" : "pending"
+                          }&invoice=${inv.number}`}
                           className="cursor-pointer bg-[#FCEAE8] rounded size-6 grid place-content-center text-[#292D32]"
                         >
                           <IoEye size={16} />

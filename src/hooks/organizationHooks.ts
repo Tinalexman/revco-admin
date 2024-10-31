@@ -47,42 +47,19 @@ export interface iOrganizationUser {
 
 export interface iOrganizationTransactionHistoryResponse {
   id: number;
-  createdBy: number;
-  createdDate: string;
-  isActive: boolean;
-  sortBy: any;
-  orderBy: any;
-  recordsPerPage: number;
-  from: number;
-  transactionId: string;
-  transactionReference: string;
-  transactionDate: string;
-  transactionDescription: string;
-  totalAmountPaid: number;
-  serviceAmount: number;
-  fee: number;
-  commission: number;
-  transactionType: string;
-  channel: string;
-  customerName: string;
-  customerPhone: string;
-  customerEmail: any;
+  totalAmount: string;
   mdaId: number;
-  officeId: number;
-  createdDateStamp: number;
   businessId: number;
-  terminalId: any;
-  pan: any;
-  payerId: number;
-  monthNo: number;
-  yearNo: number;
-  comission: number;
-  active: boolean;
+  number: string;
+  type: string;
+  createdDate: string;
+  transaction: any;
+  paid: boolean;
 }
 
 export interface iOrganizationTransactionHistory {
   data: iOrganizationTransactionHistoryResponse[];
-  count: number;
+  totalItems: number;
 }
 
 export interface iOrganizationTypeOverviewResponse {
@@ -333,7 +310,7 @@ export const useGetOrganizationTransactionHistory = (
   const [success, setSuccess] = useState<boolean>(false);
   const [data, setData] = useState<iOrganizationTransactionHistory>({
     data: [],
-    count: 0,
+    totalItems: 0,
   });
   const { requestApi } = useAxios();
   const token = useToken().getToken();
