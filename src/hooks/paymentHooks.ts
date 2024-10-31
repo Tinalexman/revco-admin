@@ -176,7 +176,7 @@ export const useGetPaymentChannels = () => {
   };
 };
 
-export const useGetRecentInvoices = () => {
+export const useGetRecentInvoices = (category?: string) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [success, setSuccess] = useState<boolean>(false);
   const [data, setData] = useState<iRecentInvoice>({
@@ -195,8 +195,13 @@ export const useGetRecentInvoices = () => {
 
     setLoading(true);
 
+    let query = `/mda-report/generated-invoices?from=${fromDate}&to=${endDate}&pageNumber=${pageNo}&pageSize=50`;
+    if (category) {
+      query += `&category=${category}`;
+    }
+
     const { data, status } = await requestApi(
-      `/mda-report/generated-invoices?from=${fromDate}&to=${endDate}&pageNumber=${pageNo}&pageSize=50`,
+      query,
       "GET",
       {},
       {

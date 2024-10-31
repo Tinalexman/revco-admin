@@ -3,32 +3,42 @@ import Filters from "../Filters";
 import { Loader } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { IoIosArrowDown } from "react-icons/io";
-import { convertDateWithDashesAndTime } from "@/functions/dateFunctions";
+import {
+  convertDateWithDashesAndTime,
+  iDateRange,
+} from "@/functions/dateFunctions";
 import { IoEye } from "react-icons/io5";
 import StatusContainer, {
   STATE_SUCCESS,
   STATE_NULL,
 } from "@/components/reusable/StatusContainer";
-import { iOrganizationResponse, useGetOrganizations, useGetOrganizationTransactionHistory } from "@/hooks/organizationHooks";
+import {
+  iOrganizationResponse,
+  useGetOrganizations,
+  useGetOrganizationTransactionHistory,
+} from "@/hooks/organizationHooks";
 import Paginator from "@/components/reusable/paginator/Paginator";
 import Link from "next/link";
 
-
-
-const ViewOrganizationHistory: FC<{ name: string, id: string }> = ({ id, name }) => {
-
-  const { loading, getHistory, data } = useGetOrganizationTransactionHistory(id);
+const ViewOrganizationHistory: FC<{ name: string; id: string | number }> = ({
+  id,
+  name,
+}) => {
+  const currentDate = new Date().toISOString().split("T")[0];
+  const { loading, getHistory, data } =
+    useGetOrganizationTransactionHistory(id);
+  const [dateRange, setDateRange] = useState<iDateRange>({
+    start: currentDate,
+    end: currentDate,
+  });
   const [expanded, setExpanded] = useState<boolean>(false);
   const [currentPage, setCurrentPage] = useState<number>(1);
-  const totalPages = Math.ceil(data.count / 10);
-
-
+  const totalPages = Math.ceil(data.count / 50);
 
   function handlePageChange(page: number) {
     setCurrentPage(page);
-    getHistory(`${page}`);
+    getHistory(dateRange.start, dateRange.end, `${page}`);
   }
-
 
   return (
     <>
@@ -43,12 +53,18 @@ const ViewOrganizationHistory: FC<{ name: string, id: string }> = ({ id, name })
           </h2>
         </div>
         <div className="w-full justify-between items-center flex">
-          <Filters />
+          <Filters
+            onDatesChanged={(start, end) => {
+              setDateRange({ start, end });
+              getHistory(start, end, `${currentPage}`);
+            }}
+            showDatePicker={true}
+          />
           <div className="w-[35%]">
             <Paginator
               totalPages={totalPages}
               currentPage={currentPage}
-              handlePageChange={page => handlePageChange(page)}
+              handlePageChange={(page) => handlePageChange(page)}
             />
           </div>
           <button className="bg-[#F0E6FC] rounded text-primary flex gap-3 items-center px-3 h-10">
@@ -60,56 +76,72 @@ const ViewOrganizationHistory: FC<{ name: string, id: string }> = ({ id, name })
           <table className="w-[150%]">
             <thead className="w-full bg-[#F3F7FC] h-14">
               <tr className="text-[#3A3A3A] font-medium text-[0.75rem] leading-[1.125rem]">
-                <th scope="col" className="text-left px-4">Transaction ID</th>
-                <th scope="col" className="text-left px-4">Customer Name</th>
-                <th scope="col" className="text-left px-4">Amount Paid</th>
-                <th scope="col" className="text-left px-4">Payment Channel</th>
-                <th scope="col" className="text-left px-4">Transaction Date</th>
-                <th scope="col" className="text-left px-4">Status</th>
-                <th scope="col" className="text-left px-4">Actions</th>
+                <th scope="col" className="text-left px-4">
+                  Transaction ID
+                </th>
+                <th scope="col" className="text-left px-4">
+                  Customer Name
+                </th>
+                <th scope="col" className="text-left px-4">
+                  Amount Paid
+                </th>
+                <th scope="col" className="text-left px-4">
+                  Payment Channel
+                </th>
+                <th scope="col" className="text-left px-4">
+                  Transaction Date
+                </th>
+                <th scope="col" className="text-left px-4">
+                  Status
+                </th>
+                <th scope="col" className="text-left px-4">
+                  Actions
+                </th>
               </tr>
             </thead>
             <tbody>
-              {!loading && data.data
-                .slice(0, expanded ? data.data.length : 5)
-                .map((org, i) => (
-                  <tr
-                    key={i}
-                    className="odd:bg-white even:bg-slate-50 text-[#3A3A3A] text-[0.75rem] leading-[1.125rem] justify-around"
-                  >
-                    <td className="p-4">{org.id}</td>
-                    <td className="p-4">{org.customerName}</td>
-                    <td className="p-4">₦{org.totalAmountPaid.toLocaleString("en-US")}</td>
-                    <td className="p-4">{org.channel}</td>
-                    <td className="p-4">{convertDateWithDashesAndTime(org.createdDate)}</td>
-                    <td className="p-4">
-                      <StatusContainer
-                        text={"Paid"}
-                        status={STATE_SUCCESS}
-                      />
-                    </td>
-                    <td className="flex gap-1 p-4">
-                      <Link
-                        href={`/dashboard/organizations/view-organization?name=${name}&organizationId=${id}`}
-                        className="cursor-pointer bg-[#FCEAE8] rounded size-6 grid place-content-center text-[#292D32]"
-                      >
-                        <IoEye size={16} />
-                      </Link>
-                    </td>
-                  </tr>
-                ))}
+              {!loading &&
+                data.data
+                  .slice(0, expanded ? data.data.length : 10)
+                  .map((org, i) => (
+                    <tr
+                      key={i}
+                      className="odd:bg-white even:bg-slate-50 text-[#3A3A3A] text-[0.75rem] leading-[1.125rem] justify-around"
+                    >
+                      <td className="p-4">{org.id}</td>
+                      <td className="p-4">{org.customerName}</td>
+                      <td className="p-4">
+                        ₦{org.totalAmountPaid.toLocaleString("en-US")}
+                      </td>
+                      <td className="p-4">{org.channel}</td>
+                      <td className="p-4">
+                        {convertDateWithDashesAndTime(org.createdDate)}
+                      </td>
+                      <td className="p-4">
+                        <StatusContainer text={"Paid"} status={STATE_SUCCESS} />
+                      </td>
+                      <td className="flex gap-1 p-4">
+                        <Link
+                          href={`/dashboard/organizations/view-organization?name=${name}&organizationId=${id}`}
+                          className="cursor-pointer bg-[#FCEAE8] rounded size-6 grid place-content-center text-[#292D32]"
+                        >
+                          <IoEye size={16} />
+                        </Link>
+                      </td>
+                    </tr>
+                  ))}
             </tbody>
           </table>
-          {
-            loading && <div className="w-full h-60 grid place-content-center">
+          {loading && (
+            <div className="w-full h-60 grid place-content-center">
               <Loader color="primary.6" />
             </div>
-          }
-          {
-            !loading && data.data.length === 0 && <div className="w-full h-60 grid place-content-center text-[#3A3A3A] font-medium text-[1rem] leading-[1.125rem]">
-              No organizations available
+          )}
+          {!loading && data.data.length === 0 && (
+            <div className="w-full h-60 grid place-content-center text-[#3A3A3A] font-medium text-[1rem] leading-[1.125rem]">
+              No transactions available
             </div>
-          }
+          )}
         </div>
       </div>
     </>

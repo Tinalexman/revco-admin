@@ -11,15 +11,6 @@ import AddGroup from "./AddGroup";
 import { useRouter } from "next/navigation";
 import { useGetOrganizationsOverview } from "@/hooks/organizationHooks";
 
-interface iOrganizationData {
-  value: number;
-  title: string;
-  icon: any;
-  individual: number;
-  corporate: number;
-  link?: string;
-}
-
 const Organizations = () => {
   const [addGroup, shouldAddGroup] = useState<boolean>(false);
   const router = useRouter();
@@ -55,7 +46,7 @@ const Organizations = () => {
           </div>
           <div className="w-full grid grid-cols-4 gap-2.5">
             {data.map((org, i) => {
-              const hasLink: boolean = i !== 0;
+              const hasLink: boolean = i !== 0 && org.name !== "";
 
               return (
                 <div

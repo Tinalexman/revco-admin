@@ -80,38 +80,22 @@ const Filters: FC<{
           color="#292D32"
         />
       </div>
-      <div className="w-[120px] h-10">
-        <Dropdown
-          menus={allFilters.map((v, i) => ({
-            name: v,
-            onClick: () => {
-              setFilter(v);
-              const dateRange = getDateRange(v);
-              onDatesChanged?.(dateRange[0], dateRange[1]);
-            },
-          }))}
-          hint="Select"
-          value={filter}
-        />
-      </div>
-      {/* <div className="w-40 h-10 flex gap-2 items-center rounded border border-gray-4 pl-2">
-        <p className=" text-[#10101266] text-[0.815rem] leading-[0.975rem]">
-          Showing:
-        </p>
-        <div className="w-24">
+      {showDatePicker && showDatePicker && (
+        <div className="w-[120px] h-10">
           <Dropdown
-            menus={["Users"].map((v, i) => ({
+            menus={allFilters.map((v, i) => ({
               name: v,
               onClick: () => {
-                setType(v);
+                setFilter(v);
+                const dateRange = getDateRange(v);
+                onDatesChanged?.(dateRange[0], dateRange[1]);
               },
             }))}
             hint="Select"
-            bare={true}
-            value={type}
+            value={filter}
           />
         </div>
-      </div> */}
+      )}
     </div>
   );
 };

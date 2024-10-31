@@ -85,7 +85,13 @@ export interface iOrganizationTransactionHistory {
   count: number;
 }
 
-export const useGetOrganizations = () => {
+export interface iOrganizationTypeOverviewResponse {
+  TotalInvoicePaid: number;
+  TotalInvoiceGenerated: number;
+  TotalInvoiceUnpaid: number;
+}
+
+export const useGetOrganizations = (category?: string) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [success, setSuccess] = useState<boolean>(false);
   const [data, setData] = useState<iOrganization>({
@@ -100,8 +106,13 @@ export const useGetOrganizations = () => {
 
     setLoading(true);
 
+    let query = `/mda-report/mda/mdas?&pageNo=${pageNo}&pageSize=50`;
+    if (category) {
+      query += `&category=${category}`;
+    }
+
     const { data, status } = await requestApi(
-      `/mda-report/mda/mdas?&pageNo=${pageNo}&pageSize=10`,
+      query,
       "GET",
       {},
       {
@@ -178,6 +189,13 @@ export const useGetOrganizationsOverview = () => {
         count: data.TOTAL.count,
       };
 
+      const bankDetail: iDetail = {
+        name: "Banks",
+        active: data.BANKS.active,
+        inactive: data.BANKS.inactive,
+        count: data.BANKS.count,
+      };
+
       const ministryDetail: iDetail = {
         name: "Ministries",
         active: data.MINISTRY.active,
@@ -192,17 +210,7 @@ export const useGetOrganizationsOverview = () => {
         count: data.OTHERS.count,
       };
 
-      setData([
-        totalDetail,
-        ministryDetail,
-        otherDetail,
-        {
-          name: "",
-          active: 0,
-          inactive: 0,
-          count: 0,
-        },
-      ]);
+      setData([totalDetail, bankDetail, ministryDetail, otherDetail]);
     }
   };
 
@@ -236,7 +244,7 @@ export const useGetOrganizationUsers = () => {
     setLoading(true);
 
     const { data, status } = await requestApi(
-      `/mda-report/mda/mdas/user?mdaId=${mdaId}&pageNo=${pageNo}&pageSize=10`,
+      `/mda-report/mda/mdas/user?mdaId=${mdaId}&pageNo=${pageNo}&pageSize=50`,
       "GET",
       {},
       {
@@ -264,7 +272,63 @@ export const useGetOrganizationUsers = () => {
   };
 };
 
-export const useGetOrganizationTransactionHistory = (mdaId: string) => {
+export const useGetOrganizationTypeOverview = () => {
+  const [loading, setLoading] = useState<boolean>(false);
+  const [success, setSuccess] = useState<boolean>(false);
+  const [data, setData] = useState<iOrganizationTypeOverviewResponse>({
+    TotalInvoiceGenerated: 0,
+    TotalInvoicePaid: 0,
+    TotalInvoiceUnpaid: 0,
+  });
+  const { requestApi } = useAxios();
+  const token = useToken().getToken();
+
+  let getOverview = async (category?: string, mdaId?: string) => {
+    if (loading) return;
+
+    setLoading(true);
+
+    let query = `/mda-report/mda/transaction/summary?`;
+    if (category) {
+      query += `category=${category}`;
+    }
+
+    if (mdaId) {
+      query += `mdaId=${mdaId}`;
+    }
+
+    const { data, status } = await requestApi(
+      query,
+      "GET",
+      {},
+      {
+        Authorization: `Bearer ${token}`,
+      }
+    );
+
+    setLoading(false);
+    setSuccess(status);
+
+    if (!status) {
+      toast.error(
+        data?.response?.data?.data ?? "An error occurred. Please try again"
+      );
+    } else {
+      setData(data);
+    }
+  };
+
+  return {
+    loading,
+    success,
+    getOverview,
+    data,
+  };
+};
+
+export const useGetOrganizationTransactionHistory = (
+  mdaId: string | number
+) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [success, setSuccess] = useState<boolean>(false);
   const [data, setData] = useState<iOrganizationTransactionHistory>({
@@ -274,13 +338,13 @@ export const useGetOrganizationTransactionHistory = (mdaId: string) => {
   const { requestApi } = useAxios();
   const token = useToken().getToken();
 
-  let getHistory = async (pageNo: string) => {
+  let getHistory = async (fromDate: string, toDate: string, pageNo: string) => {
     if (loading) return;
 
     setLoading(true);
 
     const { data, status } = await requestApi(
-      `/mda-report/mda/transactions?mdaId=${mdaId}&pageNo=${pageNo}&pageSize=10`,
+      `/mda-report/mda/transactions?mdaId=${mdaId}&pageNo=${pageNo}&pageSize=50&from=${fromDate}&to=${toDate}`,
       "GET",
       {},
       {
@@ -302,7 +366,8 @@ export const useGetOrganizationTransactionHistory = (mdaId: string) => {
 
   useEffect(() => {
     if (token) {
-      getHistory("1");
+      const currentDate = new Date().toISOString().split("T")[0];
+      getHistory(currentDate, currentDate, "1");
     }
   }, [token]);
 

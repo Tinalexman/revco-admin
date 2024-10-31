@@ -108,7 +108,6 @@ const InvoiceManagement = () => {
                     <th scope="col" className="text-start px-4">
                       S/N
                     </th>
-
                     <th scope="col" className="text-start px-4">
                       Invoice Number
                     </th>
