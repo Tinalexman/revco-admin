@@ -84,10 +84,10 @@ const Details = () => {
 
   const personItem: iPersonItem = {
     title: "Total Tax Payers",
-    value: userActivity?.taxpayers || 0,
+    value: userActivity.taxpayers,
     icon: <PiUsersFill size={20} className="text-primary" />,
-    individual: userActivity?.individuals || 0,
-    corporate: userActivity?.corporations || 0,
+    individual: userActivity.individuals,
+    corporate: userActivity.corporations,
     background: TaxPayersImage,
   };
 

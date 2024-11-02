@@ -43,6 +43,41 @@ export interface iUserTransactionResponse {
   status: any;
 }
 
+export interface iAdminUser {
+  id: number;
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string;
+  role: string;
+  lastLoginDate: string;
+  nin: boolean;
+  active: boolean;
+}
+
+export interface iAdminUserResponse {
+  data: iAdminUser[];
+  count: number;
+}
+
+export interface iCreateUserPayload {
+  firstName: string;
+  lastName: string;
+  phone: string;
+  email: string;
+  role: string;
+  userMda: {
+    mdaId: number;
+    mdaOfficeId: number;
+    canCollect: boolean;
+    collectionLimit: number;
+    permissions: any;
+  };
+  project: {
+    projectId: number;
+  };
+}
+
 export const useGetTaxPayers = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [success, setSuccess] = useState<boolean>(false);
@@ -59,7 +94,7 @@ export const useGetTaxPayers = () => {
     setLoading(true);
 
     const { data, status } = await requestApi(
-      `/mda-report/taxpayers?pageNumber=${pageNo}&pageSize=10&status=false&roleFilter=${role}`,
+      `/mda-report/taxpayers?pageNumber=${pageNo}&pageSize=50&roleFilter=${role}`,
       "GET",
       {},
       {
@@ -82,6 +117,56 @@ export const useGetTaxPayers = () => {
   useEffect(() => {
     if (token) {
       getUsers("1", "");
+    }
+  }, [token]);
+
+  return {
+    loading,
+    success,
+    getUsers,
+    data,
+  };
+};
+
+export const useGetAdminUsers = () => {
+  const [loading, setLoading] = useState<boolean>(false);
+  const [success, setSuccess] = useState<boolean>(false);
+  const [data, setData] = useState<iAdminUserResponse>({
+    data: [],
+    count: 0,
+  });
+  const { requestApi } = useAxios();
+  const token = useToken().getToken();
+
+  let getUsers = async (pageNo: string) => {
+    if (loading) return;
+
+    setLoading(true);
+
+    const { data, status } = await requestApi(
+      `/mda-report/admin-users?pageNumber=${pageNo}&pageSize=50`,
+      "GET",
+      {},
+      {
+        Authorization: `Bearer ${token}`,
+      }
+    );
+
+    setLoading(false);
+    setSuccess(status);
+
+    if (!status) {
+      toast.error(
+        data?.response?.data?.data ?? "An error occurred. Please try again"
+      );
+    } else {
+      setData(data);
+    }
+  };
+
+  useEffect(() => {
+    if (token) {
+      getUsers("1");
     }
   }, [token]);
 
@@ -141,5 +226,44 @@ export const useGetUserTransactions = (name: string, phoneNumber: string) => {
     success,
     getTransactions,
     data,
+  };
+};
+
+export const useCreateUser = () => {
+  const [loading, setLoading] = useState<boolean>(false);
+  const [success, setSuccess] = useState<boolean>(false);
+  const { requestApi } = useAxios();
+  const token = useToken().getToken();
+
+  let createUser = async (payload: iCreateUserPayload) => {
+    if (loading) return;
+
+    setLoading(true);
+
+    const { data, status } = await requestApi(
+      `/auth/createuser`,
+      "POST",
+      payload,
+      {
+        Authorization: `Bearer ${token}`,
+      }
+    );
+
+    setLoading(false);
+    setSuccess(status);
+
+    if (!status) {
+      toast.error(
+        data?.response?.data?.data ?? "An error occurred. Please try again"
+      );
+    } else {
+      toast.success("Successfully created a new user");
+    }
+  };
+
+  return {
+    loading,
+    success,
+    createUser,
   };
 };

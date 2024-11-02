@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { Drawer } from "@mantine/core";
+import { Drawer, Loader } from "@mantine/core";
 import { VscTools } from "react-icons/vsc";
 import { IoIosAdd } from "react-icons/io";
 import Filters from "../Filters";
@@ -13,6 +13,8 @@ import StatusContainer, {
 import { IoEye } from "react-icons/io5";
 import AddNewUser from "./AddNewUser";
 import Link from "next/link";
+import { useGetAdminUsers } from "@/hooks/userHooks";
+import Paginator from "@/components/reusable/paginator/Paginator";
 
 interface iAdminUser {
   name: string;
@@ -24,37 +26,18 @@ interface iAdminUser {
 
 const AdminUsers = () => {
   const [expanded, setExpanded] = useState<boolean>(false);
-  const [users, setUsers] = useState<iAdminUser[]>([
-    {
-      name: "Adebanjo Micheal",
-      email: "adbanjo@exmaple.com",
-      userType: "Board Chairman",
-      status: STATE_SUCCESS,
-      statusText: "Active",
-    },
-    {
-      name: "Adebanjo Micheal",
-      email: "adbanjo@exmaple.com",
-      userType: "Revenue Staff",
-      status: STATE_SUCCESS,
-      statusText: "Active",
-    },
-    {
-      name: "Adebanjo Micheal",
-      email: "adbanjo@exmaple.com",
-      userType: "Bank Staff",
-      status: STATE_PENDING,
-      statusText: "Pending",
-    },
-    {
-      name: "Adebanjo Micheal",
-      email: "adbanjo@exmaple.com",
-      userType: "State Governor",
-      status: STATE_SUCCESS,
-      statusText: "Active",
-    },
-  ]);
+
+  const { loading, data, getUsers } = useGetAdminUsers();
+
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const totalPages = Math.ceil(data.count / 50);
+
   const [addNewUser, shouldAddNewUser] = useState<boolean>(false);
+
+  function handlePageChange(page: number) {
+    setCurrentPage(page);
+    getUsers(`${page}`);
+  }
 
   return (
     <>
@@ -91,6 +74,13 @@ const AdminUsers = () => {
             </div>
             <div className="w-full justify-between items-center flex">
               <Filters />
+              <div className="w-[35%]">
+                <Paginator
+                  totalPages={totalPages}
+                  currentPage={currentPage}
+                  handlePageChange={(page) => handlePageChange(page)}
+                />
+              </div>
               <button
                 onClick={() => shouldAddNewUser(true)}
                 className="bg-primary text-white rounded-lg h-9 gap-2 px-3 text-[0.825rem] flex items-center leading-[0.98rem]"
@@ -121,30 +111,47 @@ const AdminUsers = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {users.map((user, i) => (
-                    <tr
-                      key={i}
-                      className="odd:bg-white even:bg-slate-50 text-[#3A3A3A] text-[0.75rem] leading-[1.125rem] justify-around"
-                    >
-                      <td className="p-4">{user.name}</td>
-                      <td className="p-4">{user.email}</td>
-                      <td className="p-4">{user.userType}</td>
-                      <td className="p-4">
-                        <StatusContainer
-                          status={user.status}
-                          text={user.statusText}
-                        />
-                      </td>
+                  {!loading &&
+                    data.data
+                      .slice(0, expanded ? data.data.length : 10)
+                      .map((user, i) => (
+                        <tr
+                          key={i}
+                          className="odd:bg-white even:bg-slate-50 text-[#3A3A3A] text-[0.75rem] leading-[1.125rem] justify-around"
+                        >
+                          <td className="p-4">
+                            {user.firstName} {user.lastName}
+                          </td>
+                          <td className="p-4">{user.email}</td>
+                          <td className="p-4">{user.role}</td>
+                          <td className="p-4">
+                            <StatusContainer
+                              status={
+                                user.active ? STATE_SUCCESS : STATE_PENDING
+                              }
+                              text={user.active ? "Active" : "Inactive"}
+                            />
+                          </td>
 
-                      <td className="p-4 flex gap-1 w-fit items-center">
-                        <div className="cursor-pointer bg-[#FCEAE8] rounded size-6 grid place-content-center text-[#292D32]">
-                          <IoEye size={16} />
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
+                          <td className="p-4 flex gap-1 w-fit items-center">
+                            <div className="cursor-pointer bg-[#FCEAE8] rounded size-6 grid place-content-center text-[#292D32]">
+                              <IoEye size={16} />
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
                 </tbody>
               </table>
+              {loading && (
+                <div className="w-full h-60 grid place-content-center">
+                  <Loader color="primary.6" />
+                </div>
+              )}
+              {!loading && data.data.length === 0 && (
+                <div className="w-full h-60 grid place-content-center text-[#3A3A3A] font-medium text-[1rem] leading-[1.125rem]">
+                  No users available
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -162,7 +169,13 @@ const AdminUsers = () => {
           <Drawer.Overlay />
           <Drawer.Content>
             <Drawer.Body>
-              <AddNewUser onClose={() => shouldAddNewUser(false)} />
+              <AddNewUser
+                onClose={() => shouldAddNewUser(false)}
+                onCreate={() => {
+                  shouldAddNewUser(false);
+                  window.location.reload();
+                }}
+              />
             </Drawer.Body>
           </Drawer.Content>
         </Drawer.Root>

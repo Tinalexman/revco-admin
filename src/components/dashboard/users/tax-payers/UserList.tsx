@@ -46,8 +46,7 @@ const UserList = () => {
 
   const { data, loading, getUsers } = useGetTaxPayers();
   const [currentPage, setCurrentPage] = useState<number>(1);
-  const totalPages = Math.ceil(data.count / 10);
-
+  const totalPages = Math.ceil(data.count / 50);
 
   function handlePageChange(page: number) {
     setCurrentPage(page);
@@ -59,7 +58,7 @@ const UserList = () => {
     if (role === "Corporation") return "Non-Individual";
     if (role === "Agent") return "Agent";
     return "";
-  }
+  };
 
   return (
     <>
@@ -73,15 +72,17 @@ const UserList = () => {
                   setIndexOfChildToBeViewed(index);
                   getUsers(`${currentPage}`, getRoleValue(childName));
                 }}
-                className={`text-reg-caption cursor-pointer transition-all duration-300 ease-out px-4 grid place-content-center font-semibold ${indexOfChildToBeViewed === index
-                  ? "text-primary bg-white"
-                  : "text-[#A9A9A9]"
-                  } ${index === 0
+                className={`text-reg-caption cursor-pointer transition-all duration-300 ease-out px-4 grid place-content-center font-semibold ${
+                  indexOfChildToBeViewed === index
+                    ? "text-primary bg-white"
+                    : "text-[#A9A9A9]"
+                } ${
+                  index === 0
                     ? "rounded-l-xl"
                     : index === childrenNames.length - 1
-                      ? "rounded-r-xl"
-                      : ""
-                  }`}
+                    ? "rounded-r-xl"
+                    : ""
+                }`}
               >
                 <h3>{childName}</h3>
               </div>
@@ -103,7 +104,7 @@ const UserList = () => {
             <Paginator
               totalPages={totalPages}
               currentPage={currentPage}
-              handlePageChange={page => handlePageChange(page)}
+              handlePageChange={(page) => handlePageChange(page)}
             />
           </div>
           <button className="bg-[#F0E6FC] rounded text-primary flex gap-3 items-center px-3 h-10">
@@ -115,67 +116,93 @@ const UserList = () => {
           <table className="w-full">
             <thead className="w-full bg-[#F3F7FC] h-14">
               <tr className="text-[#3A3A3A] font-medium text-[0.75rem] leading-[1.125rem]">
-                <th scope="col" className="text-left px-4">Tax Payer ID</th>
-                <th scope="col" className="text-left px-4">Name</th>
-                <th scope="col" className="text-left px-4">Email</th>
-                <th scope="col" className="text-left px-4">User Type</th>
-                <th scope="col" className="text-left px-4">Status</th>
-                <th scope="col" className="text-left px-4">Actions</th>
+                <th scope="col" className="text-left px-4">
+                  Tax Payer ID
+                </th>
+                <th scope="col" className="text-left px-4">
+                  Name
+                </th>
+                <th scope="col" className="text-left px-4">
+                  Email
+                </th>
+                <th scope="col" className="text-left px-4">
+                  User Type
+                </th>
+                <th scope="col" className="text-left px-4">
+                  Status
+                </th>
+                <th scope="col" className="text-left px-4">
+                  Actions
+                </th>
               </tr>
             </thead>
             <tbody>
-              {!loading && data.data.slice(0, expanded ? data.data.length : 5).map((user, i) => {
-
-                return (
-                  <tr
-                    key={i}
-                    className="odd:bg-white even:bg-slate-50 text-[#3A3A3A] text-[0.75rem] leading-[1.125rem] justify-around"
-                  >
-                    <td className="p-4">{user.id}</td>
-                    <td className="p-4">{user.name}</td>
-                    <td className="p-4">{user.email}</td>
-                    <td className="p-4">{user.role}</td>
-                    <td className="p-4">
-                      <StatusContainer
-                        text={user.status === "false" ? "Inactive" : "Active"}
-                        status={user.status === "false" ? STATE_PENDING : STATE_SUCCESS}
-                      />
-                    </td>
-                    <td className="flex gap-1 p-4">
-                      <div
-                        onClick={() => {
-                          setCurrentUser({
-                            email: user.email,
-                            name: user.name,
-                            phoneNumber: user.phone,
-                            registrationDate: user.createdAt,
-                            status: user.status === "false" ? STATE_PENDING : STATE_SUCCESS,
-                            statusText: user.status === "false" ? "Inactive" : "Active",
-                            taxPayerID: user.id,
-                            userType: user.role,
-                          });
-                          open();
-                        }}
-                        className="cursor-pointer bg-[#FCEAE8] rounded size-6 grid place-content-center text-[#292D32]"
+              {!loading &&
+                data.data
+                  .slice(0, expanded ? data.data.length : 10)
+                  .map((user, i) => {
+                    return (
+                      <tr
+                        key={i}
+                        className="odd:bg-white even:bg-slate-50 text-[#3A3A3A] text-[0.75rem] leading-[1.125rem] justify-around"
                       >
-                        <IoEye size={16} />
-                      </div>
-                    </td>
-                  </tr>
-                );
-              })}
+                        <td className="p-4">{user.id}</td>
+                        <td className="p-4">{user.name}</td>
+                        <td className="p-4">{user.email}</td>
+                        <td className="p-4">{user.role}</td>
+                        <td className="p-4">
+                          <StatusContainer
+                            text={
+                              user.status === "false" ? "Inactive" : "Active"
+                            }
+                            status={
+                              user.status === "false"
+                                ? STATE_PENDING
+                                : STATE_SUCCESS
+                            }
+                          />
+                        </td>
+                        <td className="flex gap-1 p-4">
+                          <div
+                            onClick={() => {
+                              setCurrentUser({
+                                email: user.email,
+                                name: user.name,
+                                phoneNumber: user.phone,
+                                registrationDate: user.createdAt,
+                                status:
+                                  user.status === "false"
+                                    ? STATE_PENDING
+                                    : STATE_SUCCESS,
+                                statusText:
+                                  user.status === "false"
+                                    ? "Inactive"
+                                    : "Active",
+                                taxPayerID: user.id,
+                                userType: user.role,
+                              });
+                              open();
+                            }}
+                            className="cursor-pointer bg-[#FCEAE8] rounded size-6 grid place-content-center text-[#292D32]"
+                          >
+                            <IoEye size={16} />
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  })}
             </tbody>
           </table>
-          {
-            loading && <div className="w-full h-60 grid place-content-center">
+          {loading && (
+            <div className="w-full h-60 grid place-content-center">
               <Loader color="primary.6" />
             </div>
-          }
-          {
-            !loading && data.data.length === 0 && <div className="w-full h-60 grid place-content-center text-[#3A3A3A] font-medium text-[1rem] leading-[1.125rem]">
+          )}
+          {!loading && data.data.length === 0 && (
+            <div className="w-full h-60 grid place-content-center text-[#3A3A3A] font-medium text-[1rem] leading-[1.125rem]">
               No users available
             </div>
-          }
+          )}
         </div>
       </div>
       {currentUser !== null && (

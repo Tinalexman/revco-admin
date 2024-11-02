@@ -29,18 +29,18 @@ const Details = () => {
   const personItems: iPersonItem[] = [
     {
       title: "Total Tax Payers",
-      value: userActivity?.taxpayers || 0,
+      value: userActivity.taxpayers,
       icon: <Profile size={20} className="text-primary" variant="Bold" />,
-      individual: userActivity?.individuals || 0,
-      corporate: userActivity?.corporations || 0,
+      individual: userActivity.individuals,
+      corporate: userActivity.corporations,
       background: TaxPayersImage,
     },
     {
       title: "New Sign-ups",
-      value: userActivity?.newSignUps || 0,
+      value: userActivity.newSignUps,
       icon: <Profile2User size={20} className="text-primary" variant="Bold" />,
-      individual: userActivity?.nsIndividual || 0,
-      corporate: userActivity?.nsCorporations || 0,
+      individual: userActivity.nsIndividual,
+      corporate: userActivity.nsCorporations,
       background: TotalUsersImage,
     },
   ];

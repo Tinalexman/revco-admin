@@ -77,6 +77,42 @@ export const useGetMDAs = () => {
   };
 };
 
+export const useGetMDAOffices = () => {
+  const [loading, setLoading] = useState<boolean>(false);
+  const [data, setData] = useState<any[]>([]);
+  const [success, setSuccess] = useState<boolean>(false);
+  const { requestApi } = useAxios();
+
+  let getMDAOffices = async (mdaId: number) => {
+    if (loading) return;
+    setLoading(true);
+
+    const { data, status } = await requestApi(
+      `/mda/mdaoffices?mda_id=${mdaId}&per_page=50`,
+      "GET",
+      {}
+    );
+
+    setLoading(false);
+    setSuccess(status);
+
+    if (!status) {
+      toast.error(
+        data?.response?.data?.data ?? "An error occurred. Please try again"
+      );
+    } else {
+      setData(data.data.data);
+    }
+  };
+
+  return {
+    loading,
+    data,
+    success,
+    getMDAOffices,
+  };
+};
+
 export const useGetMDAServices = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [data, setData] = useState<iMdaService[]>([]);
@@ -143,6 +179,39 @@ export const useGetProjectHeads = () => {
 
   useEffect(() => {
     getProjectHeads();
+  }, []);
+
+  return {
+    loading,
+    data,
+    success,
+  };
+};
+
+export const useGetAllUserRoles = () => {
+  const [loading, setLoading] = useState<boolean>(false);
+  const [data, setData] = useState<string[]>([]);
+  const [success, setSuccess] = useState<boolean>(false);
+  const { requestApi } = useAxios();
+
+  let getUserRoles = async () => {
+    if (loading) return;
+    setLoading(true);
+
+    const { data, status } = await requestApi(`/auth/roles`, "GET", {});
+
+    setLoading(false);
+    setSuccess(status);
+
+    if (!status) {
+      toast.error("An error occurred. Please try again");
+    } else {
+      setData(data);
+    }
+  };
+
+  useEffect(() => {
+    getUserRoles();
   }, []);
 
   return {

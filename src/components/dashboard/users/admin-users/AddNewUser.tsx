@@ -1,23 +1,46 @@
-import React, { FC, useState } from "react";
+import React, { FC, useEffect, useState } from "react";
 import { IoClose } from "react-icons/io5";
 import { Form, Formik } from "formik";
 import Dropdown from "@/components/reusable/Dropdown";
 import CustomCheckbox from "@/components/reusable/CustomCheckbox";
+import {
+  unformatNumberWithThreesAndFours,
+  formatNumberWithThreesAndFours,
+} from "@/functions/numberFunctions";
+import {
+  useGetAllUserRoles,
+  useGetMDAOffices,
+  useGetMDAs,
+  useGetProjectHeads,
+} from "@/hooks/otherHooks";
+import { useCreateUser } from "@/hooks/userHooks";
+import { Loader } from "@mantine/core";
 
-interface iAddUser {
-  name: string;
-  email: string;
-  password: string;
-  role: string;
-}
+const AddNewUser: FC<{ onClose: () => void; onCreate: () => void }> = ({
+  onClose,
+  onCreate,
+}) => {
+  const [projectId, setProjectId] = useState<number>(-1);
+  const [mdaId, setMDAId] = useState<number>(-1);
+  const [mdaOfficeId, setMDAOfficeId] = useState<number>(-1);
 
-const AddNewUser: FC<{ onClose: () => void }> = ({ onClose }) => {
-  const [permissions, setPermissions] = useState<string[]>([]);
-  const allPermissions: string[] = [
-    "Access Dashboard",
-    "Make Payments",
-    "View Reports",
-  ];
+  const { loading: loadingGetMDAs, data: mdas, getMDA } = useGetMDAs();
+  const { data: projectHeads, loading: loadingProjectHeads } =
+    useGetProjectHeads();
+  const {
+    data: mdaOffices,
+    loading: loadingMDAOffices,
+    getMDAOffices,
+  } = useGetMDAOffices();
+  const { data: userRoles, loading: loadingUserRoles } = useGetAllUserRoles();
+
+  const { loading: loadingCreateUser, createUser, success } = useCreateUser();
+
+  useEffect(() => {
+    if (!loadingCreateUser && success) {
+      onCreate();
+    }
+  }, [loadingCreateUser, success]);
 
   return (
     <div className="w-full bg-[#FEFEFE] pt-8 pb-12 flex flex-col items-center gap-6 overflow-y-scroll scrollbar-custom">
@@ -36,15 +59,46 @@ const AddNewUser: FC<{ onClose: () => void }> = ({ onClose }) => {
         initialValues={{
           name: "",
           email: "",
-          password: "",
+          phone: "",
           role: "",
+          project: "",
+          mda: "",
+          mdaOffice: "",
         }}
         validate={(values) => {
-          const errors: Partial<iAddUser> = {};
-
+          const errors: any = {};
+          if (!values.name) errors.name = "Required";
+          else if (values.name.split(" ").length < 2)
+            errors.name = "First Name and Last Name required";
+          if (!values.email) errors.email = "Required";
+          if (!values.phone) errors.phone = "Required";
+          if (!values.mda) errors.mda = "Required";
+          if (!values.mdaOffice) errors.mdaOffice = "Required";
+          if (!values.role) errors.role = "Required";
+          if (!values.project) errors.project = "Required";
           return errors;
         }}
-        onSubmit={async (values, { setSubmitting }) => {}}
+        onSubmit={async (values, { setSubmitting }) => {
+          setSubmitting(false);
+          const names = values.name.split(" ");
+          createUser({
+            firstName: names[0],
+            lastName: names[1],
+            email: values.email,
+            phone: unformatNumberWithThreesAndFours(values.phone),
+            role: values.role,
+            userMda: {
+              mdaId: mdaId,
+              mdaOfficeId: mdaOfficeId,
+              collectionLimit: 5000.0,
+              canCollect: true,
+              permissions: null,
+            },
+            project: {
+              projectId: projectId,
+            },
+          });
+        }}
       >
         {({
           values,
@@ -99,89 +153,120 @@ const AddNewUser: FC<{ onClose: () => void }> = ({ onClose }) => {
                 <p className="text-err">{errors.email}</p>
               )}
             </div>
+            <div className="flex flex-col gap-0.5 w-full px-5 mt-4">
+              <h3 className="text-reg-caption font-medium text-[#111213]">
+                Phone
+              </h3>
+              <input
+                type="tel"
+                name="phone"
+                value={values.phone}
+                onChange={(e) => {
+                  const res = unformatNumberWithThreesAndFours(e.target.value);
+                  if (isNaN(Number(res))) return;
+                  setFieldValue("phone", formatNumberWithThreesAndFours(res));
+                }}
+                placeholder="e.g 080 1234 5678"
+                className="px-4 drawer-input "
+              />
+              {errors.phone && touched.phone && (
+                <p className="text-err">{errors.phone}</p>
+              )}
+            </div>
             <div className="w-full bg-[#F6F6F7] h-10 flex items-center pl-5 mt-4 text-[#595959] text-reg-caption font-medium">
               Account Settings
             </div>
 
             <div className="flex flex-col gap-0.5 w-full px-5 mt-4">
               <h3 className="text-reg-caption font-medium text-[#111213]">
-                Password
-              </h3>
-              <div className="w-full flex gap-1">
-                <div className="flex flex-col gap-0.5 w-full">
-                  <input
-                    type="text"
-                    name="password"
-                    value={values.password}
-                    onChange={handleChange}
-                    placeholder="*********"
-                    className="px-4 drawer-input "
-                  />
-                  {errors.password && touched.password && (
-                    <p className="text-err">{errors.password}</p>
-                  )}
-                </div>
-                <button className="text-white w-[250px] text-reg-caption bg-[#EB5757] h-10 flex justify-center gap-2 items-center rounded-lg">
-                  Generate Password
-                </button>
-              </div>
-            </div>
-
-            <div className="flex flex-col gap-0.5 w-full px-5 mt-2">
-              <h3 className="text-reg-caption font-medium text-[#111213]">
-                User Role
+                Project Type
               </h3>
               <div className="w-full h-10">
                 <Dropdown
-                  value={values.role}
-                  menus={[
-                    "Board Chairman",
-                    "Revenue Staff",
-                    "Bank Staff",
-                    "State Governor",
-                  ].map((v) => ({
-                    name: v,
+                  value={values.project}
+                  menus={projectHeads.map((v) => ({
+                    name: v.projectName,
                     onClick: () => {
-                      setFieldValue("role", v);
+                      setFieldValue("project", v.projectName);
+                      setProjectId(v.projectId);
+                      getMDA(v.projectId);
                     },
                   }))}
-                  hint="Select User Role"
+                  loading={loadingProjectHeads}
+                  hint="Select Project Type"
                 />
               </div>
-              {errors.role && <p className="text-err">{errors.role}</p>}
+              {errors.project && <p className="text-err">{errors.project}</p>}
             </div>
-            <div className="w-full bg-[#F6F6F7] h-10 flex items-center pl-5 mt-4 text-[#595959] text-reg-caption font-medium">
-              Permissions
-            </div>
-            <div className="px-5 mt-2 flex flex-col gap-2">
-              {allPermissions.map((permission, i) => {
-                const isSelected: boolean =
-                  permissions.indexOf(permission) !== -1;
 
-                return (
-                  <div
-                    key={i}
-                    className="w-full flex py-1 px-2 items-center justify-between"
-                  >
-                    <p className="text-reg-body-2 text-[#3A3A3A]">
-                      {permission}
-                    </p>
-                    <CustomCheckbox
-                      value={isSelected}
-                      onChange={() => {
-                        if (isSelected) {
-                          setPermissions(
-                            permissions.filter((p) => p !== permission)
-                          );
-                        } else {
-                          setPermissions([...permissions, permission]);
-                        }
-                      }}
+            {projectId !== -1 && (
+              <>
+                <div className="flex flex-col gap-0.5 w-full px-5 mt-2">
+                  <h3 className="text-reg-caption font-medium text-[#111213]">
+                    User Role
+                  </h3>
+                  <div className="w-full h-10">
+                    <Dropdown
+                      value={values.role}
+                      menus={userRoles.map((v) => ({
+                        name: v,
+                        onClick: () => {
+                          setFieldValue("role", v);
+                        },
+                      }))}
+                      loading={loadingUserRoles}
+                      hint="Select User Role"
                     />
                   </div>
-                );
-              })}
-            </div>
+                  {errors.role && <p className="text-err">{errors.role}</p>}
+                </div>
+
+                <div className="flex flex-col gap-0.5 w-full px-5 mt-4">
+                  <h3 className="text-reg-caption font-medium text-[#111213]">
+                    MDA
+                  </h3>
+                  <div className="w-full h-10">
+                    <Dropdown
+                      value={values.mda}
+                      menus={mdas.map((v) => ({
+                        name: v.name,
+                        onClick: () => {
+                          setFieldValue("mda", v.name);
+                          setMDAId(v.id);
+                          getMDAOffices(v.id);
+                        },
+                      }))}
+                      hint="Select MDA"
+                      loading={loadingGetMDAs}
+                    />
+                  </div>
+                  {errors.mda && <p className="text-err">{errors.mda}</p>}
+                </div>
+
+                <div className="flex flex-col gap-0.5 w-full px-5 mt-4">
+                  <h3 className="text-reg-caption font-medium text-[#111213]">
+                    MDA Office
+                  </h3>
+                  <div className="w-full h-10">
+                    <Dropdown
+                      value={values.mdaOffice}
+                      menus={mdaOffices.map((v) => ({
+                        name: v.name,
+                        onClick: () => {
+                          setFieldValue("mdaOffice", v.name);
+                          setMDAOfficeId(v.id);
+                        },
+                      }))}
+                      hint="Select MDA Office"
+                      loading={loadingMDAOffices}
+                    />
+                  </div>
+                  {errors.mdaOffice && (
+                    <p className="text-err">{errors.mdaOffice}</p>
+                  )}
+                </div>
+              </>
+            )}
 
             <div className="w-full flex justify-between items-center px-5 mt-10">
               <button
@@ -191,10 +276,14 @@ const AddNewUser: FC<{ onClose: () => void }> = ({ onClose }) => {
                 Cancel
               </button>
               <button
-                onClick={onClose}
+                type="submit"
                 className="text-white w-[48%] bg-primary h-10 flex justify-center gap-2 items-center rounded-lg"
               >
-                Send Invite
+                {loadingCreateUser ? (
+                  <Loader color="white.6" size={24} />
+                ) : (
+                  "Create"
+                )}
               </button>
             </div>
           </Form>

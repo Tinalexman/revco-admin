@@ -347,17 +347,24 @@ export const useGetMetrics = () => {
 export const useGetUserActivity = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [success, setSuccess] = useState<boolean>(false);
-  const [data, setData] = useState<iUserActivityResponse | null>(null);
+  const [data, setData] = useState<iUserActivityResponse>({
+    corporations: 0,
+    individuals: 0,
+    newSignUps: 0,
+    nsCorporations: 0,
+    nsIndividual: 0,
+    taxpayers: 0,
+  });
   const { requestApi } = useAxios();
   const token = useToken().getToken();
 
-  let getActivity = async (start: string, end: string) => {
+  let getActivity = async () => {
     if (loading) return;
 
     setLoading(true);
 
     const { data, status } = await requestApi(
-      `/mda-report/user-activity?from=${start}&to=${end}`,
+      `/mda-report/user-activity`,
       "GET",
       {},
       {
@@ -379,8 +386,7 @@ export const useGetUserActivity = () => {
 
   useEffect(() => {
     if (token) {
-      const currentDate = new Date().toISOString().split("T")[0];
-      getActivity(currentDate, currentDate);
+      getActivity();
     }
   }, [token]);
 
