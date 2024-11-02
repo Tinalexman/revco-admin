@@ -1,8 +1,9 @@
-import React, { FC } from "react";
-import { Modal } from "@mantine/core";
+import React, { FC, useEffect, useState } from "react";
+import { Drawer, Loader } from "@mantine/core";
 import { IoClose } from "react-icons/io5";
 import { Form, Formik } from "formik";
 import Dropdown from "@/components/reusable/Dropdown";
+import { useCreateDispute, useGetAllAgents } from "@/hooks/supportHooks";
 
 interface iCreateTicket {
   username: string;
@@ -10,21 +11,37 @@ interface iCreateTicket {
   category: string;
   priority: string;
   agent: string;
+  status: string;
 }
 
-const CreateNewTicket: FC<{ close: () => void }> = ({ close }) => {
+const CreateNewTicket: FC<{ close: () => void; onCreate: () => void }> = ({
+  close,
+  onCreate,
+}) => {
+  const { loading, success, createDispute } = useCreateDispute();
+  const { loading: loadingAgents, data: agents } = useGetAllAgents();
+  const [agentId, setAgentId] = useState<number>(-1);
+
+  useEffect(() => {
+    if (!loading && success) {
+      onCreate();
+    }
+  }, [loading, success]);
+
   return (
-    <Modal.Root
+    <Drawer.Root
       opened={true}
       onClose={close}
-      centered
+      position="right"
       padding={0}
       top={0}
       radius={12}
+      closeOnClickOutside={false}
+      closeOnEscape={false}
     >
-      <Modal.Overlay />
-      <Modal.Content>
-        <Modal.Body>
+      <Drawer.Overlay />
+      <Drawer.Content>
+        <Drawer.Body>
           <div className="w-full bg-white flex flex-col p-6 gap-6 overflow-y-auto scrollbar-custom">
             <div className="w-full py-2 flex justify-between items-center">
               <h2 className="text-black font-semibold text-[1.25rem] leading-[1.5rem]">
@@ -44,13 +61,30 @@ const CreateNewTicket: FC<{ close: () => void }> = ({ close }) => {
                 category: "",
                 priority: "",
                 agent: "",
+                status: "",
               }}
               validate={(values) => {
                 const errors: Partial<iCreateTicket> = {};
+                if (!values.username) errors.username = "Required";
+                if (!values.description) errors.description = "Required";
+                if (!values.category) errors.category = "Required";
+                if (!values.priority) errors.priority = "Required";
+                if (!values.agent) errors.agent = "Required";
+                if (!values.status) errors.status = "Required";
 
                 return errors;
               }}
-              onSubmit={async (values, { setSubmitting }) => {}}
+              onSubmit={async (values, { setSubmitting }) => {
+                setSubmitting(false);
+                createDispute({
+                  username: values.username,
+                  description: values.description,
+                  category: values.category.toUpperCase().replaceAll(" ", "_"),
+                  priority: values.priority.toUpperCase(),
+                  agentAssignedTo: agentId,
+                  status: values.status.toUpperCase().replaceAll(" ", "_"),
+                });
+              }}
             >
               {({
                 values,
@@ -149,15 +183,46 @@ const CreateNewTicket: FC<{ close: () => void }> = ({ close }) => {
 
                   <div className="flex flex-col gap-0.5 w-full">
                     <h3 className="text-reg-caption font-medium text-[#111213]">
+                      Status
+                    </h3>
+                    <div className="w-full h-10">
+                      <Dropdown
+                        value={values.status}
+                        menus={[
+                          "In Progress",
+                          "Resolved",
+                          "Open",
+                          "Closed",
+                          "Reopened",
+                        ].map((v) => ({
+                          name: v,
+                          onClick: () => {
+                            setFieldValue("status", v);
+                          },
+                        }))}
+                        hint="Select Status"
+                      />
+                    </div>
+                    {errors.status && (
+                      <p className="text-err">{errors.status}</p>
+                    )}
+                  </div>
+
+                  <div className="flex flex-col gap-0.5 w-full">
+                    <h3 className="text-reg-caption font-medium text-[#111213]">
                       Assign to Agent
                     </h3>
                     <div className="w-full h-10">
                       <Dropdown
                         value={values.agent}
-                        menus={[].map((v) => ({
-                          name: v,
+                        menus={agents.map((v) => ({
+                          name: `${v.firstName} ${v.lastName}`,
                           onClick: () => {
-                            setFieldValue("agent", v);
+                            setFieldValue(
+                              "agent",
+                              `${v.firstName} ${v.lastName}`
+                            );
+                            setAgentId(v.id);
                           },
                         }))}
                         hint="List of available agents"
@@ -174,19 +239,23 @@ const CreateNewTicket: FC<{ close: () => void }> = ({ close }) => {
                       Cancel
                     </button>
                     <button
-                      onClick={close}
+                      type="submit"
                       className="text-white w-[48%] bg-primary h-10 flex justify-center gap-2 items-center rounded-lg"
                     >
-                      Save
+                      {loading ? (
+                        <Loader color="white.6" size={24} />
+                      ) : (
+                        "Create"
+                      )}
                     </button>
                   </div>
                 </Form>
               )}
             </Formik>
           </div>
-        </Modal.Body>
-      </Modal.Content>
-    </Modal.Root>
+        </Drawer.Body>
+      </Drawer.Content>
+    </Drawer.Root>
   );
 };
 

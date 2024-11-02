@@ -17,60 +17,21 @@ import { IoIosArrowDown } from "react-icons/io";
 import { FaFileCircleXmark, FaUserCheck } from "react-icons/fa6";
 import CreateNewTicket from "./CreateNewTicket";
 import CloseTicket from "./CloseTicket";
-
-interface iSupportIssue {
-  ticketNumber: string;
-  username: string;
-  issue: string;
-  category: string;
-  priority: string;
-  statusText: string;
-  status: string;
-}
+import { useGetAllDisputes } from "@/hooks/supportHooks";
+import Paginator from "@/components/reusable/paginator/Paginator";
 
 const Support = () => {
   const [openedNewTicket, shouldOpenNewTicket] = useState(false);
   const [openedCloseTicket, shouldCloseTicket] = useState(false);
   const [expanded, setExpanded] = useState<boolean>(false);
+  const { loading, data: issues, getDisputes } = useGetAllDisputes();
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const totalPages = Math.ceil(issues.count / 50);
 
-  const [issues, setIssues] = useState<iSupportIssue[]>([
-    {
-      ticketNumber: "0192234",
-      username: "John Adebayo",
-      issue: "Unable to process payment",
-      category: "Payment Issue",
-      priority: "High",
-      status: STATE_PENDING,
-      statusText: "In progress",
-    },
-    {
-      ticketNumber: "0192234",
-      username: "John Adebayo",
-      issue: "Unable to process payment",
-      category: "Payment Issue",
-      priority: "High",
-      status: STATE_SUCCESS,
-      statusText: "Resolved",
-    },
-    {
-      ticketNumber: "0192234",
-      username: "John Adebayo",
-      issue: "Unable to process payment",
-      category: "Payment Issue",
-      priority: "High",
-      status: STATE_NULL,
-      statusText: "Closed",
-    },
-    {
-      ticketNumber: "0192234",
-      username: "John Adebayo",
-      issue: "Unable to process payment",
-      category: "Payment Issue",
-      priority: "High",
-      status: STATE_ERROR,
-      statusText: "Open",
-    },
-  ]);
+  function handlePageChange(page: number) {
+    setCurrentPage(page);
+    getDisputes(page);
+  }
 
   return (
     <>
@@ -107,6 +68,13 @@ const Support = () => {
             </div>
             <div className="w-full justify-between items-center flex">
               <Filters />
+              <div className="w-[35%]">
+                <Paginator
+                  totalPages={totalPages}
+                  currentPage={currentPage}
+                  handlePageChange={(page) => handlePageChange(page)}
+                />
+              </div>
               <button className="bg-[#F0E6FC] rounded text-primary flex gap-3 items-center px-3 h-10">
                 <p className="text-[0.815rem] leading-[0.975rem]">Export</p>
                 <IoIosArrowDown />
@@ -140,39 +108,51 @@ const Support = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {issues.map((issue, i) => (
-                    <tr
-                      key={i}
-                      className="odd:bg-white even:bg-slate-50 text-[#3A3A3A] text-[0.75rem] leading-[1.125rem] justify-around"
-                    >
-                      <td className="p-4">{issue.ticketNumber}</td>
-                      <td className="p-4">{issue.username}</td>
-                      <td className="p-4">{issue.issue}</td>
-                      <td className="p-4">{issue.category}</td>
-                      <td className="p-4">{issue.priority}</td>
-                      <td className="p-4">
-                        <StatusContainer
-                          status={issue.status}
-                          text={issue.statusText}
-                        />
-                      </td>
-
-                      <td className="p-4 flex gap-1 w-fit items-center">
-                        <div className="cursor-pointer bg-[#FCEAE8] rounded size-6 grid place-content-center text-[#292D32]">
-                          <IoEye size={16} />
-                        </div>
-                        <div className="cursor-pointer bg-[#E4ECF7] rounded size-6 grid place-content-center text-[#292D32]">
-                          <FaUserCheck size={16} />
-                        </div>
-                        <div
-                          onClick={() => shouldCloseTicket(true)}
-                          className="cursor-pointer bg-[#FDC6C6] rounded size-6 grid place-content-center text-[#292D32]"
+                  {!loading &&
+                    issues.data
+                      .slice(0, expanded ? issues.data.length : 10)
+                      .map((issue, i) => (
+                        <tr
+                          key={i}
+                          className="odd:bg-white even:bg-slate-50 text-[#3A3A3A] text-[0.75rem] leading-[1.125rem] justify-around"
                         >
-                          <FaFileCircleXmark size={16} />
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
+                          <td className="p-4">{issue.ticketNumber}</td>
+                          <td className="p-4">{issue.username}</td>
+                          <td className="p-4">{issue.description}</td>
+                          <td className="p-4">{issue.category}</td>
+                          <td className="p-4">{issue.priority}</td>
+                          <td className="p-4">
+                            <StatusContainer
+                              status={
+                                issue.status === "IN_PROGRESS"
+                                  ? STATE_PENDING
+                                  : issue.status === "CLOSED" ||
+                                    issue.status === "RESOLVED"
+                                  ? STATE_SUCCESS
+                                  : issue.status === "REOPENED"
+                                  ? STATE_NULL
+                                  : STATE_ERROR
+                              }
+                              text={issue.status}
+                            />
+                          </td>
+
+                          <td className="p-4 flex gap-1 w-fit items-center">
+                            <div className="cursor-pointer bg-[#FCEAE8] rounded size-6 grid place-content-center text-[#292D32]">
+                              <IoEye size={16} />
+                            </div>
+                            <div className="cursor-pointer bg-[#E4ECF7] rounded size-6 grid place-content-center text-[#292D32]">
+                              <FaUserCheck size={16} />
+                            </div>
+                            <div
+                              onClick={() => shouldCloseTicket(true)}
+                              className="cursor-pointer bg-[#FDC6C6] rounded size-6 grid place-content-center text-[#292D32]"
+                            >
+                              <FaFileCircleXmark size={16} />
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
                 </tbody>
               </table>
             </div>
@@ -180,7 +160,13 @@ const Support = () => {
         </div>
       </div>
       {openedNewTicket && (
-        <CreateNewTicket close={() => shouldOpenNewTicket(false)} />
+        <CreateNewTicket
+          close={() => shouldOpenNewTicket(false)}
+          onCreate={() => {
+            shouldOpenNewTicket(false);
+            window.location.reload();
+          }}
+        />
       )}
       {openedCloseTicket && (
         <CloseTicket close={() => shouldCloseTicket(false)} />
