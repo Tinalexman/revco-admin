@@ -1,5 +1,5 @@
-import React, { FC } from "react";
-import { Modal } from "@mantine/core";
+import React, { FC, useEffect } from "react";
+import { Drawer, Loader } from "@mantine/core";
 import { IoClose } from "react-icons/io5";
 import { useFormik } from "formik";
 import Dropdown from "@/components/reusable/Dropdown";
@@ -7,6 +7,8 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { Calendar } from "iconsax-react";
 import { convertDateWithDayAndMonth } from "@/functions/dateFunctions";
+import { useCreateReport, useGetReportTypes } from "@/hooks/reportHooks";
+import toast from "react-hot-toast";
 
 interface iCreateReport {
   name: string;
@@ -15,28 +17,41 @@ interface iCreateReport {
   endDate: string;
 }
 
-const CreateReport: FC<{ close: () => void }> = ({ close }) => {
+const CreateReport: FC<{ create: () => void; close: () => void }> = ({
+  create,
+  close,
+}) => {
+  const { loading: loadingTypes, data: reportTypes } = useGetReportTypes();
   const {
-    values,
-    errors,
-    touched,
-    handleChange,
-    handleBlur,
-    handleSubmit,
-    isSubmitting,
-    isValid,
-    setSubmitting,
-    setFieldValue,
-  } = useFormik<iCreateReport>({
-    initialValues: {
-      name: "",
-      type: "",
-      startDate: new Date().toISOString().split("T")[0],
-      endDate: new Date().toISOString().split("T")[0],
-    },
-    validate: (values) => {},
-    onSubmit: (values, { setSubmitting }) => {},
-  });
+    loading: loadingCreateReport,
+    createReport,
+    success,
+  } = useCreateReport();
+
+  const { values, errors, touched, handleChange, handleSubmit, setFieldValue } =
+    useFormik<iCreateReport>({
+      initialValues: {
+        name: "",
+        type: "",
+        startDate: new Date().toISOString().split("T")[0],
+        endDate: new Date().toISOString().split("T")[0],
+      },
+      validate: (values) => {
+        const errors: Partial<iCreateReport> = {};
+        if (!values.name) errors.name = "Required";
+        if (!values.type) errors.type = "Required";
+        return errors;
+      },
+      onSubmit: (values, { setSubmitting }) => {
+        setSubmitting(false);
+        createReport({
+          from: values.startDate,
+          to: values.endDate,
+          reportName: values.name,
+          reportTypes: values.type,
+        });
+      },
+    });
 
   const handleStartDateChange = (dates: Date[] | null) => {
     if (dates) {
@@ -44,7 +59,7 @@ const CreateReport: FC<{ close: () => void }> = ({ close }) => {
       const endDate = new Date(values.endDate);
 
       if (startDate > endDate) {
-        // toast.error("Start date cannot be after the end date");
+        toast.error("Start date cannot be after the end date");
         return;
       }
 
@@ -58,7 +73,7 @@ const CreateReport: FC<{ close: () => void }> = ({ close }) => {
       const startDate = new Date(values.startDate);
 
       if (endDate < startDate) {
-        // toast.error("End date cannot be before the start date");
+        toast.error("End date cannot be before the start date");
         return;
       }
 
@@ -66,22 +81,30 @@ const CreateReport: FC<{ close: () => void }> = ({ close }) => {
     }
   };
 
+  useEffect(() => {
+    if (!loadingCreateReport && success) {
+      create();
+    }
+  }, [loadingCreateReport, success]);
+
   return (
-    <Modal.Root
+    <Drawer.Root
       opened={true}
       onClose={close}
-      centered
+      position="right"
       padding={0}
       top={0}
       radius={12}
+      closeOnClickOutside={false}
+      closeOnEscape={false}
     >
-      <Modal.Overlay />
-      <Modal.Content>
-        <Modal.Body>
+      <Drawer.Overlay />
+      <Drawer.Content>
+        <Drawer.Body>
           <div className="w-full bg-white flex flex-col p-6 gap-6 overflow-y-auto scrollbar-custom">
             <div className="w-full py-2 flex justify-between items-center">
               <h2 className="text-black font-semibold text-[1.25rem] leading-[1.5rem]">
-                Create New Ticket
+                Create New Report
               </h2>
               <div
                 className="cursor-pointer text-black size-9 grid place-content-center rounded bg-[#F6F6F7]"
@@ -117,12 +140,13 @@ const CreateReport: FC<{ close: () => void }> = ({ close }) => {
                 <div className="w-full h-10">
                   <Dropdown
                     value={values.type}
-                    menus={["Transaction", "Payment", "Refund"].map((v) => ({
+                    menus={reportTypes.map((v) => ({
                       name: v,
                       onClick: () => {
                         setFieldValue("type", v);
                       },
                     }))}
+                    loading={loadingTypes}
                     hint="Select Report Type"
                   />
                 </div>
@@ -166,7 +190,6 @@ const CreateReport: FC<{ close: () => void }> = ({ close }) => {
                   />
                 </div>
               </div>
-
               <div className="w-full flex justify-between items-center">
                 <button
                   onClick={close}
@@ -175,17 +198,21 @@ const CreateReport: FC<{ close: () => void }> = ({ close }) => {
                   Cancel
                 </button>
                 <button
-                  onClick={close}
+                  type="submit"
                   className="text-white w-[48%] bg-primary h-10 flex justify-center gap-2 items-center rounded-lg"
                 >
-                  Generate
+                  {loadingCreateReport ? (
+                    <Loader color="white.6" size={24} />
+                  ) : (
+                    "Generate"
+                  )}
                 </button>
               </div>
             </form>
           </div>
-        </Modal.Body>
-      </Modal.Content>
-    </Modal.Root>
+        </Drawer.Body>
+      </Drawer.Content>
+    </Drawer.Root>
   );
 };
 

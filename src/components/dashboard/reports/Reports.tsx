@@ -17,6 +17,8 @@ import { HiDownload } from "react-icons/hi";
 import { RiDeleteBinFill } from "react-icons/ri";
 import CreateReport from "./CreateReport";
 import DeleteReport from "./DeleteReport";
+import { useGetAllReports } from "@/hooks/reportHooks";
+import { toLeadingCase } from "@/functions/stringFunctions";
 
 interface iReport {
   name: string;
@@ -33,16 +35,7 @@ const Reports = () => {
   const [openedDeleteReport, shouldDeleteReport] = useState(false);
   const [expanded, setExpanded] = useState<boolean>(false);
 
-  const [reports, setReports] = useState<iReport[]>(
-    Array(3).fill({
-      name: "Monthly Transaction Summanry",
-      type: "Transaction Report",
-      startDate: "2024-08-12",
-      endDate: "2024-09-11",
-      status: STATE_SUCCESS,
-      statusText: "Active",
-    })
-  );
+  const { data: reports, loading } = useGetAllReports();
 
   return (
     <>
@@ -78,7 +71,7 @@ const Reports = () => {
               </h2>
             </div>
             <div className="w-full justify-between items-center flex">
-              <Filters />
+              <Filters showDatePicker={false} />
               <button className="bg-[#F0E6FC] rounded text-primary flex gap-3 items-center px-3 h-10">
                 <p className="text-[0.815rem] leading-[0.975rem]">Export</p>
                 <IoIosArrowDown />
@@ -97,10 +90,6 @@ const Reports = () => {
                     <th scope="col" className="text-start px-4">
                       Date Range
                     </th>
-
-                    <th scope="col" className="text-start px-4">
-                      Status
-                    </th>
                     <th scope="col" className="text-start px-4">
                       Actions
                     </th>
@@ -112,16 +101,12 @@ const Reports = () => {
                       key={i}
                       className="odd:bg-white even:bg-slate-50 text-[#3A3A3A] text-[0.75rem] leading-[1.125rem] justify-around"
                     >
-                      <td className="p-4">{report.name}</td>
-                      <td className="p-4">{report.type}</td>
+                      <td className="p-4">{report.reportName}</td>
                       <td className="p-4">
-                        {report.startDate} to {report.endDate}
+                        {toLeadingCase(report.reportType.replaceAll("_", " "))}
                       </td>
                       <td className="p-4">
-                        <StatusContainer
-                          status={report.status}
-                          text={report.statusText}
-                        />
+                        {report.from} to {report.to}
                       </td>
 
                       <td className="p-4 flex gap-1 w-fit items-center">
@@ -147,7 +132,13 @@ const Reports = () => {
         </div>
       </div>
       {openedNewReport && (
-        <CreateReport close={() => shouldOpenNewReport(false)} />
+        <CreateReport
+          close={() => shouldOpenNewReport(false)}
+          create={() => {
+            shouldOpenNewReport(false);
+            window.location.reload();
+          }}
+        />
       )}
       {openedDeleteReport && (
         <DeleteReport close={() => shouldDeleteReport(false)} />

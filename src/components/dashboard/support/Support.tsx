@@ -17,20 +17,31 @@ import { IoIosArrowDown } from "react-icons/io";
 import { FaFileCircleXmark, FaUserCheck } from "react-icons/fa6";
 import CreateNewTicket from "./CreateNewTicket";
 import CloseTicket from "./CloseTicket";
-import { useGetAllDisputes } from "@/hooks/supportHooks";
+import { iDispute, useGetAllDisputes } from "@/hooks/supportHooks";
 import Paginator from "@/components/reusable/paginator/Paginator";
+import ViewTicket from "./ViewTicket";
+import { Loader } from "@mantine/core";
+import { toLeadingCase } from "@/functions/stringFunctions";
+import { iDateRange } from "@/functions/dateFunctions";
 
 const Support = () => {
+  const currentDate = new Date().toISOString().split("T")[0];
   const [openedNewTicket, shouldOpenNewTicket] = useState(false);
   const [openedCloseTicket, shouldCloseTicket] = useState(false);
+  const [dateRange, setDateRange] = useState<iDateRange>({
+    start: currentDate,
+    end: currentDate,
+  });
   const [expanded, setExpanded] = useState<boolean>(false);
   const { loading, data: issues, getDisputes } = useGetAllDisputes();
   const [currentPage, setCurrentPage] = useState<number>(1);
   const totalPages = Math.ceil(issues.count / 50);
 
+  const [currentTicket, setCurrentTicket] = useState<iDispute | null>(null);
+
   function handlePageChange(page: number) {
     setCurrentPage(page);
-    getDisputes(page);
+    getDisputes(page, dateRange.start, dateRange.end);
   }
 
   return (
@@ -67,7 +78,12 @@ const Support = () => {
               </h2>
             </div>
             <div className="w-full justify-between items-center flex">
-              <Filters />
+              <Filters
+                onDatesChanged={(start, end) => {
+                  getDisputes(currentPage, start, end);
+                  setDateRange({ start, end });
+                }}
+              />
               <div className="w-[35%]">
                 <Paginator
                   totalPages={totalPages}
@@ -111,54 +127,85 @@ const Support = () => {
                   {!loading &&
                     issues.data
                       .slice(0, expanded ? issues.data.length : 10)
-                      .map((issue, i) => (
-                        <tr
-                          key={i}
-                          className="odd:bg-white even:bg-slate-50 text-[#3A3A3A] text-[0.75rem] leading-[1.125rem] justify-around"
-                        >
-                          <td className="p-4">{issue.ticketNumber}</td>
-                          <td className="p-4">{issue.username}</td>
-                          <td className="p-4">{issue.description}</td>
-                          <td className="p-4">{issue.category}</td>
-                          <td className="p-4">{issue.priority}</td>
-                          <td className="p-4">
-                            <StatusContainer
-                              status={
-                                issue.status === "IN_PROGRESS"
-                                  ? STATE_PENDING
-                                  : issue.status === "CLOSED" ||
-                                    issue.status === "RESOLVED"
-                                  ? STATE_SUCCESS
-                                  : issue.status === "REOPENED"
-                                  ? STATE_NULL
-                                  : STATE_ERROR
-                              }
-                              text={issue.status}
-                            />
-                          </td>
+                      .map((issue, i) => {
+                        const isTooLong = issue.description.length > 30;
+                        return (
+                          <tr
+                            key={i}
+                            className="odd:bg-white even:bg-slate-50 text-[#3A3A3A] text-[0.75rem] leading-[1.125rem] justify-around"
+                          >
+                            <td className="p-4">{issue.ticketNumber}</td>
+                            <td className="p-4">{issue.username}</td>
+                            <td className="p-4">
+                              {isTooLong
+                                ? issue.description.substring(0, 30)
+                                : issue.description}
+                              {isTooLong && "..."}
+                            </td>
+                            <td className="p-4">
+                              {toLeadingCase(
+                                issue.category.replaceAll("_", " ")
+                              )}
+                            </td>
+                            <td className="p-4">
+                              {toLeadingCase(
+                                issue.priority.replaceAll("_", " ")
+                              )}
+                            </td>
+                            <td className="p-4">
+                              <StatusContainer
+                                status={
+                                  issue.status === "IN_PROGRESS"
+                                    ? STATE_PENDING
+                                    : issue.status === "RESOLVED"
+                                    ? STATE_SUCCESS
+                                    : issue.status === "CLOSED"
+                                    ? STATE_NULL
+                                    : STATE_ERROR
+                                }
+                                text={toLeadingCase(
+                                  issue.status.replaceAll("_", " ")
+                                )}
+                              />
+                            </td>
 
-                          <td className="p-4 flex gap-1 w-fit items-center">
-                            <div className="cursor-pointer bg-[#FCEAE8] rounded size-6 grid place-content-center text-[#292D32]">
-                              <IoEye size={16} />
-                            </div>
-                            <div className="cursor-pointer bg-[#E4ECF7] rounded size-6 grid place-content-center text-[#292D32]">
-                              <FaUserCheck size={16} />
-                            </div>
-                            <div
-                              onClick={() => shouldCloseTicket(true)}
-                              className="cursor-pointer bg-[#FDC6C6] rounded size-6 grid place-content-center text-[#292D32]"
-                            >
-                              <FaFileCircleXmark size={16} />
-                            </div>
-                          </td>
-                        </tr>
-                      ))}
+                            <td className="p-4 flex gap-1 w-fit items-center">
+                              <div
+                                onClick={() => setCurrentTicket(issue)}
+                                className="cursor-pointer bg-[#FCEAE8] rounded size-6 grid place-content-center text-[#292D32]"
+                              >
+                                <IoEye size={16} />
+                              </div>
+                            </td>
+                          </tr>
+                        );
+                      })}
                 </tbody>
               </table>
+              {loading && (
+                <div className="w-full h-60 grid place-content-center">
+                  <Loader color="primary.6" />
+                </div>
+              )}
+              {!loading && issues.data.length === 0 && (
+                <div className="w-full h-60 grid place-content-center text-[#3A3A3A] font-medium text-[1rem] leading-[1.125rem]">
+                  No tickets available
+                </div>
+              )}
             </div>
           </div>
         </div>
       </div>
+      {currentTicket !== null && (
+        <ViewTicket
+          ticket={currentTicket}
+          onClose={() => setCurrentTicket(null)}
+          onChange={() => {
+            setCurrentTicket(null);
+            window.location.reload();
+          }}
+        />
+      )}
       {openedNewTicket && (
         <CreateNewTicket
           close={() => shouldOpenNewTicket(false)}

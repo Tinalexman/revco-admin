@@ -11,6 +11,7 @@ export interface iDispute {
   priority: string;
   status: string;
   agentAssignedTo: number;
+  agentName: string;
   createdAt: string;
   updatedAt: string;
   businessId: number;
@@ -46,12 +47,12 @@ export const useGetAllDisputes = () => {
   const { requestApi } = useAxios();
   const token = useToken().getToken();
 
-  let getDisputes = async (pageNo: number) => {
+  let getDisputes = async (pageNo: number, start: string, end: string) => {
     if (loading) return;
     setLoading(true);
 
     const { data, status } = await requestApi(
-      `/mda-report/support/get?pageNumber=${pageNo}&pageSize=50`,
+      `/mda-report/support/get?pageNumber=${pageNo}&pageSize=50&fromDate=${start}&toDate=${end}`,
       "GET",
       {}
     );
@@ -70,7 +71,8 @@ export const useGetAllDisputes = () => {
 
   useEffect(() => {
     if (token) {
-      getDisputes(1);
+      const currentDate = new Date().toISOString().split("T")[0];
+      getDisputes(1, currentDate, currentDate);
     }
   }, [token]);
 
@@ -161,5 +163,46 @@ export const useGetAllAgents = () => {
     data,
     success,
     getAgents,
+  };
+};
+
+export const changeDisputeStatus = () => {
+  const [loading, setLoading] = useState<boolean>(false);
+  const [success, setSuccess] = useState<boolean>(false);
+  const { requestApi } = useAxios();
+  const token = useToken().getToken();
+
+  let changeStatus = async (
+    ticketNumber: string,
+    ticketStatus: "IN_PROGRESS" | "RESOLVED" | "CLOSED" | "OPEN"
+  ) => {
+    if (loading) return;
+
+    setLoading(true);
+
+    const { data, status } = await requestApi(
+      `/mda-report/support/changeStatus?ticketNumber=${ticketNumber}&status=${ticketStatus}`,
+      "POST",
+      {
+        Authorization: `Bearer ${token}`,
+      }
+    );
+
+    setLoading(false);
+    setSuccess(status);
+
+    if (!status) {
+      toast.error(
+        data?.response?.data?.data ?? "An error occurred. Please try again"
+      );
+    } else {
+      toast.success("Ticked Updated");
+    }
+  };
+
+  return {
+    loading,
+    success,
+    changeStatus,
   };
 };

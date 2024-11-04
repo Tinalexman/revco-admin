@@ -193,7 +193,6 @@ const CreateNewTicket: FC<{ close: () => void; onCreate: () => void }> = ({
                           "Resolved",
                           "Open",
                           "Closed",
-                          "Reopened",
                         ].map((v) => ({
                           name: v,
                           onClick: () => {
