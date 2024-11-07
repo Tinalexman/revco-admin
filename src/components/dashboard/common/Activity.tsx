@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { FC, useState } from "react";
 import Filters from "./Filters";
 import { Drawer } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
@@ -18,9 +18,13 @@ import StatusContainer, {
   STATE_SUCCESS,
 } from "@/components/reusable/StatusContainer";
 
-const Activity = () => {
+const Activity: FC<{ mode?: string | null }> = ({ mode }) => {
   const [expanded, setExpanded] = useState<boolean>(false);
-  const { loading, data: transactions, getActivity } = useGetRecentActivity();
+  const {
+    loading,
+    data: transactions,
+    getActivity,
+  } = useGetRecentActivity(mode);
   const currentDate = new Date().toISOString().split("T")[0];
   const [dateRange, setDateRange] = useState<iDateRange>({
     start: currentDate,

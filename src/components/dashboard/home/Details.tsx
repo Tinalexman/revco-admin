@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { FC, useState } from "react";
 import Dropdown from "../../reusable/Dropdown";
 
 import { Profile } from "iconsax-react";
@@ -38,20 +38,14 @@ interface iDateRange {
   end: string;
 }
 
-const Details = () => {
+const Details: FC<{ mode: string | null }> = ({ mode }) => {
   const [filter, setFilter] = useState<string>("Today");
-  const overviewModes: string[] = [
-    "General Overview",
-    "Informal Sector",
-    "Formal Sector",
-  ];
-  const [activeMode, setActiveMode] = useState<string>(overviewModes[0]);
 
   const {
     loading: loadingSummary,
     getStatisticsSummary,
     data: statsSummary,
-  } = useGetStatisticsSummary();
+  } = useGetStatisticsSummary(mode);
 
   const revenueItems: iRevenueItem[] = [
     {
@@ -80,7 +74,8 @@ const Details = () => {
     },
   ];
 
-  const { data: userActivity, loading: loadingActivity } = useGetUserActivity();
+  const { data: userActivity, loading: loadingActivity } =
+    useGetUserActivity(mode);
 
   const personItem: iPersonItem = {
     title: "Total Tax Payers",
@@ -94,7 +89,7 @@ const Details = () => {
   return (
     <div className="w-full flex flex-col gap-2.5">
       <div className="h-fit py-3 bg-white rounded-xl w-full flex flex-col gap-2 px-7">
-        <div className="w-full flex items-center justify-between border-b border-[#D1D1D6] pb-2">
+        <div className="w-full flex items-center justify-between ">
           <p className="font-semibold text-dash-header text-gray-5">
             Dashboard Overview
           </p>
@@ -112,29 +107,6 @@ const Details = () => {
               hint={"Select"}
             />
           </div>
-        </div>
-        <div className="w-fit bg-[#F1F2F3] rounded-xl py-1 px-1 flex items-center">
-          {overviewModes.map((md, i) => {
-            return (
-              <div
-                onClick={() => {
-                  setActiveMode(md);
-                }}
-                key={i}
-                className={`${
-                  md === activeMode ? "text-primary bg-white" : "text-[#A9A9A9]"
-                } cursor-pointer py-1 px-2 ${
-                  i === 0
-                    ? "rounded-l-lg"
-                    : i === overviewModes.length - 1
-                    ? "rounded-r-lg"
-                    : ""
-                } font-semibold text-reg-caption`}
-              >
-                {md}
-              </div>
-            );
-          })}
         </div>
       </div>
       <div className="w-full grid grid-cols-4 gap-2.5">

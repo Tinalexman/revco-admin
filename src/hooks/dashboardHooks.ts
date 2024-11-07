@@ -139,7 +139,7 @@ export interface iRecentActivityDetailsResponse {
   };
 }
 
-export const useGetRecentActivity = () => {
+export const useGetRecentActivity = (mode?: string | null) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [success, setSuccess] = useState<boolean>(false);
   const [data, setData] = useState<iRecentActivity>({
@@ -153,9 +153,15 @@ export const useGetRecentActivity = () => {
     if (loading) return;
 
     setLoading(true);
+    let query = "";
+    if (mode !== undefined && mode !== null) {
+      query = `&isFormal=${
+        mode === "formal" ? "true" : mode === "informal" ? "false" : ""
+      }`;
+    }
 
     const { data, status } = await requestApi(
-      `/mda-report/transaction-activity?pageNumber=${pageNo}&pageSize=50&from=${start}&to=${end}`,
+      `/mda-report/transaction-activity?pageNumber=${pageNo}&pageSize=50&from=${start}&to=${end}${query}`,
       "GET",
       {},
       {
@@ -192,7 +198,7 @@ export const useGetRecentActivity = () => {
   };
 };
 
-export const useGetStatisticsSummary = () => {
+export const useGetStatisticsSummary = (mode?: string | null) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [data, setData] = useState<iStatisticsSummaryResponse>({
     totalAmountRemitted: 0,
@@ -213,8 +219,15 @@ export const useGetStatisticsSummary = () => {
 
     setLoading(true);
 
+    let query = "";
+    if (mode !== undefined && mode !== null) {
+      query = `&isFormal=${
+        mode === "formal" ? "true" : mode === "informal" ? "false" : ""
+      }`;
+    }
+
     const { data, status } = await requestApi(
-      `/mda-report/statistics-summary?from=${start}&to=${end}`,
+      `/mda-report/statistics-summary?from=${start}&to=${end}${query}`,
       "GET",
       {},
       {
@@ -297,7 +310,7 @@ export const useGetTransactionSummary = () => {
   };
 };
 
-export const useGetMetrics = () => {
+export const useGetMetrics = (mode?: string | null) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [success, setSuccess] = useState<boolean>(false);
   const [data, setData] = useState<iMdaMetricsResponse[]>([]);
@@ -308,9 +321,15 @@ export const useGetMetrics = () => {
     if (loading) return;
 
     setLoading(true);
+    let query = "";
+    if (mode !== undefined && mode !== null) {
+      query = `&isFormal=${
+        mode === "formal" ? "true" : mode === "informal" ? "false" : ""
+      }`;
+    }
 
     const { data, status } = await requestApi(
-      `/mda-report/metrics?type=${type}`,
+      `/mda-report/metrics?type=${type}${query}`,
       "GET",
       {},
       {
@@ -344,7 +363,7 @@ export const useGetMetrics = () => {
   };
 };
 
-export const useGetUserActivity = () => {
+export const useGetUserActivity = (mode?: string | null) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [success, setSuccess] = useState<boolean>(false);
   const [data, setData] = useState<iUserActivityResponse>({
@@ -362,9 +381,14 @@ export const useGetUserActivity = () => {
     if (loading) return;
 
     setLoading(true);
-
+    let query = "";
+    if (mode !== undefined && mode !== null) {
+      query = `&isFormal=${
+        mode === "formal" ? "true" : mode === "informal" ? "false" : ""
+      }`;
+    }
     const { data, status } = await requestApi(
-      `/mda-report/user-activity`,
+      `/mda-report/user-activity${query}`,
       "GET",
       {},
       {
@@ -398,7 +422,7 @@ export const useGetUserActivity = () => {
   };
 };
 
-export const useGetTransactionChannelsPieData = () => {
+export const useGetTransactionChannelsPieData = (mode?: string | null) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [success, setSuccess] = useState<boolean>(false);
   const [data, setData] = useState<iTransactionChannelChartDataResponse[]>([]);
@@ -409,9 +433,15 @@ export const useGetTransactionChannelsPieData = () => {
     if (loading) return;
 
     setLoading(true);
+    let query = "";
+    if (mode !== undefined && mode !== null) {
+      query = `&isFormal=${
+        mode === "formal" ? "true" : mode === "informal" ? "false" : ""
+      }`;
+    }
 
     const { data, status } = await requestApi(
-      `/mda-report/getChannelMetrics?type=${type}`,
+      `/mda-report/getChannelMetrics?type=${type}${query}`,
       "GET",
       {},
       {
@@ -445,7 +475,7 @@ export const useGetTransactionChannelsPieData = () => {
   };
 };
 
-export const useGetTransactionStatusPieData = () => {
+export const useGetTransactionStatusPieData = (mode?: string | null) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [success, setSuccess] = useState<boolean>(false);
   const [data, setData] = useState<iTransactionStatusChartDataResponse>({
@@ -460,9 +490,15 @@ export const useGetTransactionStatusPieData = () => {
     if (loading) return;
 
     setLoading(true);
+    let query = "";
+    if (mode !== undefined && mode !== null) {
+      query = `&isFormal=${
+        mode === "formal" ? "true" : mode === "informal" ? "false" : ""
+      }`;
+    }
 
     const { data, status } = await requestApi(
-      `/notifications/status/pie?type=${type}`,
+      `/notifications/status/pie?type=${type}${query}`,
       "GET",
       {},
       {
@@ -496,7 +532,7 @@ export const useGetTransactionStatusPieData = () => {
   };
 };
 
-export const useGetTransactionRevenuePieData = () => {
+export const useGetTransactionRevenuePieData = (mode?: string | null) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [success, setSuccess] = useState<boolean>(false);
   const [data, setData] = useState<iTransactionRevenueChartDataResponse>({
@@ -512,9 +548,15 @@ export const useGetTransactionRevenuePieData = () => {
     if (loading) return;
 
     setLoading(true);
+    let query = "";
+    if (mode !== undefined && mode !== null) {
+      query = `&isFormal=${
+        mode === "formal" ? "true" : mode === "informal" ? "false" : ""
+      }`;
+    }
 
     const { data, status } = await requestApi(
-      `/notifications/total-revenue/pie?type=${type}`,
+      `/notifications/total-revenue/pie?type=${type}${query}`,
       "GET",
       {},
       {

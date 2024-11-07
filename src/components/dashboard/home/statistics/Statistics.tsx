@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { FC, useState } from "react";
 
 import TransactionCard, { iTransactionData } from "./TransactionCard";
 
@@ -10,32 +10,31 @@ import {
   useGetTransactionRevenuePieData,
 } from "@/hooks/dashboardHooks";
 import { Loader } from "@mantine/core";
-import { getDateRange } from "@/functions/dateFunctions";
 
-const Statistics = () => {
+const Statistics: FC<{ mode: string | null }> = ({ mode }) => {
   const {
     data: metrics,
     getMetrics,
     loading: loadingMetrics,
-  } = useGetMetrics();
+  } = useGetMetrics(mode);
 
   const {
     loading: loadingTransactionChannelsPieData,
     data: transactionChannels,
     getPieChannelsData,
-  } = useGetTransactionChannelsPieData();
+  } = useGetTransactionChannelsPieData(mode);
 
   const {
     loading: loadingTransactionStatusPieData,
     data: transactionStatus,
     getPieStatusData,
-  } = useGetTransactionStatusPieData();
+  } = useGetTransactionStatusPieData(mode);
 
   const {
     loading: loadingTransactionRevenuePieData,
     data: transactionRevenue,
     getPieRevenueData,
-  } = useGetTransactionRevenuePieData();
+  } = useGetTransactionRevenuePieData(mode);
 
   const totalRevenue: number =
     transactionRevenue["TARABA STATE INTERNAL REVENUE SERVICE "] +

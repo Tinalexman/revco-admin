@@ -87,8 +87,8 @@ const DashboardNavigationContent = () => {
       if (child === "admin-users") return 1;
     } else {
       if (mode === null && parent === undefined) return 0;
-      if (mode === "formal" && parent === undefined) return 1;
-      if (mode === "informal" && parent === undefined) return 2;
+      if (mode === "informal" && parent === undefined) return 1;
+      if (mode === "formal" && parent === undefined) return 2;
     }
 
     return -1;
@@ -109,17 +109,17 @@ const DashboardNavigationContent = () => {
           {
             name: "Overview",
             icon: <MdOutlineBarChart size={20} />,
-            link: "/dashboard/overview",
+            link: "/dashboard",
           },
           {
             name: "Informal Sector",
             icon: <LuStore size={20} />,
-            link: "/dashboard/informal-sector",
+            link: "/dashboard?mode=informal",
           },
           {
             name: "Formal Sector",
             icon: <PiBuildingOfficeDuotone size={20} />,
-            link: "/dashboard/formal-sector",
+            link: "/dashboard?mode=formal",
           },
         ],
       },
@@ -295,7 +295,14 @@ const DashboardNavigationContent = () => {
                 {navItem.children.map(
                   (child: iNavigationChild, childIndex: number) => (
                     <div
-                      onClick={() => router.push(child.link)}
+                      onClick={() => {
+                        router.push(child.link);
+                        setTimeout(() => {
+                          if (index === 0) {
+                            window.location.reload();
+                          }
+                        }, 1000);
+                      }}
                       className={`w-full flex items-center gap-2 py-2 pl-5 cursor-pointer ${
                         activeChild === childIndex && page === i
                           ? "text-primary"
