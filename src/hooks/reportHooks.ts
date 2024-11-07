@@ -35,7 +35,10 @@ export const useGetAllReports = () => {
     const { data, status } = await requestApi(
       `/mda-report/get/reports`,
       "GET",
-      {}
+      {},
+      {
+        Authorization: `Bearer ${token}`,
+      }
     );
 
     setLoading(false);
@@ -78,7 +81,10 @@ export const useGetReportTypes = () => {
     const { data, status } = await requestApi(
       `/mda-report/get/report-types`,
       "GET",
-      {}
+      {},
+      {
+        Authorization: `Bearer ${token}`,
+      }
     );
 
     setLoading(false);
@@ -143,5 +149,85 @@ export const useCreateReport = () => {
     loading,
     success,
     createReport,
+  };
+};
+
+export const useDeleteReport = (reportId: string | number) => {
+  const [loading, setLoading] = useState<boolean>(false);
+  const [success, setSuccess] = useState<boolean>(false);
+  const { requestApi } = useAxios();
+  const token = useToken().getToken();
+
+  let deleteReport = async () => {
+    if (loading) return;
+    setLoading(true);
+
+    const { data, status } = await requestApi(
+      `/mda-report/delete/report/${reportId}`,
+      "DELETE",
+      {},
+      {
+        Authorization: `Bearer ${token}`,
+      }
+    );
+
+    setLoading(false);
+    setSuccess(status);
+
+    if (!status) {
+      toast.error(
+        data?.response?.data?.data ?? "An error occurred. Please try again"
+      );
+    }
+  };
+
+  return {
+    loading,
+    success,
+    deleteReport,
+  };
+};
+
+export const useDownloadReport = () => {
+  const [loading, setLoading] = useState<boolean>(false);
+  const [success, setSuccess] = useState<boolean>(false);
+  const { requestApi } = useAxios();
+  const token = useToken().getToken();
+
+  let downloadReport = async (reportId: string | number) => {
+    if (loading) return;
+    setLoading(true);
+
+    const { data, status } = await requestApi(
+      `/mda-report/get/get-report?id=${reportId}`,
+      "GET",
+      {},
+      {
+        Authorization: `Bearer ${token}`,
+        responseType: "blob",
+      }
+    );
+
+    setLoading(false);
+    setSuccess(status);
+
+    if (!status) {
+      toast.error(
+        data?.response?.data?.data ?? "An error occurred. Please try again"
+      );
+    } else {
+      const url = window.URL.createObjectURL(data);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "report.pdf";
+      a.click();
+      window.URL.revokeObjectURL(url);
+    }
+  };
+
+  return {
+    loading,
+    success,
+    downloadReport,
   };
 };

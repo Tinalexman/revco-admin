@@ -12,7 +12,6 @@ import {
   Card,
   Category2,
   ClipboardText,
-  Coin1,
   I24Support,
   Profile2User,
   Setting,
@@ -21,6 +20,9 @@ import { MdPayments } from "react-icons/md";
 import { IoIosArrowDown } from "react-icons/io";
 import { IoReceiptOutline } from "react-icons/io5";
 import { HiOutlineReceiptRefund } from "react-icons/hi";
+import { LuStore } from "react-icons/lu";
+import { PiBuildingOfficeDuotone } from "react-icons/pi";
+import { MdOutlineBarChart } from "react-icons/md";
 
 export interface iNavigationItem {
   name: string;
@@ -48,7 +50,11 @@ const DashboardNavigation = () => {
       }
     }
 
-    if (pathName === "/dashboard") {
+    if (
+      pathName === "/dashboard/overview" ||
+      pathName === "/dashboard/informal-sector" ||
+      pathName === "/dashboard/formal-sector"
+    ) {
       return 0;
     }
 
@@ -74,8 +80,15 @@ const DashboardNavigation = () => {
     } else if (parent === "users") {
       if (child === "tax-payers") return 0;
       if (child === "admin-users") return 1;
+    } else if (parent === "dashboard") {
+      if (child === "overview") return 0;
+      if (child === "informal-sector") return 1;
+      if (child === "formal-sector") return 2;
+    } else if (splits[1] === "dashboard") {
+      if (parent === "overview") return 0;
+      if (parent === "informal-sector") return 1;
+      if (parent === "formal-sector") return 2;
     }
-
     return -1;
   };
 
@@ -89,10 +102,25 @@ const DashboardNavigation = () => {
       {
         name: "Dashboard",
         icon: <Category2 size="24" variant="Bold" />,
-        link: "/dashboard",
-        children: [],
+        link: "",
+        children: [
+          {
+            name: "Overview",
+            icon: <MdOutlineBarChart size={20} />,
+            link: "/dashboard/overview",
+          },
+          {
+            name: "Informal Sector",
+            icon: <LuStore size={20} />,
+            link: "/dashboard/informal-sector",
+          },
+          {
+            name: "Formal Sector",
+            icon: <PiBuildingOfficeDuotone size={20} />,
+            link: "/dashboard/formal-sector",
+          },
+        ],
       },
-
       {
         name: "Payments",
         icon: <MdPayments size="24" />,

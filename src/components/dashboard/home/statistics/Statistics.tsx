@@ -39,8 +39,8 @@ const Statistics = () => {
 
   const totalRevenue: number =
     transactionRevenue["TARABA STATE INTERNAL REVENUE SERVICE "] +
-    transactionRevenue["Participant 1"] +
-    transactionRevenue["Participant 2"] +
+    (transactionRevenue?.["Participant 1"] ?? 0) +
+    (transactionRevenue?.["Participant 2"] ?? 0) +
     transactionRevenue.Paysure;
 
   const transactionData: iTransactionData[] = [
@@ -96,19 +96,19 @@ const Statistics = () => {
         },
         {
           name: "Participant 1",
-          value: `${transactionRevenue["Participant 1"]}`,
+          value: `${transactionRevenue?.["Participant 1"] ?? 0}`,
           fraction:
             totalRevenue === 0
               ? 0
-              : transactionRevenue["Participant 1"] / totalRevenue,
+              : (transactionRevenue?.["Participant 1"] ?? 0) / totalRevenue,
         },
         {
           name: "Participant 2",
-          value: `${transactionRevenue["Participant 2"]}`,
+          value: `${transactionRevenue?.["Participant 2"] ?? 0}`,
           fraction:
             totalRevenue === 0
               ? 0
-              : transactionRevenue["Participant 2"] / totalRevenue,
+              : (transactionRevenue?.["Participant 2"] ?? 0) / totalRevenue,
         },
         {
           name: "Paysure",

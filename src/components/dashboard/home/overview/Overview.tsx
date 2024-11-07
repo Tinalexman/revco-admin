@@ -2,11 +2,11 @@
 
 import React from "react";
 
-import Details from "./Details";
-import Activity from "../common/Activity";
-import Statistics from "./statistics/Statistics";
+import Details from "@/components/dashboard/home/Details";
+import Activity from "@/components/dashboard/common/Activity";
+import Statistics from "@/components/dashboard/home/statistics/Statistics";
 
-const Dashboard = () => {
+const Overview = () => {
   return (
     <div className="w-full flex flex-col">
       <div className="px-8 bg-white w-full h-[4.5rem]">
@@ -28,4 +28,4 @@ const Dashboard = () => {
   );
 };
 
-export default Dashboard;
+export default Overview;

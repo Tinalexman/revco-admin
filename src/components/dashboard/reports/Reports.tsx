@@ -17,8 +17,9 @@ import { HiDownload } from "react-icons/hi";
 import { RiDeleteBinFill } from "react-icons/ri";
 import CreateReport from "./CreateReport";
 import DeleteReport from "./DeleteReport";
-import { useGetAllReports } from "@/hooks/reportHooks";
+import { useDownloadReport, useGetAllReports } from "@/hooks/reportHooks";
 import { toLeadingCase } from "@/functions/stringFunctions";
+import { Loader } from "@mantine/core";
 
 interface iReport {
   name: string;
@@ -34,8 +35,13 @@ const Reports = () => {
   const [openedNewReport, shouldOpenNewReport] = useState(false);
   const [openedDeleteReport, shouldDeleteReport] = useState(false);
   const [expanded, setExpanded] = useState<boolean>(false);
-
+  const [selectedReport, setSelectedReport] = useState<number>(-1);
   const { data: reports, loading } = useGetAllReports();
+  const {
+    loading: loadingDownload,
+    success,
+    downloadReport,
+  } = useDownloadReport();
 
   return (
     <>
@@ -70,13 +76,7 @@ const Reports = () => {
                 {expanded ? "View Less" : "View All"}
               </h2>
             </div>
-            <div className="w-full justify-between items-center flex">
-              <Filters showDatePicker={false} />
-              <button className="bg-[#F0E6FC] rounded text-primary flex gap-3 items-center px-3 h-10">
-                <p className="text-[0.815rem] leading-[0.975rem]">Export</p>
-                <IoIosArrowDown />
-              </button>
-            </div>
+            <Filters showDatePicker={false} />
             <div className="w-full overflow-x-auto">
               <table className="w-full overflow-x-auto">
                 <thead className="w-full bg-[#F3F7FC] h-14">
@@ -110,14 +110,17 @@ const Reports = () => {
                       </td>
 
                       <td className="p-4 flex gap-1 w-fit items-center">
-                        <div className="cursor-pointer bg-[#FCEAE8] rounded size-6 grid place-content-center text-[#292D32]">
-                          <IoEye size={16} />
-                        </div>
-                        <div className="cursor-pointer bg-[#E4ECF7] rounded size-6 grid place-content-center text-[#292D32]">
+                        <div
+                          onClick={() => downloadReport(report.id)}
+                          className="cursor-pointer bg-[#E4ECF7] rounded size-6 grid place-content-center text-[#292D32]"
+                        >
                           <HiDownload size={16} />
                         </div>
                         <div
-                          onClick={() => shouldDeleteReport(true)}
+                          onClick={() => {
+                            setSelectedReport(report.id);
+                            shouldDeleteReport(true);
+                          }}
                           className="cursor-pointer bg-[#FDC6C6] rounded size-6 grid place-content-center text-[#292D32]"
                         >
                           <RiDeleteBinFill size={16} />
@@ -127,6 +130,17 @@ const Reports = () => {
                   ))}
                 </tbody>
               </table>
+
+              {loading && (
+                <div className="w-full h-60 grid place-content-center">
+                  <Loader color="primary.6" />
+                </div>
+              )}
+              {!loading && reports.length === 0 && (
+                <div className="w-full h-60 grid place-content-center text-[#3A3A3A] font-medium text-[1rem] leading-[1.125rem]">
+                  No reports available
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -140,8 +154,15 @@ const Reports = () => {
           }}
         />
       )}
-      {openedDeleteReport && (
-        <DeleteReport close={() => shouldDeleteReport(false)} />
+      {openedDeleteReport && selectedReport !== -1 && (
+        <DeleteReport
+          close={() => shouldDeleteReport(false)}
+          onDelete={() => {
+            shouldDeleteReport(false);
+            window.location.reload();
+          }}
+          id={selectedReport}
+        />
       )}
     </>
   );

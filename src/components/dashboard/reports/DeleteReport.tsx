@@ -1,8 +1,21 @@
-import React, { FC } from "react";
-import { Modal } from "@mantine/core";
+import React, { FC, useEffect } from "react";
+import { Loader, Modal } from "@mantine/core";
 import { GiCancel } from "react-icons/gi";
+import { useDeleteReport } from "@/hooks/reportHooks";
 
-const DeleteReport: FC<{ close: () => void }> = ({ close }) => {
+const DeleteReport: FC<{
+  id: number;
+  close: () => void;
+  onDelete: () => void;
+}> = ({ close, onDelete, id }) => {
+  const { loading, success, deleteReport } = useDeleteReport(id);
+
+  useEffect(() => {
+    if (!loading && success) {
+      onDelete();
+    }
+  }, [loading, success]);
+
   return (
     <Modal.Root
       opened={true}
@@ -38,10 +51,14 @@ const DeleteReport: FC<{ close: () => void }> = ({ close }) => {
                 No, keep
               </button>
               <button
-                onClick={close}
+                onClick={deleteReport}
                 className={`text-white w-[48%] ${"bg-[#D32F2F]"} text-reg-caption h-10 grid place-content-center rounded`}
               >
-                Yes, close
+                {loading ? (
+                  <Loader color="white.6" size={24} />
+                ) : (
+                  "Yes, continue"
+                )}
               </button>
             </div>
           </div>

@@ -6,7 +6,10 @@ import { FaCamera } from "react-icons/fa6";
 
 import { useFormik } from "formik";
 import { useRevcoUserStore } from "@/stores/userStore";
-import { formatNumberWithThreesAndFours, unformatNumberWithThreesAndFours } from "@/functions/numberFunctions";
+import {
+  formatNumberWithThreesAndFours,
+  unformatNumberWithThreesAndFours,
+} from "@/functions/numberFunctions";
 
 interface iGeneralSettings {
   name: string;
@@ -24,7 +27,6 @@ const GeneralSettings = () => {
   const email = useRevcoUserStore((state) => state.email);
   const phone = useRevcoUserStore((state) => state.phone);
 
-
   const {
     values,
     errors,
@@ -41,8 +43,8 @@ const GeneralSettings = () => {
       email: "",
       phone: "",
     },
-    validate: (values) => { },
-    onSubmit: (values, { setSubmitting }) => { },
+    validate: (values) => {},
+    onSubmit: (values, { setSubmitting }) => {},
   });
 
   useEffect(() => {
@@ -58,47 +60,6 @@ const GeneralSettings = () => {
       </p>
       <div className="w-full grid place-content-center">
         <div className="w-[500px] flex flex-col items-center">
-          {/* <div className="size-24 relative">
-            {newImageBase64Data ? (
-              <Image
-                src={newImageBase64Data}
-                alt="profile-picture"
-                className="rounded-full size-24 object-cover"
-                width={96}
-                height={96}
-              />
-            ) : (
-              <Image
-                src={User}
-                alt="profile-picture"
-                className="rounded-full size-24 object-cover"
-                width={96}
-                height={96}
-              />
-            )}
-            <FaCamera
-              className="absolute right-2 bottom-0 z-1 text-[#222222] cursor-pointer"
-              size={20}
-              onClick={() => inputRef.current?.click()}
-            />
-            <input
-              type="file"
-              style={{ display: "none" }}
-              ref={inputRef}
-              accept="image/*"
-              onChange={(e) => {
-                const listOfFiles = e.target.files;
-                if (listOfFiles !== null) {
-                  setNewImageFile(listOfFiles[0]);
-                  const reader = new FileReader();
-                  reader.readAsDataURL(listOfFiles[0]);
-                  reader.onload = () => {
-                    setNewImageBase64Data(reader.result as string);
-                  };
-                }
-              }}
-            />
-          </div> */}
           <form
             method="POST"
             onSubmit={handleSubmit}
@@ -113,6 +74,7 @@ const GeneralSettings = () => {
                 name="name"
                 value={values.name}
                 onChange={handleChange}
+                readOnly
                 className="w-full drawer-input px-4"
               />
               {errors.name && touched.name && (
@@ -128,6 +90,7 @@ const GeneralSettings = () => {
                 name="email"
                 value={values.email}
                 onChange={handleChange}
+                readOnly
                 className="w-full drawer-input px-4"
               />
               {errors.email && touched.email && (
@@ -142,17 +105,13 @@ const GeneralSettings = () => {
                 type="tel"
                 name="phone"
                 value={values.phone}
+                readOnly
                 onChange={(e) => {
-                  const res = unformatNumberWithThreesAndFours(
-                    e.target.value
-                  );
+                  const res = unformatNumberWithThreesAndFours(e.target.value);
 
                   if (isNaN(Number(res))) return;
 
-                  setFieldValue(
-                    "phone",
-                    formatNumberWithThreesAndFours(res)
-                  );
+                  setFieldValue("phone", formatNumberWithThreesAndFours(res));
                 }}
                 className="w-full drawer-input px-4"
               />
@@ -160,14 +119,14 @@ const GeneralSettings = () => {
                 <p className="text-err">{errors.phone}</p>
               )}
             </div>
-            <div className="w-full flex justify-end">
+            {/* <div className="w-full flex justify-end">
               <button
                 type="submit"
                 className="text-med-button text-white bg-primary rounded-lg w-[230px] h-11"
               >
                 Save Changes
               </button>
-            </div>
+            </div> */}
           </form>
         </div>
       </div>

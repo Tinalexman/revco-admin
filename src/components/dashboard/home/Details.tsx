@@ -174,7 +174,7 @@ const Details = () => {
                   ₦
                   {statsSummary.totalCommissionInNaira[
                     "Participant 1"
-                  ].toLocaleString("en-US")}
+                  ]?.toLocaleString("en-US") ?? 0}
                 </h2>
               )}
             </div>
@@ -189,7 +189,7 @@ const Details = () => {
                   ₦
                   {statsSummary.totalCommissionInNaira[
                     "Participant 2"
-                  ].toLocaleString("en-US")}
+                  ]?.toLocaleString("en-US") ?? 0}
                 </h2>
               )}
             </div>
