@@ -6,7 +6,7 @@ import Details from "@/components/dashboard/home/Details";
 import Activity from "@/components/dashboard/common/Activity";
 import Statistics from "@/components/dashboard/home/statistics/Statistics";
 
-const Overview = () => {
+const Dashboard = () => {
   return (
     <div className="w-full flex flex-col">
       <div className="px-8 bg-white w-full h-[4.5rem]">
@@ -28,4 +28,4 @@ const Overview = () => {
   );
 };
 
-export default Overview;
+export default Dashboard;

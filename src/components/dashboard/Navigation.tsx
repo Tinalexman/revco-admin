@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Suspense } from "react";
 
 import Image from "next/image";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 import Logo from "@/assets/Revco.svg";
 
@@ -23,6 +23,7 @@ import { HiOutlineReceiptRefund } from "react-icons/hi";
 import { LuStore } from "react-icons/lu";
 import { PiBuildingOfficeDuotone } from "react-icons/pi";
 import { MdOutlineBarChart } from "react-icons/md";
+import { Loader } from "@mantine/core";
 
 export interface iNavigationItem {
   name: string;
@@ -38,6 +39,14 @@ export interface iNavigationChild {
 }
 
 const DashboardNavigation = () => {
+  return (
+    <Suspense fallback={<Loader color="primary.6" />}>
+      <DashboardNavigationContent />
+    </Suspense>
+  );
+};
+
+const DashboardNavigationContent = () => {
   const [navs, setNavs] = useState<iNavigationItem[]>([]);
   const [paths, setPaths] = useState<string[]>([]);
   const [index, setIndex] = useState<number>(-1);
@@ -50,20 +59,16 @@ const DashboardNavigation = () => {
       }
     }
 
-    if (
-      pathName === "/dashboard/overview" ||
-      pathName === "/dashboard/informal-sector" ||
-      pathName === "/dashboard/formal-sector"
-    ) {
+    if (pathName === "/dashboard") {
       return 0;
     }
 
     return -1;
   };
 
-  const determineActiveChild = () => {
+  const determineActiveChild = (mode: string | null) => {
     const splits: string[] = pathName.split("/");
-    const parent: string = splits[2];
+    const parent: string | undefined = splits[2];
     const child = splits[3];
 
     if (parent === "payments") {
@@ -80,15 +85,12 @@ const DashboardNavigation = () => {
     } else if (parent === "users") {
       if (child === "tax-payers") return 0;
       if (child === "admin-users") return 1;
-    } else if (parent === "dashboard") {
-      if (child === "overview") return 0;
-      if (child === "informal-sector") return 1;
-      if (child === "formal-sector") return 2;
-    } else if (splits[1] === "dashboard") {
-      if (parent === "overview") return 0;
-      if (parent === "informal-sector") return 1;
-      if (parent === "formal-sector") return 2;
+    } else {
+      if (mode === null && parent === undefined) return 0;
+      if (mode === "formal" && parent === undefined) return 1;
+      if (mode === "informal" && parent === undefined) return 2;
     }
+
     return -1;
   };
 
@@ -205,9 +207,11 @@ const DashboardNavigation = () => {
 
   const router = useRouter();
   const pathName = usePathname();
+  const searchParams = useSearchParams();
   const expanded = useDashboardData((state) => state.expanded);
   const page = determineIndex();
-  const activeChild = hasChildren(page) ? determineActiveChild() : -1;
+  const mode = searchParams.get("mode");
+  const activeChild = hasChildren(page) ? determineActiveChild(mode) : -1;
 
   useEffect(() => {
     determineNavItems();

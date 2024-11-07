@@ -28,7 +28,7 @@ const Login = () => {
 
   useEffect(() => {
     if (success && !loading) {
-      router.replace("/dashboard/overview");
+      router.replace("/dashboard");
     }
   }, [success, loading]);
 
