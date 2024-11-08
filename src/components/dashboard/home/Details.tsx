@@ -33,11 +33,6 @@ interface iPersonItem {
   background: StaticImageData;
 }
 
-interface iDateRange {
-  start: string;
-  end: string;
-}
-
 const Details: FC<{ mode: string | null }> = ({ mode }) => {
   const [filter, setFilter] = useState<string>("Today");
 

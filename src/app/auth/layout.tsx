@@ -19,12 +19,11 @@ const AuthLayout: FC<{ children: React.ReactNode }> = ({ children }) => {
         />
         <div className="w-[65%] gap-3 flex flex-col">
           <h2 className="text-white font-medium text-[1.6rem] leading-[1.8rem]">
-            Effortlessly Settle Bills and government payments
+            Effortlessly Settle Bills and Government Payments
           </h2>
           <h2 className="text-white text-med-button">
-            Whether it's state tax, school fees, waterboard charges, NECO, or
-            WAEC payments, find a one-stop solution for all your financial
-            transactions right here.
+            REVCO, a one-stop solution for all your financial transactions right
+            here.
           </h2>
           <div className="w-full flex items-center gap-2">
             <div className="w-fit flex items-center gap-2">
