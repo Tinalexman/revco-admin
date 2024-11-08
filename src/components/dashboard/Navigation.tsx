@@ -39,14 +39,6 @@ export interface iNavigationChild {
 }
 
 const DashboardNavigation = () => {
-  return (
-    <Suspense fallback={<Loader color="primary.6" />}>
-      <DashboardNavigationContent />
-    </Suspense>
-  );
-};
-
-const DashboardNavigationContent = () => {
   const [navs, setNavs] = useState<iNavigationItem[]>([]);
   const [paths, setPaths] = useState<string[]>([]);
   const [index, setIndex] = useState<number>(-1);
@@ -59,14 +51,18 @@ const DashboardNavigationContent = () => {
       }
     }
 
-    if (pathName === "/dashboard") {
+    if (
+      pathName === "/dashboard" ||
+      pathName === "/dashboard/informal-sector" ||
+      pathName === "/dashboard/formal-sector"
+    ) {
       return 0;
     }
 
     return -1;
   };
 
-  const determineActiveChild = (mode: string | null) => {
+  const determineActiveChild = () => {
     const splits: string[] = pathName.split("/");
     const parent: string | undefined = splits[2];
     const child = splits[3];
@@ -85,10 +81,10 @@ const DashboardNavigationContent = () => {
     } else if (parent === "users") {
       if (child === "tax-payers") return 0;
       if (child === "admin-users") return 1;
-    } else {
-      if (mode === "informal" && parent === undefined) return 1;
-      if (mode === "formal" && parent === undefined) return 2;
+    } else if (splits[1] === "dashboard") {
       if (parent === undefined) return 0;
+      if (parent === "informal-sector") return 1;
+      if (parent === "formal-sector") return 2;
     }
 
     return -1;
@@ -114,12 +110,12 @@ const DashboardNavigationContent = () => {
           {
             name: "Informal Sector",
             icon: <LuStore size={20} />,
-            link: "/dashboard?mode=informal",
+            link: "/dashboard/informal-sector",
           },
           {
             name: "Formal Sector",
             icon: <PiBuildingOfficeDuotone size={20} />,
-            link: "/dashboard?mode=formal",
+            link: "/dashboard/formal-sector",
           },
         ],
       },
@@ -207,11 +203,9 @@ const DashboardNavigationContent = () => {
 
   const router = useRouter();
   const pathName = usePathname();
-  const searchParams = useSearchParams();
   const expanded = useDashboardData((state) => state.expanded);
   const page = determineIndex();
-  const mode = searchParams.get("mode");
-  const activeChild = hasChildren(page) ? determineActiveChild(mode) : -1;
+  const activeChild = hasChildren(page) ? determineActiveChild() : -1;
 
   useEffect(() => {
     determineNavItems();
@@ -297,11 +291,6 @@ const DashboardNavigationContent = () => {
                     <div
                       onClick={() => {
                         router.push(child.link);
-                        setTimeout(() => {
-                          if (index === 0) {
-                            window.location.reload();
-                          }
-                        }, 1000);
                       }}
                       className={`w-full flex items-center gap-2 py-2 pl-5 cursor-pointer ${
                         activeChild === childIndex && page === i
