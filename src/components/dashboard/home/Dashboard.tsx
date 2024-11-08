@@ -1,25 +1,12 @@
 "use client";
 
-import React, { Suspense } from "react";
+import React from "react";
 
 import Details from "@/components/dashboard/home/Details";
 import Activity from "@/components/dashboard/common/Activity";
 import Statistics from "@/components/dashboard/home/statistics/Statistics";
-import { Loader } from "@mantine/core";
-import { useSearchParams } from "next/navigation";
 
 const Dashboard = () => {
-  return (
-    <Suspense fallback={<Loader color="primary.6" />}>
-      <DashboardContent />
-    </Suspense>
-  );
-};
-
-const DashboardContent = () => {
-  const searchParams = useSearchParams();
-  const mode = searchParams.get("mode");
-
   return (
     <div className="w-full flex flex-col">
       <div className="px-8 bg-white w-full h-[4.5rem]">
@@ -33,9 +20,9 @@ const DashboardContent = () => {
         </div>
       </div>
       <div className="py-5 px-10 w-full flex flex-col gap-2.5">
-        <Details mode={mode} />
-        <Statistics mode={mode} />
-        <Activity mode={mode} />
+        <Details mode={null} />
+        <Statistics mode={null} />
+        <Activity mode={null} />
       </div>
     </div>
   );
