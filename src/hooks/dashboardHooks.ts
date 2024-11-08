@@ -383,7 +383,7 @@ export const useGetUserActivity = (mode?: string | null) => {
     setLoading(true);
     let query = "";
     if (mode !== undefined && mode !== null) {
-      query = `&isFormal=${
+      query = `?isFormal=${
         mode === "formal" ? "true" : mode === "informal" ? "false" : ""
       }`;
     }
