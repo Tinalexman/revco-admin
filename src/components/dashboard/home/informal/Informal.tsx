@@ -1,7 +1,95 @@
-import React from "react";
+"use client";
+
+import Dropdown from "@/components/reusable/Dropdown";
+import { allFilters, getDateRange } from "@/functions/dateFunctions";
+import React, { useState, ReactNode } from "react";
+import Assessments from "./Assessments";
+import Collections from "./Collections";
+import Enumeration from "./Enumeration";
+import GeneralOverview from "./GeneralOverview";
+import Remittance from "./Remittance";
 
 const InformalSector = () => {
-  return <div></div>;
+  const modes: string[] = [
+    "General Overview",
+    "Enumeration",
+    "Assessments",
+    "Collections",
+    "Cash Remittance",
+  ];
+  const [filter, setFilter] = useState<string>("Today");
+  const [activeMode, setActiveMode] = useState<number>(0);
+
+  const children: ReactNode[] = [
+    <GeneralOverview />,
+    <Enumeration />,
+    <Assessments />,
+    <Collections />,
+    <Remittance />,
+  ];
+
+  return (
+    <div className="w-full flex flex-col gap-6">
+      <div className="px-8 bg-white w-full h-[4.5rem]">
+        <div className="w-full flex flex-col justify-around py-2">
+          <h2 className="text-monokai font-semibold text-dash-intro-header">
+            Welcome to Taraba State Board of Internal Revenue Admin Portal
+          </h2>
+          <h3 className="text-primary text-reg-caption">
+            Manage all transactions and data on the Revco service
+          </h3>
+        </div>
+      </div>
+      <div className="w-full px-8">
+        <div className="h-fit py-3 bg-white rounded-xl w-full flex flex-col gap-2 px-7">
+          <div className="w-full flex items-center justify-between border-b border-[#D1D1D6] pb-2">
+            <p className="font-semibold text-dash-header text-gray-5">
+              Informal Sector Overview
+            </p>
+            <div className="w-[115px]">
+              <Dropdown
+                menus={allFilters.map((v, i) => ({
+                  name: v,
+                  onClick: () => {
+                    setFilter(v);
+                    const dates = getDateRange(v);
+                  },
+                }))}
+                value={filter}
+                hint={"Select"}
+              />
+            </div>
+          </div>
+          <div className="w-fit bg-[#F1F2F3] rounded-xl py-1 px-1 flex items-center">
+            {modes.map((md, i) => {
+              return (
+                <div
+                  onClick={() => {
+                    setActiveMode(i);
+                  }}
+                  key={i}
+                  className={`${
+                    i === activeMode
+                      ? "text-primary bg-white"
+                      : "text-[#A9A9A9]"
+                  } cursor-pointer py-1 px-2 ${
+                    i === 0
+                      ? "rounded-l-lg"
+                      : i === modes.length - 1
+                      ? "rounded-r-lg"
+                      : ""
+                  } font-semibold text-reg-caption`}
+                >
+                  {md}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+      <div className="w-full px-8">{children[activeMode]}</div>
+    </div>
+  );
 };
 
 export default InformalSector;

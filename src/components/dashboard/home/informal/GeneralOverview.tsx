@@ -1,19 +1,19 @@
-import React, { FC, useState } from "react";
-import Dropdown from "../../reusable/Dropdown";
-
-import Image, { StaticImageData } from "next/image";
-import TaxPayersImage from "@/assets/dashboard/tax payers.png";
 import {
   useGetStatisticsSummary,
   useGetUserActivity,
 } from "@/hooks/dashboardHooks";
 import { Loader } from "@mantine/core";
-import { allFilters, getDateRange } from "@/functions/dateFunctions";
-import { IoReceiptSharp } from "react-icons/io5";
-import { PiWalletFill, PiUsersFill } from "react-icons/pi";
+import Image, { StaticImageData } from "next/image";
+import React from "react";
 import { AiOutlineFileDone } from "react-icons/ai";
 import { FaHandshakeSimple } from "react-icons/fa6";
+import { IoReceiptSharp } from "react-icons/io5";
+import { PiUsersFill, PiWalletFill } from "react-icons/pi";
+
+import TaxPayersImage from "@/assets/dashboard/tax payers.png";
 import { MdGroupAdd } from "react-icons/md";
+import Statistics from "../statistics/Statistics";
+import Activity from "../../common/Activity";
 
 interface iRevenueItem {
   value: number;
@@ -31,14 +31,12 @@ interface iPersonItem {
   background: StaticImageData;
 }
 
-const Details: FC<{ mode: string | null }> = ({ mode }) => {
-  const [filter, setFilter] = useState<string>("Today");
-
+const GeneralOverview = () => {
   const {
     loading: loadingSummary,
     getStatisticsSummary,
     data: statsSummary,
-  } = useGetStatisticsSummary(mode);
+  } = useGetStatisticsSummary("informal");
 
   const revenueItems: iRevenueItem[] = [
     {
@@ -68,7 +66,7 @@ const Details: FC<{ mode: string | null }> = ({ mode }) => {
   ];
 
   const { data: userActivity, loading: loadingActivity } =
-    useGetUserActivity(mode);
+    useGetUserActivity("informal");
 
   const personItem: iPersonItem = {
     title: "Total Tax Payers",
@@ -80,28 +78,7 @@ const Details: FC<{ mode: string | null }> = ({ mode }) => {
   };
 
   return (
-    <div className="w-full flex flex-col gap-2.5">
-      <div className="h-fit py-3 bg-white rounded-xl w-full flex flex-col gap-2 px-7">
-        <div className="w-full flex items-center justify-between ">
-          <p className="font-semibold text-dash-header text-gray-5">
-            {mode === "formal" ? "Formal Sector" : "Dashboard"} Overview
-          </p>
-          <div className="w-[115px]">
-            <Dropdown
-              menus={allFilters.map((v, i) => ({
-                name: v,
-                onClick: () => {
-                  setFilter(v);
-                  const dates = getDateRange(v);
-                  getStatisticsSummary(dates[0], dates[1]);
-                },
-              }))}
-              value={filter}
-              hint={"Select"}
-            />
-          </div>
-        </div>
-      </div>
+    <div className="flex flex-col gap-6 w-full">
       <div className="w-full grid grid-cols-4 gap-2.5">
         {revenueItems.map((it, i) => (
           <div
@@ -230,8 +207,11 @@ const Details: FC<{ mode: string | null }> = ({ mode }) => {
           />
         </div>
       </div>
+
+      <Statistics mode={"informal"} />
+      <Activity mode={"informal"} />
     </div>
   );
 };
 
-export default Details;
+export default GeneralOverview;
