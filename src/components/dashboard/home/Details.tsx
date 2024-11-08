@@ -91,7 +91,12 @@ const Details: FC<{ mode: string | null }> = ({ mode }) => {
       <div className="h-fit py-3 bg-white rounded-xl w-full flex flex-col gap-2 px-7">
         <div className="w-full flex items-center justify-between ">
           <p className="font-semibold text-dash-header text-gray-5">
-            Dashboard Overview
+            {mode === "formal"
+              ? "Formal Sector"
+              : mode === "informal"
+              ? "Informal Sector"
+              : "Dashboard"}{" "}
+            Overview
           </p>
           <div className="w-[115px]">
             <Dropdown

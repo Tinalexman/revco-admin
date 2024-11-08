@@ -86,9 +86,9 @@ const DashboardNavigationContent = () => {
       if (child === "tax-payers") return 0;
       if (child === "admin-users") return 1;
     } else {
-      if (mode === null && parent === undefined) return 0;
       if (mode === "informal" && parent === undefined) return 1;
       if (mode === "formal" && parent === undefined) return 2;
+      if (parent === undefined) return 0;
     }
 
     return -1;
@@ -157,7 +157,7 @@ const DashboardNavigationContent = () => {
         children: [],
       },
       {
-        name: "Users",
+        name: "User Management",
         icon: <Profile2User size="24" variant="Bold" />,
         link: "",
         children: [
