@@ -18,13 +18,15 @@ import StatusContainer, {
   STATE_SUCCESS,
 } from "@/components/reusable/StatusContainer";
 
-const Activity: FC<{ mode?: string | null }> = ({ mode }) => {
+const Activity: FC<{ mode?: string | null; showModePicker?: boolean }> = ({
+  mode,
+  showModePicker,
+}) => {
+  const overviewModes: string[] = ["All", "Informal Sector", "Formal Sector"];
+  const [activeMode, setActiveMode] = useState<string>(overviewModes[0]);
+
   const [expanded, setExpanded] = useState<boolean>(false);
-  const {
-    loading,
-    data: transactions,
-    getActivity,
-  } = useGetRecentActivity(mode);
+  const { loading, data: transactions, getActivity } = useGetRecentActivity();
   const currentDate = new Date().toISOString().split("T")[0];
   const [dateRange, setDateRange] = useState<iDateRange>({
     start: currentDate,
@@ -50,12 +52,46 @@ const Activity: FC<{ mode?: string | null }> = ({ mode }) => {
 
   function handlePageChange(page: number) {
     setCurrentPage(page);
-    getActivity(dateRange.start, dateRange.end, `${page}`);
+    getActivity(dateRange.start, dateRange.end, `${page}`, mode);
   }
 
   return (
     <>
       <div className="w-full bg-white p-5 flex flex-col gap-3 rounded-xl">
+        {showModePicker && showModePicker && (
+          <div className="w-fit bg-[#F1F2F3] rounded-xl py-1 px-1 flex items-center">
+            {overviewModes.map((md, i) => {
+              return (
+                <div
+                  onClick={() => {
+                    setActiveMode(md);
+                    getActivity(
+                      dateRange.start,
+                      dateRange.end,
+                      `${currentPage}`,
+                      i === 0 ? null : i === 1 ? "informal" : "formal"
+                    );
+                  }}
+                  key={i}
+                  className={`${
+                    md === activeMode
+                      ? "text-primary bg-white"
+                      : "text-[#A9A9A9]"
+                  } cursor-pointer py-1 px-2 ${
+                    i === 0
+                      ? "rounded-l-lg"
+                      : i === overviewModes.length - 1
+                      ? "rounded-r-lg"
+                      : ""
+                  } font-semibold text-reg-caption`}
+                >
+                  {md}
+                </div>
+              );
+            })}
+          </div>
+        )}
+
         <div className="w-full flex justify-between items-center">
           <h2 className="text-black text-med-button">Recent Activity</h2>
           <h2
@@ -72,7 +108,7 @@ const Activity: FC<{ mode?: string | null }> = ({ mode }) => {
                 start,
                 end,
               });
-              getActivity(start, end, `${currentPage}`);
+              getActivity(start, end, `${currentPage}`, mode);
             }}
           />
           <div className="w-[35%]">

@@ -56,14 +56,14 @@ const Details: FC<{ mode: string | null }> = ({ mode }) => {
       icon: <IoReceiptSharp size={20} className="text-primary" />,
     },
     {
-      title: "Total Amount due to State Government",
+      title: "Total Amount Remitted",
       value: statsSummary.totalAmountRemitted,
       subtitle: 3000,
       icon: <AiOutlineFileDone size={20} className="text-primary" />,
     },
     {
-      title: "Total Amount due to Paysure (4.6%)",
-      value: statsSummary.totalCommissionInNaira.Paysure,
+      title: "Total Comission (10%)",
+      value: statsSummary.totalCommissionInNaira.total,
       subtitle: 3000,
       icon: <FaHandshakeSimple size={20} className="text-primary" />,
     },
@@ -130,14 +130,29 @@ const Details: FC<{ mode: string | null }> = ({ mode }) => {
         ))}
       </div>
       <div className="w-full grid grid-cols-2 gap-2.5">
-        <div className="relative overflow-hidden bg-white w-full rounded-xl px-6 py-3 gap-6 h-52 flex flex-col items-start">
+        <div className="relative overflow-hidden bg-white w-full rounded-xl px-6 py-3 gap-6 h-[18rem] flex flex-col items-start">
           <div className="bg-primary-accent rounded-full p-2">
             <MdGroupAdd size={20} className="text-primary" />
           </div>
           <div className="flex flex-col gap-6">
             <div className="flex flex-col">
               <h3 className="text-small text-[#9EA4AA]">
-                Total Amount due to Participant 1 (1.6%)
+                Total Amount due to Participant 1 (4.6%)
+              </h3>
+              {loadingSummary ? (
+                <Loader color="primary.6" size={24} />
+              ) : (
+                <h2 className="text-dash-intro-header font-semibold text-gray-5">
+                  ₦
+                  {statsSummary.totalCommissionInNaira.Paysure?.toLocaleString(
+                    "en-US"
+                  ) ?? 0}
+                </h2>
+              )}
+            </div>
+            <div className="flex flex-col">
+              <h3 className="text-small text-[#9EA4AA]">
+                Total Amount due to Participant 2 (1.6%)
               </h3>
               {loadingSummary ? (
                 <Loader color="primary.6" size={24} />
@@ -152,7 +167,7 @@ const Details: FC<{ mode: string | null }> = ({ mode }) => {
             </div>
             <div className="flex flex-col">
               <h3 className="text-small text-[#9EA4AA]">
-                Total Amount due to Participant 2 (3.8%)
+                Total Amount due to Participant 3 (3.8%)
               </h3>
               {loadingSummary ? (
                 <Loader color="primary.6" size={24} />
@@ -168,7 +183,7 @@ const Details: FC<{ mode: string | null }> = ({ mode }) => {
           </div>
         </div>
 
-        <div className="relative overflow-hidden bg-white w-full rounded-xl px-6 py-3 gap-6 h-52 flex flex-col justify-between items-start">
+        <div className="relative overflow-hidden bg-white w-full rounded-xl px-6 py-3 gap-6 h-[18rem] flex flex-col justify-between items-start">
           <div className="bg-primary-accent rounded-full p-2">
             {personItem.icon}
           </div>

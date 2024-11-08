@@ -19,7 +19,7 @@ const Transactions = () => {
       </div>
       <div className="py-5 px-10 w-full flex flex-col gap-2.5">
         <Details />
-        <Activity />
+        <Activity showModePicker={true} />
       </div>
     </div>
   );

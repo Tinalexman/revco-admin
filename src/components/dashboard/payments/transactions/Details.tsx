@@ -40,14 +40,14 @@ const Details = () => {
       icon: <IoReceiptSharp size={20} className="text-primary" />,
     },
     {
-      title: "Total Amount due to State Government",
+      title: "Total Amount Remitted",
       value: statsSummary.totalAmountRemitted,
       subtitle: 3000,
       icon: <AiOutlineFileDone size={20} className="text-primary" />,
     },
     {
-      title: "Total Amount due to Paysure (4.6%)",
-      value: statsSummary.totalCommissionInNaira.Paysure,
+      title: "Total Comission (10%)",
+      value: statsSummary.totalCommissionInNaira.total,
       subtitle: 3000,
       icon: <FaHandshakeSimple size={20} className="text-primary" />,
     },

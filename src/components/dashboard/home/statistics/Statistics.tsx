@@ -95,6 +95,12 @@ const Statistics: FC<{ mode: string | null }> = ({ mode }) => {
         },
         {
           name: "Participant 1",
+          value: `${transactionRevenue.Paysure}`,
+          fraction:
+            totalRevenue === 0 ? 0 : transactionRevenue.Paysure / totalRevenue,
+        },
+        {
+          name: "Participant 2",
           value: `${transactionRevenue?.["Participant 1"] ?? 0}`,
           fraction:
             totalRevenue === 0
@@ -102,18 +108,12 @@ const Statistics: FC<{ mode: string | null }> = ({ mode }) => {
               : (transactionRevenue?.["Participant 1"] ?? 0) / totalRevenue,
         },
         {
-          name: "Participant 2",
+          name: "Participant 3",
           value: `${transactionRevenue?.["Participant 2"] ?? 0}`,
           fraction:
             totalRevenue === 0
               ? 0
               : (transactionRevenue?.["Participant 2"] ?? 0) / totalRevenue,
-        },
-        {
-          name: "Paysure",
-          value: `${transactionRevenue.Paysure}`,
-          fraction:
-            totalRevenue === 0 ? 0 : transactionRevenue.Paysure / totalRevenue,
         },
       ],
     },

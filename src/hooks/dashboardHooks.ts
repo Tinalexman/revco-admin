@@ -139,7 +139,7 @@ export interface iRecentActivityDetailsResponse {
   };
 }
 
-export const useGetRecentActivity = (mode?: string | null) => {
+export const useGetRecentActivity = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [success, setSuccess] = useState<boolean>(false);
   const [data, setData] = useState<iRecentActivity>({
@@ -149,7 +149,12 @@ export const useGetRecentActivity = (mode?: string | null) => {
   const { requestApi } = useAxios();
   const token = useToken().getToken();
 
-  let getActivity = async (start: string, end: string, pageNo: string) => {
+  let getActivity = async (
+    start: string,
+    end: string,
+    pageNo: string,
+    mode?: string | null
+  ) => {
     if (loading) return;
 
     setLoading(true);
