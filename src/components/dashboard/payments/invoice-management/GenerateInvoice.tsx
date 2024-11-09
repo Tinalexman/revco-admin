@@ -176,7 +176,7 @@ const GenerateInvoice: FC<{ onClose: () => void }> = ({ onClose }) => {
                 },
                 projectId,
               });
-            } else if (values.customerType === "Non Individual") {
+            } else if (values.customerType === "Corporate") {
               generateNonIndividualInvoice({
                 enumerate: {
                   cacRegNo: "",
@@ -323,7 +323,7 @@ const GenerateInvoice: FC<{ onClose: () => void }> = ({ onClose }) => {
                     <div className="w-full h-10">
                       <Dropdown
                         value={values.customerType}
-                        menus={["Individual", "Non Individual"].map((v) => ({
+                        menus={["Individual", "Corporate"].map((v) => ({
                           name: v,
                           onClick: () => {
                             setFieldValue("customerType", v);

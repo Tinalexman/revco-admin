@@ -123,7 +123,7 @@ const Remittance = () => {
                   <Loader color="primary.6" size={24} />
                 ) : (
                   <h2 className="text-[1rem] leading-[1.2rem] font-semibold text-gray-5">
-                    ₦{it.sub!.value.toLocaleString("en-US")}
+                    {it.sub!.value.toLocaleString("en-US")}
                   </h2>
                 )}
               </div>
@@ -133,7 +133,7 @@ const Remittance = () => {
       </div>
       <div className="w-full bg-white p-5 flex flex-col gap-3 rounded-xl">
         <div className="w-full flex justify-between items-center">
-          <h2 className="text-black text-med-button">Remittance Per State</h2>
+          <h2 className="text-black text-med-button">List of Remittance</h2>
           <h2
             onClick={() => setExpanded(!expanded)}
             className="cursor-pointer text-med-button text-[#007AFF]"
@@ -225,7 +225,7 @@ const Remittance = () => {
           )}
           {!loading && data.length === 0 && (
             <div className="w-full h-60 grid place-content-center text-[#3A3A3A] font-medium text-[1rem] leading-[1.125rem]">
-              No transaction history
+              No remmitances available
             </div>
           )}
         </div>

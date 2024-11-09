@@ -18,7 +18,7 @@ interface iRevenueItem {
 }
 
 const Details = () => {
-  const [filter, setFilter] = useState<string>("Yearly");
+  const [filter, setFilter] = useState<string>("Today");
 
   const {
     loading: loadingSummary,

@@ -31,7 +31,7 @@ const UserList = () => {
   const [indexOfChildToBeViewed, setIndexOfChildToBeViewed] =
     useState<number>(0);
   const router = useRouter();
-  const childrenNames: string[] = ["All", "Individual", "Corporation", "Agent"];
+  const childrenNames: string[] = ["All", "Individual", "Corporate", "Agent"];
   const [currentUser, setCurrentUser] = useState<iUserData | null>(null);
   const [expanded, setExpanded] = useState<boolean>(false);
   const [editMode, setEditMode] = useState<boolean>(false);
@@ -53,7 +53,7 @@ const UserList = () => {
 
   const getRoleValue = (role: string) => {
     if (role === "Individual") return "Individual";
-    if (role === "Corporation") return "Non-Individual";
+    if (role === "Corporate") return "Non-Individual";
     if (role === "Agent") return "Agent";
     return "";
   };

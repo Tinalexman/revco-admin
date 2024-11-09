@@ -91,7 +91,7 @@ const Assessments = () => {
       </div>
       <div className="w-full bg-white p-5 flex flex-col gap-3 rounded-xl">
         <div className="w-full flex justify-between items-center">
-          <h2 className="text-black text-med-button">Assesments Per State</h2>
+          <h2 className="text-black text-med-button">List of Assesments</h2>
           <h2
             onClick={() => setExpanded(!expanded)}
             className="cursor-pointer text-med-button text-[#007AFF]"
@@ -178,7 +178,7 @@ const Assessments = () => {
           )}
           {!loadingList && objections.data.length === 0 && (
             <div className="w-full h-60 grid place-content-center text-[#3A3A3A] font-medium text-[1rem] leading-[1.125rem]">
-              No objections available
+              No assessments available
             </div>
           )}
         </div>
