@@ -1,17 +1,13 @@
-import React, { FC, useState } from "react";
+import React, { useEffect } from "react";
 
-import Image, { StaticImageData } from "next/image";
-import TaxPayersImage from "@/assets/dashboard/tax payers.png";
-import {
-  useGetStatisticsSummary,
-  useGetUserActivity,
-} from "@/hooks/dashboardHooks";
+import { useGetStatisticsSummary } from "@/hooks/dashboardHooks";
 import { Loader } from "@mantine/core";
 import { IoReceiptSharp } from "react-icons/io5";
 import { PiWalletFill, PiUsersFill } from "react-icons/pi";
 import { AiOutlineFileDone } from "react-icons/ai";
 import { FaHandshakeSimple } from "react-icons/fa6";
 import Activity from "../../common/Activity";
+import { useInformalSector } from "@/stores/informalSector";
 
 interface iRevenueItem {
   value: number;
@@ -20,9 +16,13 @@ interface iRevenueItem {
   icon: any;
 }
 
-const Collections: FC<{ filter: string }> = ({ filter }) => {
-  const { loading: loadingSummary, data: statsSummary } =
-    useGetStatisticsSummary("informal");
+const Collections = () => {
+  const range = useInformalSector((state) => state.range);
+  const {
+    loading: loadingSummary,
+    data: statsSummary,
+    getStatisticsSummary,
+  } = useGetStatisticsSummary("informal");
 
   const revenueItems: iRevenueItem[] = [
     {
@@ -50,6 +50,10 @@ const Collections: FC<{ filter: string }> = ({ filter }) => {
       icon: <FaHandshakeSimple size={20} className="text-primary" />,
     },
   ];
+
+  useEffect(() => {
+    getStatisticsSummary(range.start, range.end);
+  }, [range]);
 
   return (
     <div className="w-full flex flex-col gap-2.5">

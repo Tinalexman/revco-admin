@@ -59,6 +59,28 @@ export interface iStatisticsSummaryResponse {
   totalAmountRemitted: number;
 }
 
+export interface iRemittanceSummaryResponse {
+  totalCollectedAmount: number;
+  totalGeneratedAmount: number;
+  totalPendingAmount: number;
+  pendingCount: number;
+  generatedCount: number;
+  totalComission: number;
+  collectedCount: number;
+}
+
+export interface iRemittance {
+  totalCollectedAmount: number;
+  totalGeneratedAmount: number;
+  totalPendingAmount: number;
+  clientName: string;
+  pendingCount: number;
+  generatedCount: number;
+  businessId: number;
+  totalCommission: number;
+  collectedCount: number;
+}
+
 export interface iMdaMetricsResponse {
   amount: any;
   referenceName: string;
@@ -675,6 +697,103 @@ export const useGetRecentTransactionDetails = (txid?: string) => {
     loading,
     success,
     getTransaction,
+    data,
+  };
+};
+
+export const useInformalRemittanceSummary = () => {
+  const [loading, setLoading] = useState<boolean>(false);
+  const [data, setData] = useState<iRemittanceSummaryResponse>({
+    collectedCount: 0,
+    generatedCount: 0,
+    pendingCount: 0,
+    totalCollectedAmount: 0,
+    totalGeneratedAmount: 0,
+    totalComission: 0,
+    totalPendingAmount: 0,
+  });
+  const { requestApi } = useAxios();
+  const token = useToken().getToken();
+
+  let getRemittanceSummary = async (start: string, end: string) => {
+    if (loading) return;
+
+    setLoading(true);
+    const { data, status } = await requestApi(
+      `/mda-report/remittance/summary?fromDate=${start}&toDate=${end}&isFormal=false`,
+      "GET",
+      {},
+      {
+        Authorization: `Bearer ${token}`,
+      }
+    );
+
+    setLoading(false);
+
+    if (!status) {
+      toast.error(
+        data?.response?.data?.data ?? "An error occurred. Please try again"
+      );
+    } else {
+      console.log(data[0]);
+      // setData(data[0]);
+    }
+  };
+
+  useEffect(() => {
+    if (token) {
+      const currentDate = new Date().toISOString().split("T")[0];
+      getRemittanceSummary(currentDate, currentDate);
+    }
+  }, [token]);
+
+  return {
+    loading,
+    getRemittanceSummary,
+    data,
+  };
+};
+
+export const useInformalRemittance = () => {
+  const [loading, setLoading] = useState<boolean>(false);
+  const [data, setData] = useState<iRemittance[]>([]);
+  const { requestApi } = useAxios();
+  const token = useToken().getToken();
+
+  let getRemittance = async (start: string, end: string) => {
+    if (loading) return;
+
+    setLoading(true);
+    const { data, status } = await requestApi(
+      `/mda-report/remittance/states?fromDate=${start}&toDate=${end}`,
+      "GET",
+      {},
+      {
+        Authorization: `Bearer ${token}`,
+      }
+    );
+
+    setLoading(false);
+
+    if (!status) {
+      toast.error(
+        data?.response?.data?.data ?? "An error occurred. Please try again"
+      );
+    } else {
+      setData(data);
+    }
+  };
+
+  useEffect(() => {
+    if (token) {
+      const currentDate = new Date().toISOString().split("T")[0];
+      getRemittance(currentDate, currentDate);
+    }
+  }, [token]);
+
+  return {
+    loading,
+    getRemittance,
     data,
   };
 };

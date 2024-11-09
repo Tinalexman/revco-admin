@@ -8,6 +8,7 @@ import Collections from "./Collections";
 import Enumeration from "./Enumeration";
 import GeneralOverview from "./GeneralOverview";
 import Remittance from "./Remittance";
+import { useInformalSector } from "@/stores/informalSector";
 
 const InformalSector = () => {
   const modes: string[] = [
@@ -21,11 +22,11 @@ const InformalSector = () => {
   const [activeMode, setActiveMode] = useState<number>(0);
 
   const children: ReactNode[] = [
-    <GeneralOverview filter={filter} />,
-    <Enumeration filter={filter} />,
-    <Assessments filter={filter} />,
-    <Collections filter={filter} />,
-    <Remittance filter={filter} />,
+    <GeneralOverview />,
+    <Enumeration />,
+    <Assessments />,
+    <Collections />,
+    <Remittance />,
   ];
 
   return (
@@ -53,6 +54,9 @@ const InformalSector = () => {
                   onClick: () => {
                     setFilter(v);
                     const dates = getDateRange(v);
+                    useInformalSector.setState({
+                      range: { start: dates[0], end: dates[1] },
+                    });
                   },
                 }))}
                 value={filter}

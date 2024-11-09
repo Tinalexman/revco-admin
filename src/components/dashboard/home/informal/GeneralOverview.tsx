@@ -4,7 +4,7 @@ import {
 } from "@/hooks/dashboardHooks";
 import { Loader } from "@mantine/core";
 import Image, { StaticImageData } from "next/image";
-import React, { FC } from "react";
+import React, { useEffect } from "react";
 import { AiOutlineFileDone } from "react-icons/ai";
 import { FaHandshakeSimple } from "react-icons/fa6";
 import { IoReceiptSharp } from "react-icons/io5";
@@ -14,6 +14,7 @@ import TaxPayersImage from "@/assets/dashboard/tax payers.png";
 import { MdGroupAdd } from "react-icons/md";
 import Statistics from "../statistics/Statistics";
 import Activity from "../../common/Activity";
+import { useInformalSector } from "@/stores/informalSector";
 
 interface iRevenueItem {
   value: number;
@@ -31,11 +32,13 @@ interface iPersonItem {
   background: StaticImageData;
 }
 
-const GeneralOverview: FC<{ filter: string }> = ({ filter }) => {
+const GeneralOverview = () => {
+  const range = useInformalSector((state) => state.range);
+
   const {
     loading: loadingSummary,
-    getStatisticsSummary,
     data: statsSummary,
+    getStatisticsSummary,
   } = useGetStatisticsSummary("informal");
 
   const revenueItems: iRevenueItem[] = [
@@ -76,6 +79,10 @@ const GeneralOverview: FC<{ filter: string }> = ({ filter }) => {
     corporate: userActivity.corporations,
     background: TaxPayersImage,
   };
+
+  useEffect(() => {
+    getStatisticsSummary(range.start, range.end);
+  }, [range]);
 
   return (
     <div className="flex flex-col gap-6 w-full">

@@ -31,12 +31,9 @@ interface iPersonItem {
   corporate: number;
   background: StaticImageData;
 }
-const Enumeration: FC<{ filter: string }> = ({ filter }) => {
-  const {
-    data: userActivity,
-    loading: loadingActivity,
-    getActivity,
-  } = useGetUserActivity("informal");
+const Enumeration = () => {
+  const { data: userActivity, loading: loadingActivity } =
+    useGetUserActivity("informal");
   const personItems: iPersonItem[] = [
     {
       title: "Total Tax Payers",

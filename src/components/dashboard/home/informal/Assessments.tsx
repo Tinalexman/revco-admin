@@ -5,12 +5,13 @@ import {
   useGetObjectionSummary,
 } from "@/hooks/objectionHooks";
 import { Loader } from "@mantine/core";
-import React, { useState, FC } from "react";
+import React, { useState, FC, useEffect } from "react";
 import { IoIosArrowDown } from "react-icons/io";
 import Filters from "../../common/Filters";
 
 import { HiDocumentText } from "react-icons/hi";
 import { GiTakeMyMoney } from "react-icons/gi";
+import { useInformalSector } from "@/stores/informalSector";
 
 interface iObjectionHeader {
   icon: any;
@@ -18,13 +19,14 @@ interface iObjectionHeader {
   value: number;
 }
 
-const Assessments: FC<{ filter: string }> = ({ filter }) => {
+const Assessments = () => {
+  const range = useInformalSector((state) => state.range);
   const currentDate = new Date().toISOString().split("T")[0];
   const [dateRange, setDateRange] = useState<iDateRange>({
     start: currentDate,
     end: currentDate,
   });
-  const { loading, data } = useGetObjectionSummary(false);
+  const { loading, data, getObjectionSummary } = useGetObjectionSummary(false);
   const objectionHeaders: iObjectionHeader[] = [
     {
       icon: <HiDocumentText size={20} className="text-primary" />,
@@ -51,6 +53,10 @@ const Assessments: FC<{ filter: string }> = ({ filter }) => {
     setCurrentPage(page);
     getObjections(dateRange.start, dateRange.end, `${page}`);
   }
+
+  useEffect(() => {
+    getObjectionSummary(range.start, range.end);
+  }, [range]);
 
   return (
     <div className="w-full flex flex-col gap-2.5">
