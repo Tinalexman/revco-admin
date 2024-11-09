@@ -21,11 +21,11 @@ const InformalSector = () => {
   const [activeMode, setActiveMode] = useState<number>(0);
 
   const children: ReactNode[] = [
-    <GeneralOverview />,
-    <Enumeration />,
-    <Assessments />,
-    <Collections />,
-    <Remittance />,
+    <GeneralOverview filter={filter} />,
+    <Enumeration filter={filter} />,
+    <Assessments filter={filter} />,
+    <Collections filter={filter} />,
+    <Remittance filter={filter} />,
   ];
 
   return (

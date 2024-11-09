@@ -5,9 +5,8 @@ import {
   useGetObjectionSummary,
 } from "@/hooks/objectionHooks";
 import { Loader } from "@mantine/core";
-import React, { useState } from "react";
+import React, { useState, FC } from "react";
 import { IoIosArrowDown } from "react-icons/io";
-import { IoEye } from "react-icons/io5";
 import Filters from "../../common/Filters";
 
 import { HiDocumentText } from "react-icons/hi";
@@ -19,7 +18,7 @@ interface iObjectionHeader {
   value: number;
 }
 
-const Assessments = () => {
+const Assessments: FC<{ filter: string }> = ({ filter }) => {
   const currentDate = new Date().toISOString().split("T")[0];
   const [dateRange, setDateRange] = useState<iDateRange>({
     start: currentDate,

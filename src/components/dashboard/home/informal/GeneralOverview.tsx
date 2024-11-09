@@ -4,7 +4,7 @@ import {
 } from "@/hooks/dashboardHooks";
 import { Loader } from "@mantine/core";
 import Image, { StaticImageData } from "next/image";
-import React from "react";
+import React, { FC } from "react";
 import { AiOutlineFileDone } from "react-icons/ai";
 import { FaHandshakeSimple } from "react-icons/fa6";
 import { IoReceiptSharp } from "react-icons/io5";
@@ -31,7 +31,7 @@ interface iPersonItem {
   background: StaticImageData;
 }
 
-const GeneralOverview = () => {
+const GeneralOverview: FC<{ filter: string }> = ({ filter }) => {
   const {
     loading: loadingSummary,
     getStatisticsSummary,

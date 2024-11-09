@@ -1,6 +1,6 @@
-import React from "react";
+import React, { FC } from "react";
 
-const Remittance = () => {
+const Remittance: FC<{ filter: string }> = ({ filter }) => {
   return <div></div>;
 };
 

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, FC } from "react";
 
 import { Profile, Profile2User } from "iconsax-react";
 
@@ -31,7 +31,7 @@ interface iPersonItem {
   corporate: number;
   background: StaticImageData;
 }
-const Enumeration = () => {
+const Enumeration: FC<{ filter: string }> = ({ filter }) => {
   const {
     data: userActivity,
     loading: loadingActivity,
