@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import Dropdown from "@/components/reusable/Dropdown";
 
-import { RiMoneyDollarCircleFill } from "react-icons/ri";
 import { Profile, Profile2User } from "iconsax-react";
 
 import Image, { StaticImageData } from "next/image";

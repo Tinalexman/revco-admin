@@ -2,9 +2,7 @@ import React, { useState } from "react";
 
 import { useDisclosure } from "@mantine/hooks";
 import { IoIosArrowDown } from "react-icons/io";
-import { convertDateWithDashesAndTime } from "@/functions/dateFunctions";
 import { IoEye } from "react-icons/io5";
-import { HiReceiptRefund } from "react-icons/hi2";
 import Filters from "../Filters";
 import StatusContainer, {
   STATE_SUCCESS,

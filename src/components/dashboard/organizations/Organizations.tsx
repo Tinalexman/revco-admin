@@ -4,7 +4,6 @@ import React, { useState } from "react";
 
 import { Profile, Profile2User } from "iconsax-react";
 import { VscTools } from "react-icons/vsc";
-import Dropdown from "@/components/reusable/Dropdown";
 import OrganizationList from "./OrganizationList";
 import { Drawer, Loader } from "@mantine/core";
 import AddGroup from "./AddGroup";

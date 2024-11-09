@@ -23,8 +23,7 @@ import { HiOutlineReceiptRefund } from "react-icons/hi";
 import { LuStore } from "react-icons/lu";
 import { PiBuildingOfficeDuotone } from "react-icons/pi";
 import { MdOutlineBarChart } from "react-icons/md";
-import { Loader } from "@mantine/core";
-
+import { BiSolidMessageSquareError } from "react-icons/bi";
 export interface iNavigationItem {
   name: string;
   icon: any;
@@ -150,6 +149,12 @@ const DashboardNavigation = () => {
         name: "Organizations",
         icon: <MdGroups2 size={26} />,
         link: "/dashboard/organizations",
+        children: [],
+      },
+      {
+        name: "Objections",
+        icon: <BiSolidMessageSquareError size={26} />,
+        link: "/dashboard/objections",
         children: [],
       },
       {
