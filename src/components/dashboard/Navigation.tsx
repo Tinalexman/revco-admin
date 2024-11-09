@@ -153,7 +153,7 @@ const DashboardNavigation = () => {
       },
       {
         name: "Objections",
-        icon: <BiSolidMessageSquareError size={26} />,
+        icon: <BiSolidMessageSquareError size={22} />,
         link: "/dashboard/objections",
         children: [],
       },

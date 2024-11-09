@@ -145,18 +145,16 @@ const UserList = () => {
                         className="odd:bg-white even:bg-slate-50 text-[#3A3A3A] text-[0.75rem] leading-[1.125rem] justify-around"
                       >
                         <td className="p-4">{user.id}</td>
-                        <td className="p-4">{user.name}</td>
+                        <td className="p-4">
+                          {user.firstName} {user.lastName}
+                        </td>
                         <td className="p-4">{user.email}</td>
                         <td className="p-4">{user.role}</td>
                         <td className="p-4">
                           <StatusContainer
-                            text={
-                              user.status === "false" ? "Inactive" : "Active"
-                            }
+                            text={!user.active ? "Inactive" : "Active"}
                             status={
-                              user.status === "false"
-                                ? STATE_PENDING
-                                : STATE_SUCCESS
+                              !user.active ? STATE_PENDING : STATE_SUCCESS
                             }
                           />
                         </td>
@@ -165,17 +163,15 @@ const UserList = () => {
                             onClick={() => {
                               setCurrentUser({
                                 email: user.email,
-                                name: user.name,
+                                name: `${user.firstName} ${user.lastName}`,
                                 phoneNumber: user.phone,
                                 registrationDate: user.createdAt,
-                                status:
-                                  user.status === "false"
-                                    ? STATE_PENDING
-                                    : STATE_SUCCESS,
-                                statusText:
-                                  user.status === "false"
-                                    ? "Inactive"
-                                    : "Active",
+                                status: !user.active
+                                  ? STATE_PENDING
+                                  : STATE_SUCCESS,
+                                statusText: !user.active
+                                  ? "Inactive"
+                                  : "Active",
                                 taxPayerID: user.id,
                                 userType: user.role,
                               });

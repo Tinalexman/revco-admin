@@ -14,8 +14,10 @@ export interface iTaxPayerResponse {
   email: string;
   status: string;
   phone: string;
-  name: string;
+  firstName: string;
+  lastName: string;
   createdAt: string;
+  active: boolean;
 }
 
 export interface iUserTransaction {
@@ -94,7 +96,9 @@ export const useGetTaxPayers = () => {
     setLoading(true);
 
     const { data, status } = await requestApi(
-      `/mda-report/taxpayers?pageNumber=${pageNo}&pageSize=50&roleFilter=${role}`,
+      `/mda-report/taxpayers?pageNumber=${pageNo}&pageSize=50${
+        role !== "" ? `&roleFilter=${role}` : ""
+      }`,
       "GET",
       {},
       {
