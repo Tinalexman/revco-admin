@@ -124,15 +124,6 @@ export const allFilters: string[] = [
   "Last Year",
 ];
 
-const isA30DayMonth = (currentMonth: number) => {
-  return (
-    currentMonth === 9 ||
-    currentMonth === 6 ||
-    currentMonth === 4 ||
-    currentMonth === 11
-  );
-};
-
 export const getDateRange = (filter: string) => {
   const today = new Date();
   let startDate, endDate;
@@ -141,66 +132,63 @@ export const getDateRange = (filter: string) => {
     case "Today":
       startDate = endDate = today.toISOString().split("T")[0];
       break;
+
     case "Yesterday":
       const yesterday = new Date(today);
       yesterday.setDate(today.getDate() - 1);
       startDate = endDate = yesterday.toISOString().split("T")[0];
       break;
+
     case "This Week":
       const weekStart = new Date(today);
-      weekStart.setDate(today.getDate() - today.getDay()); // Sunday as the first day of the week
+      weekStart.setDate(today.getDate() - today.getDay()); // Sunday as the start of the week
       startDate = weekStart.toISOString().split("T")[0];
       endDate = today.toISOString().split("T")[0];
       break;
+
     case "Last Week":
       const lastWeekStart = new Date(today);
       lastWeekStart.setDate(today.getDate() - today.getDay() - 7);
-      const lastWeekEnd = new Date(today);
-      lastWeekEnd.setDate(lastWeekStart.getDate() + 6); // End of last week
+      const lastWeekEnd = new Date(lastWeekStart);
+      lastWeekEnd.setDate(lastWeekStart.getDate() + 6);
       startDate = lastWeekStart.toISOString().split("T")[0];
       endDate = lastWeekEnd.toISOString().split("T")[0];
       break;
-    case "This Month":
-      const currentMonth = today.getMonth();
-      let dayAddition = 0;
-      if (isA30DayMonth(currentMonth)) {
-        dayAddition = 1;
-      }
 
-      startDate = new Date(
-        today.getFullYear(),
-        today.getMonth(),
-        dayAddition + 1
-      )
+    case "This Month":
+      startDate = new Date(today.getFullYear(), today.getMonth(), 1)
         .toISOString()
         .split("T")[0];
       endDate = today.toISOString().split("T")[0];
       break;
+
     case "Last Month":
-      const lastMonth = new Date(today);
-      lastMonth.setMonth(today.getMonth() - 1);
-      startDate = new Date(lastMonth.getFullYear(), lastMonth.getMonth(), 1)
-        .toISOString()
-        .split("T")[0];
-      const lastMonthEnd = new Date(
-        lastMonth.getFullYear(),
-        lastMonth.getMonth() + 1,
-        0
+      const lastMonthStart = new Date(
+        today.getFullYear(),
+        today.getMonth() - 1,
+        1
       );
+      startDate = lastMonthStart.toISOString().split("T")[0];
+      const lastMonthEnd = new Date(today.getFullYear(), today.getMonth(), 0);
       endDate = lastMonthEnd.toISOString().split("T")[0];
       break;
+
     case "This Year":
       startDate = new Date(today.getFullYear(), 0, 1)
         .toISOString()
         .split("T")[0];
       endDate = today.toISOString().split("T")[0];
       break;
+
     case "Last Year":
       startDate = new Date(today.getFullYear() - 1, 0, 1)
         .toISOString()
         .split("T")[0];
-      endDate = today.toISOString().split("T")[0];
+      endDate = new Date(today.getFullYear() - 1, 11, 31)
+        .toISOString()
+        .split("T")[0];
       break;
+
     default:
       startDate = endDate = today.toISOString().split("T")[0];
   }

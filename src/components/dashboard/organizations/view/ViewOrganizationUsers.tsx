@@ -20,6 +20,8 @@ import StatusContainer, {
   STATE_SUCCESS,
 } from "@/components/reusable/StatusContainer";
 import { IoEye } from "react-icons/io5";
+import AddNewUser from "../../users/admin-users/AddNewUser";
+import { MdAdd } from "react-icons/md";
 
 const ViewOrganization = () => {
   return (
@@ -40,6 +42,8 @@ const ViewOrganizationContent = () => {
   const { data, loading, getUsers } = useGetOrganizationUsers();
   const [currentPage, setCurrentPage] = useState<number>(1);
   const totalPages = Math.ceil(data.count / 50);
+
+  const [addNewUser, shouldAddNewUser] = useState<boolean>(false);
 
   function handlePageChange(page: number) {
     setCurrentPage(page);
@@ -104,9 +108,14 @@ const ViewOrganizationContent = () => {
                   handlePageChange={(page) => handlePageChange(page)}
                 />
               </div>
-              <button className="bg-[#F0E6FC] rounded text-primary flex gap-3 items-center px-3 h-10">
-                <p className="text-[0.815rem] leading-[0.975rem]">Export</p>
-                <IoIosArrowDown />
+              <button
+                onClick={() => shouldAddNewUser(true)}
+                className="bg-primary rounded-lg text-white flex gap-3 items-center px-3 h-10"
+              >
+                <p className="text-[0.815rem] leading-[0.975rem]">
+                  Add New User
+                </p>
+                <MdAdd />
               </button>
             </div>
             <div className="relative overflow-x-auto">
@@ -173,6 +182,30 @@ const ViewOrganizationContent = () => {
           </div>
         </div>
       </div>
+      {addNewUser && (
+        <Drawer.Root
+          opened={addNewUser}
+          onClose={() => shouldAddNewUser(false)}
+          position={"right"}
+          padding={0}
+          radius={12}
+          closeOnClickOutside={false}
+          closeOnEscape={false}
+        >
+          <Drawer.Overlay />
+          <Drawer.Content>
+            <Drawer.Body>
+              <AddNewUser
+                onClose={() => shouldAddNewUser(false)}
+                onCreate={() => {
+                  shouldAddNewUser(false);
+                  window.location.reload();
+                }}
+              />
+            </Drawer.Body>
+          </Drawer.Content>
+        </Drawer.Root>
+      )}
     </>
   );
 };

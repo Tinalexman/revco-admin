@@ -196,6 +196,7 @@ const DashboardNavigation = () => {
     let newPaths: string[] = [
       "payments",
       "organizations",
+      "objections",
       "users",
       "reports",
       "support",
