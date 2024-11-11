@@ -70,6 +70,11 @@ const InformalSector = () => {
                 <div
                   onClick={() => {
                     setActiveMode(i);
+                    setFilter(allFilters[0]);
+                    const dates = getDateRange(allFilters[0]);
+                    useInformalSector.setState({
+                      range: { start: dates[0], end: dates[1] },
+                    });
                   }}
                   key={i}
                   className={`${

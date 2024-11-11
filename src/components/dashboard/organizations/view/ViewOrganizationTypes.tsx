@@ -104,7 +104,7 @@ const ViewOrganizationTypesContent = () => {
               onClick={() => {
                 router.push(`/dashboard/organizations`);
               }}
-              className="font-semibold text-reg-caption text-gray-5"
+              className="font-semibold cursor-pointer text-reg-caption text-gray-5"
             >
               Organizations
             </p>

@@ -14,14 +14,22 @@ interface iDateData {
   end: string;
 }
 
-
-const Details: FC<{ name: string, phoneNumber: string }> = ({ name, phoneNumber }) => {
+const Details: FC<{ name: string; phoneNumber: string }> = ({
+  name,
+  phoneNumber,
+}) => {
   const [expanded, setExpanded] = useState<boolean>(false);
   const currentDate = new Date().toISOString().split("T")[0];
-  const { data, loading, getTransactions } = useGetUserTransactions(name, phoneNumber);
+  const { data, loading, getTransactions } = useGetUserTransactions(
+    name,
+    phoneNumber
+  );
   const [currentPage, setCurrentPage] = useState<number>(1);
   const totalPages = Math.ceil(data.count / 10);
-  const [dateData, setDateData] = useState<iDateData>({ start: currentDate, end: currentDate });
+  const [dateData, setDateData] = useState<iDateData>({
+    start: currentDate,
+    end: currentDate,
+  });
 
   function handlePageChange(page: number) {
     setCurrentPage(page);
@@ -41,15 +49,18 @@ const Details: FC<{ name: string, phoneNumber: string }> = ({ name, phoneNumber 
           </h2>
         </div>
         <div className="w-full justify-between items-center flex">
-          <Filters onDatesChanged={(start, end) => {
-            setDateData({ start, end });
-            getTransactions(`${currentPage}`, dateData.start, dateData.end);
-          }} showDatePicker={true} />
+          <Filters
+            onDatesChanged={(start, end) => {
+              setDateData({ start, end });
+              getTransactions(`${currentPage}`, dateData.start, dateData.end);
+            }}
+            showDatePicker={false}
+          />
           <div className="w-[35%]">
             <Paginator
               totalPages={totalPages}
               currentPage={currentPage}
-              handlePageChange={page => handlePageChange(page)}
+              handlePageChange={(page) => handlePageChange(page)}
             />
           </div>
           <button className="bg-[#F0E6FC] rounded text-primary flex gap-3 items-center px-3 h-10">
@@ -61,64 +72,81 @@ const Details: FC<{ name: string, phoneNumber: string }> = ({ name, phoneNumber 
           <table className="w-[150%]">
             <thead className="w-full bg-[#F3F7FC] h-14">
               <tr className="text-[#3A3A3A] font-medium text-[0.75rem] leading-[1.125rem]">
-                <th scope="col" className="text-left px-4">S/N</th>
-                <th scope="col" className="text-left px-4">Type</th>
-                <th scope="col" className="text-left px-4">Amount</th>
-                <th scope="col" className="text-left px-4">Transaction Ref</th>
-                <th scope="col" className="text-left px-4">Payment Method</th>
-                <th scope="col" className="text-left px-4">Status</th>
-                <th scope="col" className="text-left px-4">Date Created</th>
-                <th scope="col" className="text-left px-4">Actions</th>
+                <th scope="col" className="text-left px-4">
+                  S/N
+                </th>
+                <th scope="col" className="text-left px-4">
+                  Type
+                </th>
+                <th scope="col" className="text-left px-4">
+                  Amount
+                </th>
+                <th scope="col" className="text-left px-4">
+                  Transaction Ref
+                </th>
+                <th scope="col" className="text-left px-4">
+                  Payment Method
+                </th>
+                <th scope="col" className="text-left px-4">
+                  Status
+                </th>
+                <th scope="col" className="text-left px-4">
+                  Date Created
+                </th>
+                <th scope="col" className="text-left px-4">
+                  Actions
+                </th>
               </tr>
             </thead>
             <tbody>
-              {!loading && data.data
-                .slice(0, expanded ? data.data.length : 5)
-                .map((txn, i) => (
-                  <tr
-                    key={i}
-                    className="odd:bg-white even:bg-slate-50 text-[#3A3A3A] text-[0.75rem] leading-[1.125rem] justify-around"
-                  >
-                    <td className="p-4">{i + 1}</td>
-                    <td className="p-4">{txn.channel}</td>
-                    <td className="p-4">
-                      ₦{Number.parseFloat(txn.total).toLocaleString("en-US")}
-                    </td>
+              {!loading &&
+                data.data
+                  .slice(0, expanded ? data.data.length : 5)
+                  .map((txn, i) => (
+                    <tr
+                      key={i}
+                      className="odd:bg-white even:bg-slate-50 text-[#3A3A3A] text-[0.75rem] leading-[1.125rem] justify-around"
+                    >
+                      <td className="p-4">{i + 1}</td>
+                      <td className="p-4">{txn.channel}</td>
+                      <td className="p-4">
+                        ₦{Number.parseFloat(txn.total).toLocaleString("en-US")}
+                      </td>
 
-                    <td className="p-4">{txn.externalReferenceNumber}</td>
-                    <td className="p-4">{txn.channel}</td>
+                      <td className="p-4">{txn.externalReferenceNumber}</td>
+                      <td className="p-4">{txn.channel}</td>
 
-                    <td className="p-4">
-                      <StatusContainer
-                        text={"Completed"}
-                        status={STATE_SUCCESS}
-                      />
-                    </td>
-                    <td className="p-4">
-                      {/* {convertDateWithDashesAndTime(txn.dateCreated)} */}
-                    </td>
-                    <td className="flex gap-1 p-4">
-                      <div
-                        // onClick={() => openDrawer(txn)}
-                        className="cursor-pointer bg-[#FCEAE8] rounded size-6 grid place-content-center text-[#292D32]"
-                      >
-                        <IoEye size={16} />
-                      </div>
-                    </td>
-                  </tr>
-                ))}
+                      <td className="p-4">
+                        <StatusContainer
+                          text={"Completed"}
+                          status={STATE_SUCCESS}
+                        />
+                      </td>
+                      <td className="p-4">
+                        {/* {convertDateWithDashesAndTime(txn.dateCreated)} */}
+                      </td>
+                      <td className="flex gap-1 p-4">
+                        <div
+                          // onClick={() => openDrawer(txn)}
+                          className="cursor-pointer bg-[#FCEAE8] rounded size-6 grid place-content-center text-[#292D32]"
+                        >
+                          <IoEye size={16} />
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
             </tbody>
           </table>
-          {
-            loading && <div className="w-full h-60 grid place-content-center">
+          {loading && (
+            <div className="w-full h-60 grid place-content-center">
               <Loader color="primary.6" />
             </div>
-          }
-          {
-            !loading && data.data.length === 0 && <div className="w-full h-60 grid place-content-center text-[#3A3A3A] font-medium text-[1rem] leading-[1.125rem]">
+          )}
+          {!loading && data.data.length === 0 && (
+            <div className="w-full h-60 grid place-content-center text-[#3A3A3A] font-medium text-[1rem] leading-[1.125rem]">
               No transactions available
             </div>
-          }
+          )}
         </div>
       </div>
     </>

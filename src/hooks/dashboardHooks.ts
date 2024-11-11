@@ -161,7 +161,7 @@ export interface iRecentActivityDetailsResponse {
   };
 }
 
-export const useGetRecentActivity = () => {
+export const useGetRecentActivity = (mode?: string | null) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [success, setSuccess] = useState<boolean>(false);
   const [data, setData] = useState<iRecentActivity>({
@@ -171,12 +171,7 @@ export const useGetRecentActivity = () => {
   const { requestApi } = useAxios();
   const token = useToken().getToken();
 
-  let getActivity = async (
-    start: string,
-    end: string,
-    pageNo: string,
-    mode?: string | null
-  ) => {
+  let getActivity = async (start: string, end: string, pageNo: string) => {
     if (loading) return;
 
     setLoading(true);
@@ -287,7 +282,7 @@ export const useGetStatisticsSummary = (mode?: string | null) => {
   };
 };
 
-export const useGetTransactionSummary = () => {
+export const useGetTransactionSummary = (mode?: string | null) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [success, setSuccess] = useState<boolean>(false);
   const [data, setData] = useState<iRecentActivityResponse[]>([]);

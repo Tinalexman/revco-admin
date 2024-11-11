@@ -197,7 +197,11 @@ const Enumeration = () => {
                             {user.firstName} {user.lastName}
                           </td>
                           <td className="p-4">{user.email}</td>
-                          <td className="p-4">{user.role}</td>
+                          <td className="p-4">
+                            {user.role === "Non-Individual"
+                              ? "Corporate"
+                              : user.role}
+                          </td>
                           <td className="p-4">
                             <StatusContainer
                               text={

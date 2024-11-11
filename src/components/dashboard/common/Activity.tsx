@@ -4,13 +4,9 @@ import { Drawer } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { IoIosArrowDown } from "react-icons/io";
 import { IoEye } from "react-icons/io5";
-import { HiReceiptRefund } from "react-icons/hi2";
 import ViewTransaction from "./ViewTransaction";
 import { useGetRecentActivity } from "@/hooks/dashboardHooks";
 import { Loader } from "@mantine/core";
-
-import ResponsivePagination from "react-responsive-pagination";
-import "react-responsive-pagination/themes/classic.css";
 import Paginator from "@/components/reusable/paginator/Paginator";
 import { iDateRange } from "@/functions/dateFunctions";
 import StatusContainer, {
@@ -26,7 +22,11 @@ const Activity: FC<{ mode?: string | null; showModePicker?: boolean }> = ({
   const [activeMode, setActiveMode] = useState<string>(overviewModes[0]);
 
   const [expanded, setExpanded] = useState<boolean>(false);
-  const { loading, data: transactions, getActivity } = useGetRecentActivity();
+  const {
+    loading,
+    data: transactions,
+    getActivity,
+  } = useGetRecentActivity(mode);
   const currentDate = new Date().toISOString().split("T")[0];
   const [dateRange, setDateRange] = useState<iDateRange>({
     start: currentDate,
@@ -52,7 +52,7 @@ const Activity: FC<{ mode?: string | null; showModePicker?: boolean }> = ({
 
   function handlePageChange(page: number) {
     setCurrentPage(page);
-    getActivity(dateRange.start, dateRange.end, `${page}`, mode);
+    getActivity(dateRange.start, dateRange.end, `${page}`);
   }
 
   return (
@@ -68,8 +68,7 @@ const Activity: FC<{ mode?: string | null; showModePicker?: boolean }> = ({
                     getActivity(
                       dateRange.start,
                       dateRange.end,
-                      `${currentPage}`,
-                      i === 0 ? null : i === 1 ? "informal" : "formal"
+                      `${currentPage}`
                     );
                   }}
                   key={i}
@@ -108,7 +107,7 @@ const Activity: FC<{ mode?: string | null; showModePicker?: boolean }> = ({
                 start,
                 end,
               });
-              getActivity(start, end, `${currentPage}`, mode);
+              getActivity(start, end, `${currentPage}`);
             }}
           />
           <div className="w-[35%]">

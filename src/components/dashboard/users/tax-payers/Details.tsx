@@ -19,7 +19,7 @@ interface iPersonItem {
 }
 
 const Details = () => {
-  const [filter, setFilter] = useState<string>("Yearly");
+  const [filter, setFilter] = useState<string>("Today");
   const {
     data: userActivity,
     loading: loadingActivity,
@@ -48,19 +48,19 @@ const Details = () => {
     <div className="flex flex-col w-full gap-2.5">
       <div className="h-14 bg-white rounded-xl w-full flex items-center justify-between px-7">
         <p className="font-semibold text-dash-header text-gray-5">Overview</p>
-        <div className="w-[90px]">
+        {/* <div className="w-[90px]">
           <Dropdown
             menus={["Daily", "Monthly", "Yearly"].map((v, i) => ({
               name: v,
               onClick: () => {
                 setFilter(v);
-                // getActivity(v.substring(0, 1));
+                getActivity(v.substring(0, 1));
               },
             }))}
             value={filter}
             hint={"Select"}
           />
-        </div>
+        </div> */}
       </div>
       <div className="w-full grid grid-cols-2 gap-2.5">
         {personItems.map((pt, i) => (

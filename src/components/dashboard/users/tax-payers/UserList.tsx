@@ -31,7 +31,7 @@ const UserList = () => {
   const [indexOfChildToBeViewed, setIndexOfChildToBeViewed] =
     useState<number>(0);
   const router = useRouter();
-  const childrenNames: string[] = ["All", "Individual", "Corporate", "Agent"];
+  const childrenNames: string[] = ["All", "Individual", "Corporate"];
   const [currentUser, setCurrentUser] = useState<iUserData | null>(null);
   const [expanded, setExpanded] = useState<boolean>(false);
   const [editMode, setEditMode] = useState<boolean>(false);
@@ -54,7 +54,6 @@ const UserList = () => {
   const getRoleValue = (role: string) => {
     if (role === "Individual") return "Individual";
     if (role === "Corporate") return "Non-Individual";
-    if (role === "Agent") return "Agent";
     return "";
   };
 
@@ -68,7 +67,8 @@ const UserList = () => {
                 key={index}
                 onClick={() => {
                   setIndexOfChildToBeViewed(index);
-                  getUsers(`${currentPage}`, getRoleValue(childName));
+                  setCurrentPage(1);
+                  getUsers("1", getRoleValue(childName));
                 }}
                 className={`text-reg-caption cursor-pointer transition-all duration-300 ease-out px-4 grid place-content-center font-semibold ${
                   indexOfChildToBeViewed === index
@@ -149,7 +149,11 @@ const UserList = () => {
                           {user.firstName} {user.lastName}
                         </td>
                         <td className="p-4">{user.email}</td>
-                        <td className="p-4">{user.role}</td>
+                        <td className="p-4">
+                          {user.role === "Non-Individual"
+                            ? "Corporate"
+                            : user.role}
+                        </td>
                         <td className="p-4">
                           <StatusContainer
                             text={!user.active ? "Inactive" : "Active"}
