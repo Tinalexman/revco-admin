@@ -216,12 +216,16 @@ export const useDownloadReport = () => {
         data?.response?.data?.data ?? "An error occurred. Please try again"
       );
     } else {
-      const url = window.URL.createObjectURL(data);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = "report.pdf";
-      a.click();
+      const url = window.URL.createObjectURL(new Blob([data]));
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", "report.xlsx");
+
+      document.body.appendChild(link);
+      link.click();
+
       window.URL.revokeObjectURL(url);
+      link.remove();
     }
   };
 
