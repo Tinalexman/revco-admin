@@ -100,7 +100,12 @@ const ViewOrganizationTypesContent = () => {
         </div>
         <div className="w-full px-8 flex flex-col gap-2.5">
           <div className="h-14 bg-white rounded-xl w-full flex items-center gap-3 px-7">
-            <p className="font-semibold text-reg-caption text-gray-5">
+            <p
+              onClick={() => {
+                router.push(`/dashboard/organizations`);
+              }}
+              className="font-semibold text-reg-caption text-gray-5"
+            >
               Organizations
             </p>
             <IoIosArrowForward className="text-gray-5" size={24} />

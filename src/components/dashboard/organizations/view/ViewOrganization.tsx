@@ -119,11 +119,23 @@ const ViewOrganizationContent = () => {
         </div>
         <div className="w-full px-8 flex flex-col gap-2.5">
           <div className="h-14 bg-white rounded-xl w-full flex items-center gap-3 px-7">
-            <p className="font-semibold text-reg-caption text-gray-5">
+            <p
+              onClick={() => {
+                router.push("/dashboard/organizations");
+              }}
+              className="font-semibold cursor-pointer text-reg-caption text-gray-5"
+            >
               Organizations
             </p>
             <IoIosArrowForward className="text-gray-5" size={24} />
-            <p className="font-medium text-reg-caption text-gray-5">
+            <p
+              onClick={() => {
+                router.push(
+                  `/dashboard/organizations/type?type=${organizationCategory}`
+                );
+              }}
+              className="font-medium cursor-pointer text-reg-caption text-gray-5"
+            >
               {organizationCategory}
             </p>
             <IoIosArrowForward className="text-gray-5" size={24} />
@@ -158,6 +170,7 @@ const ViewOrganizationContent = () => {
                   name: organizationName,
                   category: capitalize(organizationCategory),
                   id: organizationId,
+                  active: isOrganizationActive,
                 })
               ).toString("base64")}`}
               className="bg-[#E9F3FA] text-[#2085C9] rounded-lg h-9 gap-2 px-3 text-[0.825rem] flex items-center leading-[0.98rem]"

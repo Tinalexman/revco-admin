@@ -22,6 +22,7 @@ import StatusContainer, {
 import { IoEye } from "react-icons/io5";
 import AddNewUser from "../../users/admin-users/AddNewUser";
 import { MdAdd } from "react-icons/md";
+import { capitalize } from "@/functions/stringFunctions";
 
 const ViewOrganization = () => {
   return (
@@ -39,6 +40,7 @@ const ViewOrganizationContent = () => {
   const [organizationName, setOrganizationName] = useState<string>("");
   const [organizationCategory, setOrganizationCategory] = useState<string>("");
   const [organizationId, setOrganizationId] = useState<number>(-1);
+  const [organizationActive, setOrganizationActive] = useState<boolean>(false);
   const { data, loading, getUsers } = useGetOrganizationUsers();
   const [currentPage, setCurrentPage] = useState<number>(1);
   const totalPages = Math.ceil(data.count / 50);
@@ -63,6 +65,7 @@ const ViewOrganizationContent = () => {
         payload.category === "Ministry" ? "Ministries" : payload.category
       );
       setOrganizationId(payload.id);
+      setOrganizationActive(payload.active);
       getUsers(payload.id, "1");
     }
   }, [router]);
@@ -72,15 +75,45 @@ const ViewOrganizationContent = () => {
       <div className="w-full flex flex-col gap-2.5">
         <div className="w-full px-8 flex flex-col gap-2.5 mt-5">
           <div className="h-14 bg-white rounded-xl w-full flex items-center gap-3 px-7">
-            <p className="font-semibold text-reg-caption text-gray-5">
+            <p
+              onClick={() => {
+                router.push(`/dashboard/organizations`);
+              }}
+              className="font-semibold cursor-pointer text-reg-caption text-gray-5"
+            >
               Organizations
             </p>
             <IoIosArrowForward className="text-gray-5" size={24} />
-            <p className="font-medium text-reg-caption text-gray-5">
+            <p
+              onClick={() => {
+                router.push(
+                  `/dashboard/organizations/type?type=${organizationCategory}`
+                );
+              }}
+              className="font-medium cursor-pointer text-reg-caption text-gray-5"
+            >
               {organizationCategory}
             </p>
             <IoIosArrowForward className="text-gray-5" size={24} />
-            <p className="font-medium text-reg-caption text-gray-5">
+            <p
+              onClick={() => {
+                router.push(
+                  `/dashboard/organizations/view-organization?data=${Buffer.from(
+                    JSON.stringify({
+                      name: organizationName,
+                      category: capitalize(
+                        organizationCategory === "Ministries"
+                          ? "Ministry"
+                          : organizationCategory
+                      ),
+                      id: organizationId,
+                      active: organizationActive,
+                    })
+                  ).toString("base64")}`
+                );
+              }}
+              className="font-medium cursor-pointer text-reg-caption text-gray-5"
+            >
               {organizationName}
             </p>
             <IoIosArrowForward className="text-gray-5" size={24} />
