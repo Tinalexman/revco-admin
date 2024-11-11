@@ -86,7 +86,12 @@ const Statistics: FC<{ mode: string | null }> = ({ mode }) => {
       children: [
         {
           name: "Taraba IRS",
-          value: `${transactionRevenue["TARABA STATE INTERNAL REVENUE SERVICE "]}`,
+          value: Number.parseInt(
+            `${
+              transactionRevenue?.["TARABA STATE INTERNAL REVENUE SERVICE "] ??
+              0
+            }`
+          ).toLocaleString("en-US"),
           fraction:
             totalRevenue === 0
               ? 0
@@ -95,13 +100,17 @@ const Statistics: FC<{ mode: string | null }> = ({ mode }) => {
         },
         {
           name: "Participant 1",
-          value: `${transactionRevenue.Paysure}`,
+          value: Number.parseInt(
+            `${transactionRevenue.Paysure ?? 0}`
+          ).toLocaleString("en-US"),
           fraction:
             totalRevenue === 0 ? 0 : transactionRevenue.Paysure / totalRevenue,
         },
         {
           name: "Participant 2",
-          value: `${transactionRevenue?.["Participant 1"] ?? 0}`,
+          value: Number.parseInt(
+            `${transactionRevenue?.["Participant 1"] ?? 0}`
+          ).toLocaleString("en-US"),
           fraction:
             totalRevenue === 0
               ? 0
@@ -109,7 +118,9 @@ const Statistics: FC<{ mode: string | null }> = ({ mode }) => {
         },
         {
           name: "Participant 3",
-          value: `${transactionRevenue?.["Participant 2"] ?? 0}`,
+          value: Number.parseInt(
+            `${transactionRevenue?.["Participant 2"] ?? 0}`
+          ).toLocaleString("en-US"),
           fraction:
             totalRevenue === 0
               ? 0

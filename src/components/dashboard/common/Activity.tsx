@@ -172,7 +172,10 @@ const Activity: FC<{ mode?: string | null; showModePicker?: boolean }> = ({
                       <td className="p-4">{txn.mda}</td>
                       <td className="p-4">{txn.type}</td>
                       <td className="p-4">
-                        ₦{txn.invoiceAmount.toLocaleString("en-US")}
+                        ₦
+                        {Number.parseInt(
+                          txn.invoiceAmount.toString()
+                        ).toLocaleString("en-US")}
                       </td>
                       <td className="p-4">{txn.paymentDate}</td>
                       <td className="p-4">
