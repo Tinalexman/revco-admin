@@ -226,7 +226,7 @@ const UserList = () => {
                 />
               ) : resetMode ? (
                 <ResetPassword
-                  userId={currentUser!.taxPayerID}
+                  userId={Number.parseInt(currentUser!.taxPayerID)}
                   onClose={() => {
                     setResetMode(false);
                   }}

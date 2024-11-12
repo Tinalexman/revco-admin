@@ -22,6 +22,7 @@ import ViewUser from "../../users/tax-payers/ViewUser";
 
 import { useRouter } from "next/navigation";
 import Filters from "../../users/Filters";
+import ResetPassword from "../../users/tax-payers/ResetPassword";
 
 interface iPersonItem {
   value: number;
@@ -58,6 +59,7 @@ const Enumeration = () => {
   const [currentPage, setCurrentPage] = useState<number>(1);
   const totalPages = Math.ceil(data.count / 50);
   const [editMode, setEditMode] = useState<boolean>(false);
+  const [resetMode, setResetMode] = useState<boolean>(false);
   const [opened, { open, close }] = useDisclosure(false);
   const closeDrawer = () => {
     setCurrentUser(null);
@@ -278,9 +280,19 @@ const Enumeration = () => {
                     setEditMode(false);
                   }}
                 />
+              ) : resetMode ? (
+                <ResetPassword
+                  userId={Number.parseInt(currentUser!.taxPayerID)}
+                  onClose={() => {
+                    setResetMode(false);
+                  }}
+                />
               ) : (
                 <ViewUser
                   user={currentUser}
+                  onReset={() => {
+                    setResetMode(true);
+                  }}
                   onClose={closeDrawer}
                   onEdit={() => {
                     setEditMode(true);
