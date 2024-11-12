@@ -14,7 +14,7 @@ const Layout: FC<{ children: ReactNode }> = ({ children }) => {
   const search = useDashboardData((state) => state.searchFilter);
   const expanded = useDashboardData((state) => state.expanded);
   const role = useRevcoUserStore((state) => state.role);
-  const { removeToken } = useToken();
+  const { removeToken, removeOther } = useToken();
   const [open, setOpen] = useState<boolean>(false);
   const dropdownRef = useRef<HTMLDivElement | null>(null);
 
@@ -37,6 +37,7 @@ const Layout: FC<{ children: ReactNode }> = ({ children }) => {
 
   const logout = () => {
     removeToken();
+    removeOther("rvc-auth");
     window.localStorage.removeItem("rvc-ad");
     window.location.replace("/");
   };

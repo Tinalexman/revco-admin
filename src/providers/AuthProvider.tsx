@@ -55,5 +55,20 @@ export const useToken = () => {
     Cookies.remove(tokenKey);
   };
 
-  return { getToken, setToken, removeToken };
+  const setOther = (key: string, value: string) => {
+    Cookies.set(key, value, {
+      secure: true,
+      sameSite: "strict",
+    });
+  };
+
+  const getOther = (key: string) => {
+    return Cookies.get(key);
+  };
+
+  const removeOther = (key: string) => {
+    Cookies.remove(key);
+  };
+
+  return { getToken, setToken, removeToken, setOther, getOther, removeOther };
 };

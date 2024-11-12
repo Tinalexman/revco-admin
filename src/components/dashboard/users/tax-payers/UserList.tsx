@@ -15,6 +15,7 @@ import EditUser from "./EditUser";
 import { useRouter } from "next/navigation";
 import { useGetTaxPayers } from "@/hooks/userHooks";
 import Paginator from "@/components/reusable/paginator/Paginator";
+import ResetPassword from "./ResetPassword";
 
 export interface iUserData {
   taxPayerID: string;
@@ -35,7 +36,7 @@ const UserList = () => {
   const [currentUser, setCurrentUser] = useState<iUserData | null>(null);
   const [expanded, setExpanded] = useState<boolean>(false);
   const [editMode, setEditMode] = useState<boolean>(false);
-
+  const [resetMode, setResetMode] = useState<boolean>(false);
   const [opened, { open, close }] = useDisclosure(false);
   const closeDrawer = () => {
     setCurrentUser(null);
@@ -223,12 +224,22 @@ const UserList = () => {
                     setEditMode(false);
                   }}
                 />
+              ) : resetMode ? (
+                <ResetPassword
+                  userId={currentUser!.taxPayerID}
+                  onClose={() => {
+                    setResetMode(false);
+                  }}
+                />
               ) : (
                 <ViewUser
                   user={currentUser}
                   onClose={closeDrawer}
                   onEdit={() => {
                     setEditMode(true);
+                  }}
+                  onReset={() => {
+                    setResetMode(true);
                   }}
                   viewTransactions={() => {
                     router.push(

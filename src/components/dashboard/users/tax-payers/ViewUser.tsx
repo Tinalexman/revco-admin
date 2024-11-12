@@ -15,8 +15,9 @@ const ViewUser: FC<{
   user: iUserData;
   onClose: () => void;
   onEdit: () => void;
+  onReset: () => void;
   viewTransactions: () => void;
-}> = ({ user, onClose, onEdit, viewTransactions }) => {
+}> = ({ user, onClose, onEdit, onReset, viewTransactions }) => {
   const dropdownRef = useRef<HTMLDivElement | null>(null);
   const [showMenu, shouldShowMenu] = useState<boolean>(false);
   const handleOutsideClick = (event: MouseEvent) => {
@@ -143,18 +144,17 @@ const ViewUser: FC<{
         </div>
         <div className="w-full p-3 text-[0.875rem] text-black leading-[1rem] flex items-center justify-between">
           <h3>Registration Date:</h3>
-          <h3 className="font-medium">{convertDateWithDashesAndTime(user.registrationDate)}</h3>
+          <h3 className="font-medium">
+            {convertDateWithDashesAndTime(user.registrationDate)}
+          </h3>
         </div>
       </div>
       <div className="w-full flex justify-between items-center ">
-        <button
-          onClick={onClose}
-          className="text-[#E94410] text-reg-caption w-[48%] border-2 border-[#F6F6F7] h-10 flex justify-center gap-2 items-center rounded-lg"
-        >
+        <button className="text-[#E94410] text-reg-caption w-[48%] border-2 border-[#F6F6F7] h-10 flex justify-center gap-2 items-center rounded-lg">
           Deactivate Account
         </button>
         <button
-          onClick={onClose}
+          onClick={onReset}
           className="text-white text-reg-caption w-[48%] bg-primary h-10 flex justify-center gap-2 items-center rounded-lg"
         >
           Reset Password

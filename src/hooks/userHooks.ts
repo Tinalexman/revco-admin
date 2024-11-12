@@ -81,6 +81,12 @@ export interface iCreateUserPayload {
   };
 }
 
+export interface iResetPasswordPayload {
+  userId: number;
+  newPassword: string;
+  confirmPassword: string;
+}
+
 export const useGetTaxPayers = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [success, setSuccess] = useState<boolean>(false);
@@ -270,5 +276,44 @@ export const useCreateUser = () => {
     loading,
     success,
     createUser,
+  };
+};
+
+export const useResetUserPassword = () => {
+  const [loading, setLoading] = useState<boolean>(false);
+  const [success, setSuccess] = useState<boolean>(false);
+  const { requestApi } = useAxios();
+  const token = useToken().getToken();
+
+  let reset = async (payload: iResetPasswordPayload) => {
+    if (loading) return;
+
+    setLoading(true);
+
+    const { data, status } = await requestApi(
+      `/admin/user/manualResetPassword`,
+      "POST",
+      payload,
+      {
+        Authorization: `Bearer ${token}`,
+      }
+    );
+
+    setLoading(false);
+    setSuccess(status);
+
+    if (!status) {
+      toast.error(
+        data?.response?.data?.data ?? "An error occurred. Please try again"
+      );
+    } else {
+      toast.success("Password reset successful");
+    }
+  };
+
+  return {
+    loading,
+    success,
+    reset,
   };
 };
