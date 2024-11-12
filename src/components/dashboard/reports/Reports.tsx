@@ -110,12 +110,19 @@ const Reports = () => {
                       </td>
 
                       <td className="p-4 flex gap-1 w-fit items-center">
-                        <div
-                          onClick={() => downloadReport(report.id)}
-                          className="cursor-pointer bg-[#E4ECF7] rounded size-6 grid place-content-center text-[#292D32]"
-                        >
-                          <HiDownload size={16} />
-                        </div>
+                        {loadingDownload ? (
+                          <Loader color="primary.6" size={18} />
+                        ) : (
+                          <div
+                            onClick={() => {
+                              setSelectedReport(report.id);
+                              downloadReport(report.id);
+                            }}
+                            className="cursor-pointer bg-[#E4ECF7] rounded size-6 grid place-content-center text-[#292D32]"
+                          >
+                            <HiDownload size={16} />
+                          </div>
+                        )}
                         <div
                           onClick={() => {
                             setSelectedReport(report.id);

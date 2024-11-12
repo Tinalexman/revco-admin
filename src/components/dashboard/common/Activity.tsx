@@ -8,7 +8,11 @@ import ViewTransaction from "./ViewTransaction";
 import { useGetRecentActivity } from "@/hooks/dashboardHooks";
 import { Loader } from "@mantine/core";
 import Paginator from "@/components/reusable/paginator/Paginator";
-import { getDateRange, iDateRange } from "@/functions/dateFunctions";
+import {
+  convertDateWithDashesAndTime,
+  getDateRange,
+  iDateRange,
+} from "@/functions/dateFunctions";
 import StatusContainer, {
   STATE_PENDING,
   STATE_SUCCESS,
@@ -145,6 +149,9 @@ const Activity: FC<{ mode?: string | null; showModePicker?: boolean }> = ({
                   Invoice Amount
                 </th>
                 <th scope="col" className="px-4">
+                  Generated Date
+                </th>
+                <th scope="col" className="px-4">
                   Payment Date
                 </th>
                 <th scope="col" className="px-4">
@@ -176,7 +183,14 @@ const Activity: FC<{ mode?: string | null; showModePicker?: boolean }> = ({
                           txn.invoiceAmount.toString()
                         ).toLocaleString("en-US")}
                       </td>
-                      <td className="p-4">{txn.paymentDate}</td>
+                      <td className="p-4">
+                        {convertDateWithDashesAndTime(txn.generatedDate)}
+                      </td>
+                      <td className="p-4">
+                        {txn.paymentDate === "N/A"
+                          ? "N/A"
+                          : convertDateWithDashesAndTime(txn.paymentDate)}
+                      </td>
                       <td className="p-4">
                         <StatusContainer
                           status={txn.paid ? STATE_SUCCESS : STATE_PENDING}

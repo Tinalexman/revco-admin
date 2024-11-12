@@ -16,6 +16,7 @@ export interface iRecentActivityResponse {
   paymentDate: string;
   username: string;
   description: string;
+  generatedDate: string;
   channel: any;
   type: string;
   phoneNumber: string;
