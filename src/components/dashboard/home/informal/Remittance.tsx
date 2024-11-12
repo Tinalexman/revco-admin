@@ -14,7 +14,7 @@ import { PiWalletFill, PiUsersFill } from "react-icons/pi";
 import { AiOutlineFileDone } from "react-icons/ai";
 import { FaHandshakeSimple } from "react-icons/fa6";
 import Activity from "../../common/Activity";
-import { iDateRange } from "@/functions/dateFunctions";
+import { getDateRange, iDateRange } from "@/functions/dateFunctions";
 import Filters from "../../common/Filters";
 import Paginator from "@/components/reusable/paginator/Paginator";
 import { IoIosArrowDown } from "react-icons/io";
@@ -38,10 +38,10 @@ interface iRevenueItem {
 
 const Remittance = () => {
   const range = useInformalSector((state) => state.range);
-  const currentDate = new Date().toISOString().split("T")[0];
+  const currentDate = getDateRange("Today");
   const [dateRange, setDateRange] = useState<iDateRange>({
-    start: currentDate,
-    end: currentDate,
+    start: currentDate[0],
+    end: currentDate[0],
   });
 
   const {

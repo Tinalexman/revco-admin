@@ -1,4 +1,5 @@
 import { useAxios } from "@/api/base";
+import { getDateRange } from "@/functions/dateFunctions";
 import { useToken } from "@/providers/AuthProvider";
 import { useState, useEffect } from "react";
 import toast from "react-hot-toast";
@@ -220,8 +221,8 @@ export const useGetUserTransactions = (name: string, phoneNumber: string) => {
 
   useEffect(() => {
     if (token) {
-      const currentDate = new Date().toISOString().split("T")[0];
-      getTransactions("1", currentDate, currentDate);
+      const currentDate = getDateRange("Today");
+      getTransactions("1", currentDate[0], currentDate[0]);
     }
   }, [token]);
 

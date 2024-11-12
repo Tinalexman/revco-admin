@@ -1,4 +1,5 @@
 import { useAxios } from "@/api/base";
+import { getDateRange } from "@/functions/dateFunctions";
 import { useToken } from "@/providers/AuthProvider";
 import { useState, useEffect } from "react";
 import toast from "react-hot-toast";
@@ -207,8 +208,8 @@ export const useGetRecentActivity = (mode?: string | null) => {
 
   useEffect(() => {
     if (token) {
-      const currentDate = new Date().toISOString().split("T")[0];
-      getActivity(currentDate, currentDate, "1");
+      const currentDate = getDateRange("Today");
+      getActivity(currentDate[0], currentDate[0], "1");
     }
   }, [token]);
 
@@ -270,8 +271,8 @@ export const useGetStatisticsSummary = (mode?: string | null) => {
 
   useEffect(() => {
     if (token) {
-      const currentDate = new Date().toISOString().split("T")[0];
-      getStatisticsSummary(currentDate, currentDate);
+      const currentDate = getDateRange("Today");
+      getStatisticsSummary(currentDate[0], currentDate[0]);
     }
   }, [token]);
 
@@ -737,8 +738,8 @@ export const useInformalRemittanceSummary = () => {
 
   useEffect(() => {
     if (token) {
-      const currentDate = new Date().toISOString().split("T")[0];
-      getRemittanceSummary(currentDate, currentDate);
+      const currentDate = getDateRange("Today");
+      getRemittanceSummary(currentDate[0], currentDate[0]);
     }
   }, [token]);
 
@@ -781,8 +782,8 @@ export const useInformalRemittance = () => {
 
   useEffect(() => {
     if (token) {
-      const currentDate = new Date().toISOString().split("T")[0];
-      getRemittance(currentDate, currentDate);
+      const currentDate = getDateRange("Today");
+      getRemittance(currentDate[0], currentDate[0]);
     }
   }, [token]);
 

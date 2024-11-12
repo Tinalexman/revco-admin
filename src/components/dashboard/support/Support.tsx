@@ -22,15 +22,15 @@ import Paginator from "@/components/reusable/paginator/Paginator";
 import ViewTicket from "./ViewTicket";
 import { Loader } from "@mantine/core";
 import { toLeadingCase } from "@/functions/stringFunctions";
-import { iDateRange } from "@/functions/dateFunctions";
+import { getDateRange, iDateRange } from "@/functions/dateFunctions";
 
 const Support = () => {
-  const currentDate = new Date().toISOString().split("T")[0];
+  const currentDate = getDateRange("Today");
   const [openedNewTicket, shouldOpenNewTicket] = useState(false);
   const [openedCloseTicket, shouldCloseTicket] = useState(false);
   const [dateRange, setDateRange] = useState<iDateRange>({
-    start: currentDate,
-    end: currentDate,
+    start: currentDate[0],
+    end: currentDate[0],
   });
   const [expanded, setExpanded] = useState<boolean>(false);
   const { loading, data: issues, getDisputes } = useGetAllDisputes();

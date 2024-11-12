@@ -13,7 +13,10 @@ import StatusContainer, {
   STATE_PENDING,
 } from "@/components/reusable/StatusContainer";
 
-import { convertDateWithDashesAndTime } from "@/functions/dateFunctions";
+import {
+  convertDateWithDashesAndTime,
+  getDateRange,
+} from "@/functions/dateFunctions";
 import GenerateInvoice from "./GenerateInvoice";
 import { useGetRecentInvoices } from "@/hooks/paymentHooks";
 import Paginator from "@/components/reusable/paginator/Paginator";
@@ -33,13 +36,13 @@ const InvoiceManagement = () => {
     { open: openGenerateInvoice, close: closeGenerateInvoice },
   ] = useDisclosure(false);
 
-  const currentDate = new Date().toISOString().split("T")[0];
+  const currentDate = getDateRange("Today");
   const { loading, data, getInvoices } = useGetRecentInvoices();
   const totalPages = Math.ceil(data.count / 50);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [dateData, setDateData] = useState<iDateData>({
-    start: currentDate,
-    end: currentDate,
+    start: currentDate[0],
+    end: currentDate[0],
   });
 
   function handlePageChange(page: number) {

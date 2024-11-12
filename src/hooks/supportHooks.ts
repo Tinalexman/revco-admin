@@ -1,4 +1,5 @@
 import { useAxios } from "@/api/base";
+import { getDateRange } from "@/functions/dateFunctions";
 import { useToken } from "@/providers/AuthProvider";
 import { useState, useEffect } from "react";
 import toast from "react-hot-toast";
@@ -71,8 +72,8 @@ export const useGetAllDisputes = () => {
 
   useEffect(() => {
     if (token) {
-      const currentDate = new Date().toISOString().split("T")[0];
-      getDisputes(1, currentDate, currentDate);
+      const currentDate = getDateRange("Today");
+      getDisputes(1, currentDate[0], currentDate[0]);
     }
   }, [token]);
 

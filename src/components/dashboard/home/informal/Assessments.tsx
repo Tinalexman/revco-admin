@@ -1,5 +1,5 @@
 import Paginator from "@/components/reusable/paginator/Paginator";
-import { iDateRange } from "@/functions/dateFunctions";
+import { getDateRange, iDateRange } from "@/functions/dateFunctions";
 import {
   useGetObjections,
   useGetObjectionSummary,
@@ -21,10 +21,10 @@ interface iObjectionHeader {
 
 const Assessments = () => {
   const range = useInformalSector((state) => state.range);
-  const currentDate = new Date().toISOString().split("T")[0];
+  const currentDate = getDateRange("Today");
   const [dateRange, setDateRange] = useState<iDateRange>({
-    start: currentDate,
-    end: currentDate,
+    start: currentDate[0],
+    end: currentDate[0],
   });
   const { loading, data, getObjectionSummary } = useGetObjectionSummary(false);
   const objectionHeaders: iObjectionHeader[] = [

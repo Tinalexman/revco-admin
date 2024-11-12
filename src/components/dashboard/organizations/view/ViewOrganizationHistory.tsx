@@ -5,6 +5,7 @@ import { useDisclosure } from "@mantine/hooks";
 import { IoIosArrowDown } from "react-icons/io";
 import {
   convertDateWithDashesAndTime,
+  getDateRange,
   iDateRange,
 } from "@/functions/dateFunctions";
 import { IoEye } from "react-icons/io5";
@@ -25,12 +26,12 @@ const ViewOrganizationHistory: FC<{ name: string; id: string | number }> = ({
   id,
   name,
 }) => {
-  const currentDate = new Date().toISOString().split("T")[0];
+  const currentDate = getDateRange("Today");
   const { loading, getHistory, data } =
     useGetOrganizationTransactionHistory(id);
   const [dateRange, setDateRange] = useState<iDateRange>({
-    start: currentDate,
-    end: currentDate,
+    start: currentDate[0],
+    end: currentDate[0],
   });
   const [expanded, setExpanded] = useState<boolean>(false);
   const [currentPage, setCurrentPage] = useState<number>(1);

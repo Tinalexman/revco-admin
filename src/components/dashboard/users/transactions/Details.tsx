@@ -8,6 +8,7 @@ import Filters from "../../common/Filters";
 import { useGetUserTransactions } from "@/hooks/userHooks";
 import Paginator from "@/components/reusable/paginator/Paginator";
 import { Loader } from "@mantine/core";
+import { getDateRange } from "@/functions/dateFunctions";
 
 interface iDateData {
   start: string;
@@ -19,7 +20,7 @@ const Details: FC<{ name: string; phoneNumber: string }> = ({
   phoneNumber,
 }) => {
   const [expanded, setExpanded] = useState<boolean>(false);
-  const currentDate = new Date().toISOString().split("T")[0];
+  const currentDate = getDateRange("Today");
   const { data, loading, getTransactions } = useGetUserTransactions(
     name,
     phoneNumber
@@ -27,8 +28,8 @@ const Details: FC<{ name: string; phoneNumber: string }> = ({
   const [currentPage, setCurrentPage] = useState<number>(1);
   const totalPages = Math.ceil(data.count / 10);
   const [dateData, setDateData] = useState<iDateData>({
-    start: currentDate,
-    end: currentDate,
+    start: currentDate[0],
+    end: currentDate[0],
   });
 
   function handlePageChange(page: number) {

@@ -8,7 +8,7 @@ import ViewTransaction from "./ViewTransaction";
 import { useGetRecentActivity } from "@/hooks/dashboardHooks";
 import { Loader } from "@mantine/core";
 import Paginator from "@/components/reusable/paginator/Paginator";
-import { iDateRange } from "@/functions/dateFunctions";
+import { getDateRange, iDateRange } from "@/functions/dateFunctions";
 import StatusContainer, {
   STATE_PENDING,
   STATE_SUCCESS,
@@ -27,10 +27,10 @@ const Activity: FC<{ mode?: string | null; showModePicker?: boolean }> = ({
     data: transactions,
     getActivity,
   } = useGetRecentActivity(mode);
-  const currentDate = new Date().toISOString().split("T")[0];
+  const currentDate = getDateRange("Today");
   const [dateRange, setDateRange] = useState<iDateRange>({
-    start: currentDate,
-    end: currentDate,
+    start: currentDate[0],
+    end: currentDate[0],
   });
   const [opened, { open, close }] = useDisclosure(false);
   const [currentTransaction, setCurrentTransaction] = useState<string | null>(
@@ -172,7 +172,7 @@ const Activity: FC<{ mode?: string | null; showModePicker?: boolean }> = ({
                       <td className="p-4">{txn.type}</td>
                       <td className="p-4">
                         ₦
-                        {Number.parseInt(
+                        {Number.parseFloat(
                           txn.invoiceAmount.toString()
                         ).toLocaleString("en-US")}
                       </td>

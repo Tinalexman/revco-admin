@@ -1,4 +1,5 @@
 import { useAxios } from "@/api/base";
+import { getDateRange } from "@/functions/dateFunctions";
 import { useToken } from "@/providers/AuthProvider";
 import { useState, useEffect } from "react";
 import toast from "react-hot-toast";
@@ -223,8 +224,8 @@ export const useGetRecentInvoices = (category?: string) => {
 
   useEffect(() => {
     if (token) {
-      const currentDate = new Date().toISOString().split("T")[0];
-      getInvoices(currentDate, currentDate, "1");
+      const currentDate = getDateRange("Today");
+      getInvoices(currentDate[0], currentDate[0], "1");
     }
   }, [token]);
 
