@@ -11,21 +11,13 @@ import { IoIosArrowForward } from "react-icons/io";
 import { BsPeopleFill } from "react-icons/bs";
 import { Bank } from "iconsax-react";
 import Link from "next/link";
-import AddGroup from "../AddGroup";
+import AddBranch from "./AddBranch";
 import {
   useGetOrganizationTransactionHistory,
   useGetOrganizationTypeOverview,
 } from "@/hooks/organizationHooks";
-import { MdPayments } from "react-icons/md";
+import { MdAdd, MdPayments } from "react-icons/md";
 import { capitalize } from "@/functions/stringFunctions";
-
-interface iOrganizationData {
-  value: number;
-  title: string;
-  icon: any;
-  active: number;
-  inactive: number;
-}
 
 interface iRevenueData {
   value: number;
@@ -112,8 +104,8 @@ const ViewOrganizationContent = () => {
               onClick={() => shouldAddGroup(true)}
               className="bg-primary text-white rounded-lg h-9 gap-2 px-3 text-[0.825rem] flex items-center leading-[0.98rem]"
             >
-              <VscTools size={18} color="#FFFFFF" />
-              <h3>New Organization</h3>
+              <MdAdd size={18} color="#FFFFFF" />
+              <h3>Add Branch</h3>
             </button>
           </div>
         </div>
@@ -225,7 +217,8 @@ const ViewOrganizationContent = () => {
           <Drawer.Overlay />
           <Drawer.Content>
             <Drawer.Body>
-              <AddGroup
+              <AddBranch
+                mdaId={organizationId}
                 onClose={() => shouldAddGroup(false)}
                 onCreated={() => {
                   shouldAddGroup(false);

@@ -71,15 +71,19 @@ const Filters: FC<{
         <input
           type="text"
           value={search}
-          className="w-full h-full rounded border text-[0.815rem] leading-[0.975rem] border-gray-4 pl-14 pr-8 text-[#16192C] bg-white focus:outline-none "
+          className={`w-full h-full rounded ease-out transition-all duration-300 border text-[0.815rem] leading-[0.975rem] border-gray-4 ${
+            search === "pl-4" ? "" : "pl-14"
+          } pr-8 text-[#16192C] bg-white focus:outline-none `}
           onChange={(e) => {
             setSearch(e.target.value);
             onSearch?.(e.target.value);
           }}
         />
-        <p className="absolute text-[#10101266] text-[0.815rem] leading-[0.975rem] top-1/2 left-2 -translate-y-1/2">
-          Search
-        </p>
+        {search === "" && (
+          <p className="absolute text-[#10101266] text-[0.815rem] leading-[0.975rem] top-1/2 left-2 -translate-y-1/2">
+            Search
+          </p>
+        )}
         <SearchNormal1
           className="absolute top-1/2 -translate-y-1/2 right-2"
           size="16"

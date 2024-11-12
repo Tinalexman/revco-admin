@@ -2,7 +2,6 @@ import React, { FC, useEffect, useState } from "react";
 import { IoClose } from "react-icons/io5";
 import { Form, Formik } from "formik";
 import Dropdown from "@/components/reusable/Dropdown";
-import CustomCheckbox from "@/components/reusable/CustomCheckbox";
 import { useCreateOrganization } from "@/hooks/organizationHooks";
 import {
   useGetOrganizationServiceTypes,

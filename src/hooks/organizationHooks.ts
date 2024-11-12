@@ -81,6 +81,13 @@ export interface iCreateOrganizationPayload {
   groupType: string;
 }
 
+export interface iCreateOrganizationBranchPayload {
+  mdaId: number;
+  name: string;
+  officeCode: string;
+  isHq: boolean;
+}
+
 export const useGetOrganizations = (category?: string) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [success, setSuccess] = useState<boolean>(false);
@@ -167,6 +174,45 @@ export const useCreateOrganization = () => {
     loading,
     success,
     createOrganization,
+  };
+};
+
+export const useCreateOrganizationBranch = () => {
+  const [loading, setLoading] = useState<boolean>(false);
+  const [success, setSuccess] = useState<boolean>(false);
+  const { requestApi } = useAxios();
+  const token = useToken().getToken();
+
+  let createBranch = async (payload: iCreateOrganizationBranchPayload) => {
+    if (loading) return;
+
+    setLoading(true);
+
+    const { data, status } = await requestApi(
+      `/mda/addmdaoffice`,
+      "POST",
+      payload,
+      {
+        Authorization: `Bearer ${token}`,
+      }
+    );
+
+    setLoading(false);
+    setSuccess(status);
+
+    if (!status) {
+      toast.error(
+        data?.response?.data?.data ?? "An error occurred. Please try again"
+      );
+    } else {
+      toast.success("Organization Branch Created Successfully");
+    }
+  };
+
+  return {
+    loading,
+    success,
+    createBranch,
   };
 };
 

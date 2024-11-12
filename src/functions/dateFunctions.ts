@@ -144,12 +144,95 @@ const getDaysInMonth = (month: number, year: number) => {
   return 31;
 };
 
-const convertLocaleString = (date: string) => {
-  const split = date.split("/");
-  return `${split[2]}-${split[0].padStart(2, "0")}-${split[1].padStart(
-    2,
-    "0"
-  )}`;
+// const convertLocaleString = (date: string) => {
+//   const split = date.split("/");
+//   return `${split[2]}-${split[0].padStart(2, "0")}-${split[1].padStart(
+//     2,
+//     "0"
+//   )}`;
+// };
+
+// export const getDateRange = (filter: string) => {
+//   const today = new Date();
+//   let startDate, endDate;
+
+//   switch (filter) {
+//     case "Today":
+//       startDate = endDate = convertLocaleString(today.toLocaleDateString());
+//       break;
+//     case "Yesterday":
+//       const yesterday = new Date(today);
+//       yesterday.setDate(today.getDate() - 1);
+//       startDate = convertLocaleString(yesterday.toLocaleDateString());
+//       endDate = convertLocaleString(today.toLocaleDateString());
+//       break;
+//     case "This Week":
+//       const weekStart = new Date(today);
+//       weekStart.setDate(today.getDate() - today.getDay());
+//       startDate = convertLocaleString(weekStart.toLocaleDateString());
+//       endDate = convertLocaleString(today.toLocaleDateString());
+//       break;
+//     case "Last Week":
+//       const lastWeekStart = new Date(today);
+//       lastWeekStart.setDate(today.getDate() - today.getDay() - 7);
+//       const lastWeekEnd = new Date(today);
+//       lastWeekEnd.setDate(lastWeekStart.getDate() + 6);
+//       startDate = convertLocaleString(lastWeekStart.toLocaleDateString());
+//       endDate = convertLocaleString(lastWeekEnd.toLocaleDateString());
+//       break;
+//     case "This Month":
+//       startDate = convertLocaleString(
+//         new Date(today.getFullYear(), today.getMonth(), 1).toLocaleDateString()
+//       );
+
+//       endDate = convertLocaleString(today.toLocaleDateString());
+//       break;
+//     case "Last Month":
+//       const lastMonth = new Date(today);
+//       lastMonth.setMonth(today.getMonth() - 1);
+//       startDate = convertLocaleString(
+//         new Date(
+//           lastMonth.getFullYear(),
+//           lastMonth.getMonth(),
+//           1
+//         ).toLocaleDateString()
+//       );
+
+//       const lastMonthEnd = new Date(
+//         lastMonth.getFullYear(),
+//         lastMonth.getMonth() + 1,
+//         0
+//       );
+//       endDate = convertLocaleString(lastMonthEnd.toLocaleDateString());
+//       break;
+//     case "This Year":
+//       startDate = convertLocaleString(
+//         new Date(today.getFullYear(), 0, 1).toLocaleDateString()
+//       );
+//       endDate = convertLocaleString(today.toLocaleDateString());
+//       break;
+//     case "Last Year":
+//       startDate = convertLocaleString(
+//         new Date(today.getFullYear() - 1, 0, 1).toLocaleDateString()
+//       );
+
+//       endDate = convertLocaleString(
+//         new Date(today.getFullYear() - 1, 11, 31).toLocaleDateString()
+//       );
+//       break;
+//     default:
+//       startDate = endDate = convertLocaleString(today.toLocaleDateString());
+//   }
+
+//   return [startDate, endDate];
+// };
+
+const convertToISODateString = (date: Date) => {
+  return new Date(
+    Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate())
+  )
+    .toISOString()
+    .split("T")[0];
 };
 
 export const getDateRange = (filter: string) => {
@@ -158,70 +241,60 @@ export const getDateRange = (filter: string) => {
 
   switch (filter) {
     case "Today":
-      startDate = endDate = convertLocaleString(today.toLocaleDateString());
+      startDate = endDate = convertToISODateString(today);
       break;
     case "Yesterday":
       const yesterday = new Date(today);
-      yesterday.setDate(today.getDate() - 1);
-      startDate = convertLocaleString(yesterday.toLocaleDateString());
-      endDate = convertLocaleString(today.toLocaleDateString());
+      yesterday.setUTCDate(today.getUTCDate() - 1);
+      startDate = convertToISODateString(yesterday);
+      endDate = convertToISODateString(today);
       break;
     case "This Week":
       const weekStart = new Date(today);
-      weekStart.setDate(today.getDate() - today.getDay());
-      startDate = convertLocaleString(weekStart.toLocaleDateString());
-      endDate = convertLocaleString(today.toLocaleDateString());
+      weekStart.setUTCDate(today.getUTCDate() - today.getUTCDay());
+      startDate = convertToISODateString(weekStart);
+      endDate = convertToISODateString(today);
       break;
     case "Last Week":
       const lastWeekStart = new Date(today);
-      lastWeekStart.setDate(today.getDate() - today.getDay() - 7);
-      const lastWeekEnd = new Date(today);
-      lastWeekEnd.setDate(lastWeekStart.getDate() + 6);
-      startDate = convertLocaleString(lastWeekStart.toLocaleDateString());
-      endDate = convertLocaleString(lastWeekEnd.toLocaleDateString());
+      lastWeekStart.setUTCDate(today.getUTCDate() - today.getUTCDay() - 7);
+      const lastWeekEnd = new Date(lastWeekStart);
+      lastWeekEnd.setUTCDate(lastWeekStart.getUTCDate() + 6);
+      startDate = convertToISODateString(lastWeekStart);
+      endDate = convertToISODateString(lastWeekEnd);
       break;
     case "This Month":
-      startDate = convertLocaleString(
-        new Date(today.getFullYear(), today.getMonth(), 1).toLocaleDateString()
+      startDate = convertToISODateString(
+        new Date(Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), 1))
       );
-
-      endDate = convertLocaleString(today.toLocaleDateString());
+      endDate = convertToISODateString(today);
       break;
     case "Last Month":
-      const lastMonth = new Date(today);
-      lastMonth.setMonth(today.getMonth() - 1);
-      startDate = convertLocaleString(
-        new Date(
-          lastMonth.getFullYear(),
-          lastMonth.getMonth(),
-          1
-        ).toLocaleDateString()
+      const lastMonthStart = new Date(
+        Date.UTC(today.getUTCFullYear(), today.getUTCMonth() - 1, 1)
       );
-
       const lastMonthEnd = new Date(
-        lastMonth.getFullYear(),
-        lastMonth.getMonth() + 1,
-        0
-      );
-      endDate = convertLocaleString(lastMonthEnd.toLocaleDateString());
+        Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), 0)
+      ); // Last day of previous month
+      startDate = convertToISODateString(lastMonthStart);
+      endDate = convertToISODateString(lastMonthEnd);
       break;
     case "This Year":
-      startDate = convertLocaleString(
-        new Date(today.getFullYear(), 0, 1).toLocaleDateString()
+      startDate = convertToISODateString(
+        new Date(Date.UTC(today.getUTCFullYear(), 0, 1))
       );
-      endDate = convertLocaleString(today.toLocaleDateString());
+      endDate = convertToISODateString(today);
       break;
     case "Last Year":
-      startDate = convertLocaleString(
-        new Date(today.getFullYear() - 1, 0, 1).toLocaleDateString()
+      startDate = convertToISODateString(
+        new Date(Date.UTC(today.getUTCFullYear() - 1, 0, 1))
       );
-
-      endDate = convertLocaleString(
-        new Date(today.getFullYear() - 1, 11, 31).toLocaleDateString()
+      endDate = convertToISODateString(
+        new Date(Date.UTC(today.getUTCFullYear() - 1, 11, 31))
       );
       break;
     default:
-      startDate = endDate = convertLocaleString(today.toLocaleDateString());
+      startDate = endDate = convertToISODateString(today);
   }
 
   return [startDate, endDate];
