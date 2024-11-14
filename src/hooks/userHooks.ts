@@ -139,6 +139,78 @@ export const useGetTaxPayers = () => {
   };
 };
 
+export const useDownloadTaxPayers = (mode?: string | null) => {
+  const [loading, setLoading] = useState<boolean>(false);
+  const [success, setSuccess] = useState<boolean>(false);
+  const { requestApi } = useAxios();
+  const token = useToken().getToken();
+
+  let downloadReport = async (
+    pageNumber: string | number,
+    projectId?: string | number,
+    roleFilter?: string
+  ) => {
+    if (loading) return;
+    setLoading(true);
+
+    let query = "";
+    if (mode !== undefined && mode !== null) {
+      query = `&isFormal=${
+        mode === "formal" ? "true" : mode === "informal" ? "false" : ""
+      }`;
+    }
+
+    let projectQuery = "";
+    if (projectId !== undefined) {
+      projectQuery = `&projectId=${projectId}`;
+    }
+
+    let roleQuery = "";
+    if (roleFilter !== undefined) {
+      roleQuery = `&roleFilter=${roleFilter}`;
+    }
+
+    const { data, status } = await requestApi(
+      `/mda-report/taxpayers/resource?pageNumber=${pageNumber}&pageSize=50${query}${projectQuery}${roleQuery}`,
+      "GET",
+      {},
+      {
+        Authorization: `Bearer ${token}`,
+        ResponseType: "arraybuffer",
+        ContentType: "application/pdf",
+      }
+    );
+
+    setLoading(false);
+    setSuccess(status);
+
+    if (!status) {
+      toast.error(
+        data?.response?.data?.data ?? "An error occurred. Please try again"
+      );
+    } else {
+      const url = window.URL.createObjectURL(
+        new Blob([data], { type: "application/pdf" })
+      );
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", "tax payers.pdf");
+
+      document.body.appendChild(link);
+      link.click();
+
+      window.URL.revokeObjectURL(url);
+      link.remove();
+    }
+  };
+
+  return {
+    loading,
+    success,
+    downloadReport,
+  };
+};
+
 export const useGetAdminUsers = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [success, setSuccess] = useState<boolean>(false);

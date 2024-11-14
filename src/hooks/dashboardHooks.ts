@@ -222,6 +222,177 @@ export const useGetRecentActivity = (mode?: string | null) => {
   };
 };
 
+export const useDownloadRecentActivity = (mode?: string | null) => {
+  const [loading, setLoading] = useState<boolean>(false);
+  const [success, setSuccess] = useState<boolean>(false);
+  const { requestApi } = useAxios();
+  const token = useToken().getToken();
+
+  let downloadReport = async (
+    pageNumber: string | number,
+    from: string,
+    to: string,
+    projectId?: string | number,
+    mdaId?: string | number
+  ) => {
+    if (loading) return;
+    setLoading(true);
+
+    let query = "";
+    if (mode !== undefined && mode !== null) {
+      query = `&isFormal=${
+        mode === "formal" ? "true" : mode === "informal" ? "false" : ""
+      }`;
+    }
+
+    let projectQuery = "";
+    if (projectId !== undefined) {
+      projectQuery = `&projectId=${projectId}`;
+    }
+
+    let mdaQuery = "";
+    if (mdaId !== undefined) {
+      mdaQuery = `&mdaId=${mdaId}`;
+    }
+
+    const { data, status } = await requestApi(
+      `/mda-report/transaction-activity/resource?pageNumber=${pageNumber}&pageSize=50&from=${from}&to=${to}${query}${projectQuery}${mdaQuery}`,
+      "GET",
+      {},
+      {
+        Authorization: `Bearer ${token}`,
+        ResponseType: "arraybuffer",
+        ContentType: "application/pdf",
+      }
+    );
+
+    setLoading(false);
+    setSuccess(status);
+
+    if (!status) {
+      toast.error(
+        data?.response?.data?.data ?? "An error occurred. Please try again"
+      );
+    } else {
+      const url = window.URL.createObjectURL(
+        new Blob([data], { type: "application/pdf" })
+      );
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", "recent transactions.pdf");
+
+      document.body.appendChild(link);
+      link.click();
+
+      window.URL.revokeObjectURL(url);
+      link.remove();
+    }
+  };
+
+  return {
+    loading,
+    success,
+    downloadReport,
+  };
+};
+
+export const useDownloadMDAReports = () => {
+  const [loading, setLoading] = useState<boolean>(false);
+  const [success, setSuccess] = useState<boolean>(false);
+  const { requestApi } = useAxios();
+  const token = useToken().getToken();
+
+  let downloadReport = async (
+    pageNumber: string | number,
+    from: string,
+    end: string,
+    mdaId?: string | number,
+    mdaOfficeId?: string | number,
+    userId?: string | number,
+    projectId?: string | number,
+    category?: string,
+    isFormal?: boolean,
+    isObjected?: boolean
+  ) => {
+    if (loading) return;
+    setLoading(true);
+
+    let projectQuery = "";
+    if (projectId !== undefined) {
+      projectQuery = `&projectId=${projectId}`;
+    }
+
+    let mdaQuery = "";
+    if (mdaId !== undefined) {
+      mdaQuery = `&mdaId=${mdaId}`;
+    }
+
+    let mdaOfficeQuery = "";
+    if (mdaOfficeId !== undefined) {
+      mdaOfficeQuery = `&mdaOfficeId=${mdaOfficeId}`;
+    }
+
+    let userQuery = "";
+    if (userId !== undefined) {
+      userQuery = `&userId=${userId}`;
+    }
+
+    let categoryQuery = "";
+    if (category !== undefined) {
+      categoryQuery = `&category=${category}`;
+    }
+
+    let isFormalQuery = "";
+    if (isFormal !== undefined) {
+      isFormalQuery = `&isFormal=${isFormal}`;
+    }
+
+    let isObjectedQuery = "";
+    if (isObjected !== undefined) {
+      isObjectedQuery = `&isObjected=${isObjected}`;
+    }
+
+    const { data, status } = await requestApi(
+      `/mda-report/assessments/resource?pageNo=${pageNumber}&pageSize=50&fromDate=${from}&toDate=${end}${projectQuery}${mdaQuery}${mdaOfficeQuery}${userQuery}${categoryQuery}${isFormalQuery}${isObjectedQuery}`,
+      "GET",
+      {},
+      {
+        Authorization: `Bearer ${token}`,
+        ResponseType: "arraybuffer",
+        ContentType: "application/pdf",
+      }
+    );
+
+    setLoading(false);
+    setSuccess(status);
+
+    if (!status) {
+      toast.error(
+        data?.response?.data?.data ?? "An error occurred. Please try again"
+      );
+    } else {
+      const url = window.URL.createObjectURL(
+        new Blob([data], { type: "application/pdf" })
+      );
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", "assessment.pdf");
+
+      document.body.appendChild(link);
+      link.click();
+
+      window.URL.revokeObjectURL(url);
+      link.remove();
+    }
+  };
+
+  return {
+    loading,
+    success,
+    downloadReport,
+  };
+};
+
 export const useSearchRecentActivity = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [success, setSuccess] = useState<boolean>(false);

@@ -6,6 +6,7 @@ import { IoIosArrowDown } from "react-icons/io";
 import { IoEye } from "react-icons/io5";
 import ViewTransaction from "./ViewTransaction";
 import {
+  useDownloadRecentActivity,
   useGetRecentActivity,
   useSearchRecentActivity,
 } from "@/hooks/dashboardHooks";
@@ -40,6 +41,12 @@ const Activity: FC<{ mode?: string | null; showModePicker?: boolean }> = ({
     data: searchedData,
     searchActivity,
   } = useSearchRecentActivity();
+
+  const {
+    loading: loadingDownload,
+    downloadReport,
+    success,
+  } = useDownloadRecentActivity(mode);
 
   const currentDate = getDateRange("Today");
   const [dateRange, setDateRange] = useState<iDateRange>({
@@ -156,9 +163,20 @@ const Activity: FC<{ mode?: string | null; showModePicker?: boolean }> = ({
               handlePageChange={(page) => handlePageChange(page)}
             />
           </div>
-          <button className="bg-[#F0E6FC] rounded text-primary flex gap-3 items-center px-3 h-10">
-            <p className="text-[0.815rem] leading-[0.975rem]">Export</p>
-            <IoIosArrowDown />
+          <button
+            onClick={() => {
+              downloadReport(currentPage, dateRange.start, dateRange.end);
+            }}
+            className="bg-[#F0E6FC] rounded text-primary flex justify-center gap-3 items-center px-3 h-10"
+          >
+            {loadingDownload ? (
+              <Loader size={24} color="primary.6" />
+            ) : (
+              <>
+                <p className="text-[0.815rem] leading-[0.975rem]">Export</p>
+                <IoIosArrowDown />
+              </>
+            )}
           </button>
         </div>
         <div className="relative overflow-x-auto scrollbar-thin scrollbar-webkit w-full">

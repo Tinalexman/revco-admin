@@ -205,7 +205,7 @@ export const useDownloadReport = () => {
       {},
       {
         Authorization: `Bearer ${token}`,
-        ResponseType: "blob",
+        ResponseType: "arraybuffer",
         ContentType: "application/pdf",
       }
     );
@@ -218,7 +218,9 @@ export const useDownloadReport = () => {
         data?.response?.data?.data ?? "An error occurred. Please try again"
       );
     } else {
-      const url = window.URL.createObjectURL(new Blob([data]));
+      const url = window.URL.createObjectURL(
+        new Blob([data], { type: "application/pdf" })
+      );
       const link = document.createElement("a");
       link.href = url;
       link.setAttribute("download", "report.pdf");

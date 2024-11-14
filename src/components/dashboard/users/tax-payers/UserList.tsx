@@ -13,7 +13,7 @@ import ViewUser from "./ViewUser";
 import EditUser from "./EditUser";
 
 import { useRouter } from "next/navigation";
-import { useGetTaxPayers } from "@/hooks/userHooks";
+import { useDownloadTaxPayers, useGetTaxPayers } from "@/hooks/userHooks";
 import Paginator from "@/components/reusable/paginator/Paginator";
 import ResetPassword from "./ResetPassword";
 
@@ -44,6 +44,7 @@ const UserList = () => {
   };
 
   const { data, loading, getUsers } = useGetTaxPayers();
+  const { loading: loadingDownload, downloadReport } = useDownloadTaxPayers();
   const [currentPage, setCurrentPage] = useState<number>(1);
   const totalPages = Math.ceil(data.count / 50);
 
@@ -106,9 +107,20 @@ const UserList = () => {
               handlePageChange={(page) => handlePageChange(page)}
             />
           </div>
-          <button className="bg-[#F0E6FC] rounded text-primary flex gap-3 items-center px-3 h-10">
-            <p className="text-[0.815rem] leading-[0.975rem]">Export</p>
-            <IoIosArrowDown />
+          <button
+            onClick={() => {
+              downloadReport(currentPage);
+            }}
+            className="bg-[#F0E6FC] rounded text-primary flex justify-center gap-3 items-center px-3 h-10"
+          >
+            {loadingDownload ? (
+              <Loader color="primary.6" size={24} />
+            ) : (
+              <>
+                <p className="text-[0.815rem] leading-[0.975rem]">Export</p>
+                <IoIosArrowDown />
+              </>
+            )}
           </button>
         </div>
         <div className="relative overflow-x-auto">

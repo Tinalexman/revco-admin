@@ -237,6 +237,61 @@ export const useGetRecentInvoices = (category?: string) => {
   };
 };
 
+export const useDownloadMDAReports = () => {
+  const [loading, setLoading] = useState<boolean>(false);
+  const [success, setSuccess] = useState<boolean>(false);
+  const { requestApi } = useAxios();
+  const token = useToken().getToken();
+
+  let downloadReport = async (
+    pageNumber: string | number,
+    from: string,
+    end: string
+  ) => {
+    if (loading) return;
+    setLoading(true);
+
+    const { data, status } = await requestApi(
+      `/mda-report/generated-invoices/resource?pageNumber=${pageNumber}&pageSize=50&from=${from}&to=${end}`,
+      "GET",
+      {},
+      {
+        Authorization: `Bearer ${token}`,
+        ResponseType: "arraybuffer",
+        ContentType: "application/pdf",
+      }
+    );
+
+    setLoading(false);
+    setSuccess(status);
+
+    if (!status) {
+      toast.error(
+        data?.response?.data?.data ?? "An error occurred. Please try again"
+      );
+    } else {
+      const url = window.URL.createObjectURL(
+        new Blob([data], { type: "application/pdf" })
+      );
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", "invoices.pdf");
+
+      document.body.appendChild(link);
+      link.click();
+
+      window.URL.revokeObjectURL(url);
+      link.remove();
+    }
+  };
+
+  return {
+    loading,
+    success,
+    downloadReport,
+  };
+};
+
 export const useGenerateIndividualInvoice = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [success, setSuccess] = useState<boolean>(false);
