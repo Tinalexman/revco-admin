@@ -27,6 +27,18 @@ export interface iOrganization {
   count: number;
 }
 
+export interface iOrganizationBranch {
+  id: number;
+  name: string;
+  officeCode: string;
+  isHq: boolean;
+}
+
+export interface iOrganizationBranchResponse {
+  data: iOrganizationBranch[];
+  count: number;
+}
+
 export interface iOrganizationUserResponse {
   userId: number;
   name: string;
@@ -83,6 +95,13 @@ export interface iCreateOrganizationPayload {
 
 export interface iCreateOrganizationBranchPayload {
   mdaId: number;
+  name: string;
+  officeCode: string;
+  isHq: boolean;
+}
+
+export interface iEditOrganizationBranchPayload {
+  id: number;
   name: string;
   officeCode: string;
   isHq: boolean;
@@ -213,6 +232,45 @@ export const useCreateOrganizationBranch = () => {
     loading,
     success,
     createBranch,
+  };
+};
+
+export const useEditOrganizationBranch = () => {
+  const [loading, setLoading] = useState<boolean>(false);
+  const [success, setSuccess] = useState<boolean>(false);
+  const { requestApi } = useAxios();
+  const token = useToken().getToken();
+
+  let editBranch = async (payload: iEditOrganizationBranchPayload) => {
+    if (loading) return;
+
+    setLoading(true);
+
+    const { data, status } = await requestApi(
+      `/mda/update_mdaoffice`,
+      "POST",
+      payload,
+      {
+        Authorization: `Bearer ${token}`,
+      }
+    );
+
+    setLoading(false);
+    setSuccess(status);
+
+    if (!status) {
+      toast.error(
+        data?.response?.data?.data ?? "An error occurred. Please try again"
+      );
+    } else {
+      toast.success("Organization Branch Updated Successfully");
+    }
+  };
+
+  return {
+    loading,
+    success,
+    editBranch,
   };
 };
 
@@ -445,6 +503,100 @@ export const useGetOrganizationTransactionHistory = (
     loading,
     success,
     getHistory,
+    data,
+  };
+};
+
+export const useSearchOrganization = () => {
+  const [loading, setLoading] = useState<boolean>(false);
+  const [success, setSuccess] = useState<boolean>(false);
+  const [data, setData] = useState<iOrganization>({
+    count: 0,
+    data: [],
+  });
+  const { requestApi } = useAxios();
+  const token = useToken().getToken();
+
+  let searchOrganization = async (search: string, pageNo: string) => {
+    setLoading(true);
+
+    const { data, status } = await requestApi(
+      `/mda-report/mda/search?search=${search}&pageNumber=${pageNo}&pageSize=50`,
+      "GET",
+      {},
+      {
+        Authorization: `Bearer ${token}`,
+      }
+    );
+
+    setLoading(false);
+    setSuccess(status);
+
+    if (status) {
+      setData({
+        count: 0,
+        data,
+      });
+    }
+
+    if (!status) {
+      toast.error(
+        data?.response?.data?.data ?? "An error occurred. Please try again"
+      );
+    }
+  };
+
+  return {
+    loading,
+    success,
+    searchOrganization,
+    data,
+  };
+};
+
+export const useGetOrganizationBranches = () => {
+  const [loading, setLoading] = useState<boolean>(false);
+  const [success, setSuccess] = useState<boolean>(false);
+  const [data, setData] = useState<iOrganizationBranchResponse>({
+    data: [],
+    count: 0,
+  });
+  const { requestApi } = useAxios();
+  const token = useToken().getToken();
+
+  let getBranches = async (mdaId: string | number, pageNo: string | number) => {
+    if (loading) return;
+
+    setLoading(true);
+
+    const { data, status } = await requestApi(
+      `/mda/mdaoffices?mda_id=${mdaId}&page=${pageNo}&per_page=50`,
+      "GET",
+      {},
+      {
+        Authorization: `Bearer ${token}`,
+      }
+    );
+
+    setLoading(false);
+    setSuccess(status);
+
+    if (!status) {
+      toast.error(
+        data?.response?.data?.data ?? "An error occurred. Please try again"
+      );
+    } else {
+      setData({
+        data: data.data.data,
+        count: data.data.total,
+      });
+    }
+  };
+
+  return {
+    loading,
+    success,
+    getBranches,
     data,
   };
 };

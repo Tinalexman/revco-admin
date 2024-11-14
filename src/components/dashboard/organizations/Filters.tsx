@@ -68,12 +68,15 @@ const Filters: FC<{
         <input
           type="text"
           value={search}
-          className="w-full h-full rounded border text-[0.815rem] leading-[0.975rem] border-gray-4 pl-14 pr-8 text-[#16192C] bg-white focus:outline-none "
-          onChange={(e) => setSearch(e.target.value)}
+          placeholder="Search"
+          className="w-full h-full rounded outline-none focus:ring-1 focus:ring-purple-300 placeholder:text-[#10101266] border text-[0.815rem] leading-[0.975rem] border-gray-4 pl-4 pr-8 text-[#16192C] bg-white focus:outline-none "
+          onChange={(e) => {
+            const res = e.target.value.trim();
+            setSearch(res);
+            onSearch?.(res);
+          }}
         />
-        <p className="absolute text-[#10101266] text-[0.815rem] leading-[0.975rem] top-1/2 left-2 -translate-y-1/2">
-          Search
-        </p>
+
         <SearchNormal1
           className="absolute top-1/2 -translate-y-1/2 right-2"
           size="16"

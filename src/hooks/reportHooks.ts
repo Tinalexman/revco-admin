@@ -1,5 +1,6 @@
 import { useAxios } from "@/api/base";
 import { useToken } from "@/providers/AuthProvider";
+import { Content } from "next/font/google";
 import { useState, useEffect } from "react";
 import toast from "react-hot-toast";
 
@@ -199,12 +200,13 @@ export const useDownloadReport = () => {
     setLoading(true);
 
     const { data, status } = await requestApi(
-      `/mda-report/get/get-report?id=${reportId}`,
+      `/mda-report/get/get-report?id=${reportId}&type=PDF`,
       "GET",
       {},
       {
         Authorization: `Bearer ${token}`,
-        responseType: "blob",
+        ResponseType: "blob",
+        ContentType: "application/pdf",
       }
     );
 
@@ -219,7 +221,7 @@ export const useDownloadReport = () => {
       const url = window.URL.createObjectURL(new Blob([data]));
       const link = document.createElement("a");
       link.href = url;
-      link.setAttribute("download", "report.xlsx");
+      link.setAttribute("download", "report.pdf");
 
       document.body.appendChild(link);
       link.click();

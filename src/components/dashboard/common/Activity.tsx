@@ -5,7 +5,10 @@ import { useDisclosure } from "@mantine/hooks";
 import { IoIosArrowDown } from "react-icons/io";
 import { IoEye } from "react-icons/io5";
 import ViewTransaction from "./ViewTransaction";
-import { useGetRecentActivity } from "@/hooks/dashboardHooks";
+import {
+  useGetRecentActivity,
+  useSearchRecentActivity,
+} from "@/hooks/dashboardHooks";
 import { Loader } from "@mantine/core";
 import Paginator from "@/components/reusable/paginator/Paginator";
 import {
@@ -24,13 +27,20 @@ const Activity: FC<{ mode?: string | null; showModePicker?: boolean }> = ({
 }) => {
   const overviewModes: string[] = ["All", "Informal Sector", "Formal Sector"];
   const [activeMode, setActiveMode] = useState<string>(overviewModes[0]);
-
+  const [hasSearch, setHasSearch] = useState<boolean>(false);
   const [expanded, setExpanded] = useState<boolean>(false);
   const {
     loading,
     data: transactions,
     getActivity,
   } = useGetRecentActivity(mode);
+
+  const {
+    loading: loadingSearch,
+    data: searchedData,
+    searchActivity,
+  } = useSearchRecentActivity();
+
   const currentDate = getDateRange("Today");
   const [dateRange, setDateRange] = useState<iDateRange>({
     start: currentDate[0],
@@ -58,6 +68,22 @@ const Activity: FC<{ mode?: string | null; showModePicker?: boolean }> = ({
     setCurrentPage(page);
     getActivity(dateRange.start, dateRange.end, `${page}`);
   }
+
+  const getList = () => {
+    if (!loading && !hasSearch && transactions.data.length > 0) {
+      return transactions.data.slice(
+        0,
+        expanded ? transactions.data.length : 10
+      );
+    } else if (!loading && hasSearch && searchedData.data.length > 0) {
+      return searchedData.data.slice(
+        0,
+        expanded ? searchedData.data.length : 10
+      );
+    }
+
+    return [];
+  };
 
   return (
     <>
@@ -113,6 +139,15 @@ const Activity: FC<{ mode?: string | null; showModePicker?: boolean }> = ({
               });
               getActivity(start, end, `${currentPage}`);
             }}
+            onSearch={(val) => {
+              setHasSearch(val.length > 0);
+              searchActivity(
+                val,
+                `${currentPage}`,
+                dateRange.start,
+                dateRange.end
+              );
+            }}
           />
           <div className="w-[35%]">
             <Paginator
@@ -163,61 +198,62 @@ const Activity: FC<{ mode?: string | null; showModePicker?: boolean }> = ({
               </tr>
             </thead>
             <tbody>
-              {!loading &&
-                transactions.data.length > 0 &&
-                transactions.data
-                  .slice(0, expanded ? transactions.data.length : 10)
-                  .map((txn, i) => (
-                    <tr
-                      key={i}
-                      className="odd:bg-white even:bg-slate-50 text-[#3A3A3A] text-[0.75rem] leading-[1.125rem] justify-around max-h-[15rem]"
+              {getList().map((txn, i) => (
+                <tr
+                  key={i}
+                  className="odd:bg-white even:bg-slate-50 text-[#3A3A3A] text-[0.75rem] leading-[1.125rem] justify-around max-h-[15rem]"
+                >
+                  <td className="p-4">{i + 1}</td>
+                  <td className="p-4">{txn.txid}</td>
+                  <td className="p-4">{txn.username}</td>
+                  <td className="p-4">{txn.mda}</td>
+                  <td className="p-4">{txn.type}</td>
+                  <td className="p-4">
+                    ₦
+                    {Number.parseFloat(
+                      txn.invoiceAmount.toString()
+                    ).toLocaleString("en-US")}
+                  </td>
+                  <td className="p-4">
+                    {convertDateWithDashesAndTime(txn.generatedDate)}
+                  </td>
+                  <td className="p-4">
+                    {txn.paymentDate === "N/A"
+                      ? "N/A"
+                      : convertDateWithDashesAndTime(txn.paymentDate)}
+                  </td>
+                  <td className="p-4">
+                    <StatusContainer
+                      status={txn.paid ? STATE_SUCCESS : STATE_PENDING}
+                      text={txn.paid ? "Paid" : "Pending"}
+                    />
+                  </td>
+                  <td className="flex gap-1 p-4">
+                    <div
+                      onClick={() => openDrawer(txn.txid)}
+                      className="cursor-pointer bg-[#FCEAE8] rounded size-6 grid place-content-center text-[#292D32]"
                     >
-                      <td className="p-4">{i + 1}</td>
-                      <td className="p-4">{txn.txid}</td>
-                      <td className="p-4">{txn.username}</td>
-                      <td className="p-4">{txn.mda}</td>
-                      <td className="p-4">{txn.type}</td>
-                      <td className="p-4">
-                        ₦
-                        {Number.parseFloat(
-                          txn.invoiceAmount.toString()
-                        ).toLocaleString("en-US")}
-                      </td>
-                      <td className="p-4">
-                        {convertDateWithDashesAndTime(txn.generatedDate)}
-                      </td>
-                      <td className="p-4">
-                        {txn.paymentDate === "N/A"
-                          ? "N/A"
-                          : convertDateWithDashesAndTime(txn.paymentDate)}
-                      </td>
-                      <td className="p-4">
-                        <StatusContainer
-                          status={txn.paid ? STATE_SUCCESS : STATE_PENDING}
-                          text={txn.paid ? "Paid" : "Pending"}
-                        />
-                      </td>
-                      <td className="flex gap-1 p-4">
-                        <div
-                          onClick={() => openDrawer(txn.txid)}
-                          className="cursor-pointer bg-[#FCEAE8] rounded size-6 grid place-content-center text-[#292D32]"
-                        >
-                          <IoEye size={16} />
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
+                      <IoEye size={16} />
+                    </div>
+                  </td>
+                </tr>
+              ))}
             </tbody>
           </table>
 
-          {loading && (
+          {((loading && !hasSearch) || (loadingSearch && hasSearch)) && (
             <div className="w-full h-60 grid place-content-center">
               <Loader color="primary.6" />
             </div>
           )}
-          {!loading && transactions.data.length === 0 && (
+          {!loading && !hasSearch && transactions.data.length === 0 && (
             <div className="w-full h-60 grid place-content-center text-[#3A3A3A] font-medium text-[1rem] leading-[1.125rem]">
               No recent activity
+            </div>
+          )}
+          {!loadingSearch && hasSearch && searchedData.data.length === 0 && (
+            <div className="w-full h-60 grid place-content-center text-[#3A3A3A] font-medium text-[1rem] leading-[1.125rem]">
+              No transactions match your search query
             </div>
           )}
         </div>

@@ -11,6 +11,7 @@ import StatusContainer, {
 import {
   iOrganizationResponse,
   useGetOrganizations,
+  useSearchOrganization,
 } from "@/hooks/organizationHooks";
 import Paginator from "@/components/reusable/paginator/Paginator";
 import Link from "next/link";
@@ -18,14 +19,35 @@ import { capitalize } from "@/functions/stringFunctions";
 
 const OrganizationList = () => {
   const [expanded, setExpanded] = useState<boolean>(false);
+  const [hasSearch, setHasSearch] = useState<boolean>(false);
   const { loading, getOrganizations, data } = useGetOrganizations();
+  const {
+    loading: loadingSearch,
+    data: searchedData,
+    searchOrganization,
+  } = useSearchOrganization();
   const [currentPage, setCurrentPage] = useState<number>(1);
-  const totalPages = Math.ceil(data.count / 50);
+  const totalPages = Math.ceil(
+    (hasSearch ? searchedData.count : data.count) / 50
+  );
 
   function handlePageChange(page: number) {
     setCurrentPage(page);
     getOrganizations(`${page}`);
   }
+
+  const getList = () => {
+    if (!loading && !hasSearch && data.data.length > 0) {
+      return data.data.slice(0, expanded ? data.data.length : 10);
+    } else if (!loading && hasSearch && searchedData.data.length > 0) {
+      return searchedData.data.slice(
+        0,
+        expanded ? searchedData.data.length : 10
+      );
+    }
+
+    return [];
+  };
 
   return (
     <>
@@ -40,7 +62,12 @@ const OrganizationList = () => {
           </h2>
         </div>
         <div className="w-full justify-between items-center flex">
-          <Filters />
+          <Filters
+            onSearch={(val) => {
+              setHasSearch(val.length > 0);
+              searchOrganization(val, `${currentPage}`);
+            }}
+          />
           <div className="w-[35%]">
             <Paginator
               totalPages={totalPages}
@@ -81,58 +108,60 @@ const OrganizationList = () => {
               </tr>
             </thead>
             <tbody>
-              {!loading &&
-                data.data
-                  .slice(0, expanded ? data.data.length : 10)
-                  .map((org, i) => {
-                    const payload = Buffer.from(
-                      JSON.stringify({
-                        name: org.name,
-                        category: capitalize(org.category),
-                        id: org.id,
-                        active: org.active,
-                      })
-                    ).toString("base64");
+              {getList().map((org, i) => {
+                const payload = Buffer.from(
+                  JSON.stringify({
+                    name: org.name,
+                    category: capitalize(org.category),
+                    id: org.id,
+                    active: org.active,
+                  })
+                ).toString("base64");
 
-                    return (
-                      <tr
-                        key={i}
-                        className="odd:bg-white even:bg-slate-50 text-[#3A3A3A] text-[0.75rem] leading-[1.125rem] justify-around"
+                return (
+                  <tr
+                    key={i}
+                    className="odd:bg-white even:bg-slate-50 text-[#3A3A3A] text-[0.75rem] leading-[1.125rem] justify-around"
+                  >
+                    <td className="p-4">{org.id}</td>
+                    <td className="p-4">{org.name}</td>
+                    <td className="p-4">{org.category}</td>
+                    <td className="p-4">{org.abbreviation}</td>
+                    <td className="p-4">
+                      {convertDateWithDashesAndTime(org.createdDate)}
+                    </td>
+                    <td className="p-4">
+                      <StatusContainer
+                        text={org.active ? "Active" : "Inactive"}
+                        status={org.active ? STATE_SUCCESS : STATE_NULL}
+                      />
+                    </td>
+                    <td className="flex gap-1 p-4">
+                      <Link
+                        href={`/dashboard/organizations/view-organization?data=${payload}`}
+                        className="cursor-pointer bg-[#FCEAE8] rounded size-6 grid place-content-center text-[#292D32]"
                       >
-                        <td className="p-4">{org.id}</td>
-                        <td className="p-4">{org.name}</td>
-                        <td className="p-4">{org.category}</td>
-                        <td className="p-4">{org.abbreviation}</td>
-                        <td className="p-4">
-                          {convertDateWithDashesAndTime(org.createdDate)}
-                        </td>
-                        <td className="p-4">
-                          <StatusContainer
-                            text={org.active ? "Active" : "Inactive"}
-                            status={org.active ? STATE_SUCCESS : STATE_NULL}
-                          />
-                        </td>
-                        <td className="flex gap-1 p-4">
-                          <Link
-                            href={`/dashboard/organizations/view-organization?data=${payload}`}
-                            className="cursor-pointer bg-[#FCEAE8] rounded size-6 grid place-content-center text-[#292D32]"
-                          >
-                            <IoEye size={16} />
-                          </Link>
-                        </td>
-                      </tr>
-                    );
-                  })}
+                        <IoEye size={16} />
+                      </Link>
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
-          {loading && (
+          {((loading && !hasSearch) || (loadingSearch && hasSearch)) && (
             <div className="w-full h-60 grid place-content-center">
               <Loader color="primary.6" />
             </div>
           )}
-          {!loading && data.data.length === 0 && (
+          {!loading && !hasSearch && data.data.length === 0 && (
             <div className="w-full h-60 grid place-content-center text-[#3A3A3A] font-medium text-[1rem] leading-[1.125rem]">
               No organizations available
+            </div>
+          )}
+          {!loadingSearch && hasSearch && searchedData.data.length === 0 && (
+            <div className="w-full h-60 grid place-content-center text-[#3A3A3A] font-medium text-[1rem] leading-[1.125rem]">
+              No organizations match your search query
             </div>
           )}
         </div>

@@ -18,6 +18,7 @@ import {
 } from "@/hooks/organizationHooks";
 import { MdAdd, MdPayments } from "react-icons/md";
 import { capitalize } from "@/functions/stringFunctions";
+import { IoEye } from "react-icons/io5";
 
 interface iRevenueData {
   value: number;
@@ -156,20 +157,36 @@ const ViewOrganizationContent = () => {
                 </div>
               </div>
             </div>
-            <Link
-              href={`/dashboard/organizations/view-organization-users?data=${Buffer.from(
-                JSON.stringify({
-                  name: organizationName,
-                  category: capitalize(organizationCategory),
-                  id: organizationId,
-                  active: isOrganizationActive,
-                })
-              ).toString("base64")}`}
-              className="bg-[#E9F3FA] text-[#2085C9] rounded-lg h-9 gap-2 px-3 text-[0.825rem] flex items-center leading-[0.98rem]"
-            >
-              <BsPeopleFill size={18} fill="#2085C9" />
-              <h3>Manage Users</h3>
-            </Link>
+            <div className="w-fit gap-4 flex justify-center items-center">
+              <Link
+                href={`/dashboard/organizations/view-organization-branches?data=${Buffer.from(
+                  JSON.stringify({
+                    name: organizationName,
+                    category: capitalize(organizationCategory),
+                    id: organizationId,
+                    active: isOrganizationActive,
+                  })
+                ).toString("base64")}`}
+                className="bg-primary text-white rounded-lg h-9 gap-2 px-3 text-[0.825rem] flex items-center leading-[0.98rem]"
+              >
+                <IoEye size={18} fill="#FFFFFF" />
+                <h3>View Branches</h3>
+              </Link>
+              <Link
+                href={`/dashboard/organizations/view-organization-users?data=${Buffer.from(
+                  JSON.stringify({
+                    name: organizationName,
+                    category: capitalize(organizationCategory),
+                    id: organizationId,
+                    active: isOrganizationActive,
+                  })
+                ).toString("base64")}`}
+                className="bg-[#E9F3FA] text-[#2085C9] rounded-lg h-9 gap-2 px-3 text-[0.825rem] flex items-center leading-[0.98rem]"
+              >
+                <BsPeopleFill size={18} fill="#2085C9" />
+                <h3>Manage Users</h3>
+              </Link>
+            </div>
           </div>
           <div className="w-full grid grid-cols-3 gap-2.5">
             {revenueData.map((rv, i) => {

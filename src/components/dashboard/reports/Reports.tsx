@@ -3,16 +3,7 @@
 import React, { useState } from "react";
 
 import { DocumentText } from "iconsax-react";
-import { IoEye } from "react-icons/io5";
 import Filters from "@/components/dashboard/common/Filters";
-import StatusContainer, {
-  STATE_ERROR,
-  STATE_NULL,
-  STATE_PENDING,
-  STATE_SUCCESS,
-} from "@/components/reusable/StatusContainer";
-import { IoIosArrowDown } from "react-icons/io";
-
 import { HiDownload } from "react-icons/hi";
 import { RiDeleteBinFill } from "react-icons/ri";
 import CreateReport from "./CreateReport";
@@ -110,7 +101,7 @@ const Reports = () => {
                       </td>
 
                       <td className="p-4 flex gap-1 w-fit items-center">
-                        {loadingDownload ? (
+                        {loadingDownload && selectedReport === report.id ? (
                           <Loader color="primary.6" size={18} />
                         ) : (
                           <div
