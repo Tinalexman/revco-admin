@@ -38,6 +38,7 @@ import {
   canViewPaymentRefunds,
   canViewPayments,
   canViewPaymentTransactions,
+  canViewReports,
   canViewSettings,
   canViewSupport,
   canViewTaxPayers,
@@ -240,7 +241,7 @@ const DashboardNavigation = () => {
       newPaths.push("users");
     }
 
-    if (canViewSupport(role)) {
+    if (canViewReports(role)) {
       newNavs.push({
         name: "Reports",
         icon: <ClipboardText size="24" variant="Bold" />,
