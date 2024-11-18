@@ -232,7 +232,36 @@ export const getDashboardActiveChildIndex = (role: string, parent?: string) => {
   return -1;
 };
 
-export const canViewTargetPage = (path: string) => {
-  // CHeck for each path with the corresponding function
-  return true;
+export const canViewTargetPage = (role: string, path: string) => {
+  if (path === "/dashboard") {
+    return canViewDashboard(role);
+  } else if (path.startsWith("/dashboard/formal-sector")) {
+    return canViewDashboardFormalSector(role);
+  } else if (path.startsWith("/dashboard/informal-sector")) {
+    return canViewDashboardInformalSector(role);
+  } else if (path.startsWith("/dashboard/payments/transactions")) {
+    return canViewPaymentTransactions(role);
+  } else if (path.startsWith("/dashboard/payments/payment-channels")) {
+    return canViewPaymentChannels(role);
+  } else if (path.startsWith("/dashboard/payments/invoice-management")) {
+    return canViewPaymentInvoices(role);
+  } else if (path.startsWith("/dashboard/organizations")) {
+    return canViewOrganizations(role);
+  } else if (path.startsWith("/dashboard/objections")) {
+    return canViewObjections(role);
+  } else if (path.startsWith("/dashboard/users/admin-users")) {
+    return canViewAdminUsers(role);
+  } else if (path.startsWith("/dashboard/users/tax-payers")) {
+    return canViewTaxPayers(role);
+  } else if (path.startsWith("/dashboard/users")) {
+    return canViewUsers(role);
+  } else if (path.startsWith("/dashboard/reports")) {
+    return canViewReports(role);
+  } else if (path.startsWith("/dashboard/support")) {
+    return canViewSupport(role);
+  } else if (path.startsWith("/dashboard/settings")) {
+    return canViewSettings(role);
+  }
+
+  return false;
 };

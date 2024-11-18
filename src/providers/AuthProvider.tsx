@@ -2,7 +2,7 @@
 import { useEffect } from "react";
 
 import { jwtDecode } from "jwt-decode";
-import { usePathname, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { toast } from "react-hot-toast";
 import Cookies from "js-cookie";
 
@@ -11,24 +11,15 @@ export default function AuthProvider({
 }: {
   children: React.ReactNode;
 }) {
-  const pathName = usePathname();
-
-  const determineIndex = () => {
-    const current = pathName.split("/")[1];
-    return current === "dashboard" ? 1 : -1;
-  };
-
-  const page = determineIndex();
   const router = useRouter();
-
   const { getToken } = useToken();
 
   useEffect(() => {
-    // const token = getToken();
-    // if (token === undefined && page !== -1) {
-    //   toast.error("Please login to continue");
-    //   router.replace("/auth/login");
-    // }
+    const token = getToken();
+    if (token === undefined) {
+      toast.error("Please login to continue");
+      router.replace("/auth/login");
+    }
   }, [router]);
 
   return <>{children}</>;
