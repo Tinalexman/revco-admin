@@ -15,6 +15,7 @@ import CustomCheckbox from "@/components/reusable/CustomCheckbox";
 import { useRouter } from "next/navigation";
 import { useLogin } from "@/hooks/authHooks";
 import { useToken } from "@/providers/AuthProvider";
+import { determineFirstPage } from "@/functions/navigationFunctions";
 
 interface iManualLoginPayload {
   username: string;
@@ -24,7 +25,7 @@ interface iManualLoginPayload {
 const Login = () => {
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [remember, setRemember] = useState<boolean>(false);
-  const { success, loading, login } = useLogin();
+  const { success, loading, login, data } = useLogin();
   const router = useRouter();
 
   const { setOther, getOther, removeOther } = useToken();
@@ -81,7 +82,7 @@ const Login = () => {
         removeOther("rvc-auth");
       }
 
-      router.replace("/dashboard");
+      router.replace(determineFirstPage(data));
     }
   }, [success, loading]);
 

@@ -9,7 +9,7 @@ export type tRevcoUser = {
   phone: string;
   createdDate: string;
   lastUpdatedDate: string;
-  role: "Admin" | "Sub-Admin1" | "Sub-Admin2" | "Sub-Admin3" | "Agent" | "";
+  role: string;
   lastLoginDate: string;
   mda: any;
   project: string;

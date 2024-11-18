@@ -1,7 +1,7 @@
-import React, { useState, useEffect, Suspense } from "react";
+import React, { useState, useEffect } from "react";
 
 import Image from "next/image";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 
 import Logo from "@/assets/Revco.svg";
 
@@ -24,6 +24,29 @@ import { LuStore } from "react-icons/lu";
 import { PiBuildingOfficeDuotone } from "react-icons/pi";
 import { MdOutlineBarChart } from "react-icons/md";
 import { BiSolidMessageSquareError } from "react-icons/bi";
+import { useRevcoUserStore } from "@/stores/userStore";
+import {
+  canViewAdminUsers,
+  canViewDashboard,
+  canViewDashboardFormalSector,
+  canViewDashboardInformalSector,
+  canViewDashboardOverview,
+  canViewObjections,
+  canViewOrganizations,
+  canViewPaymentChannels,
+  canViewPaymentInvoices,
+  canViewPaymentRefunds,
+  canViewPayments,
+  canViewPaymentTransactions,
+  canViewSettings,
+  canViewSupport,
+  canViewTaxPayers,
+  canViewUsers,
+  getDashboardActiveChildIndex,
+  getPaymentChildActiveIndex,
+  getUsersChildActiveIndex,
+} from "@/functions/navigationFunctions";
+
 export interface iNavigationItem {
   name: string;
   icon: any;
@@ -42,11 +65,15 @@ const DashboardNavigation = () => {
   const [paths, setPaths] = useState<string[]>([]);
   const [index, setIndex] = useState<number>(-1);
 
-  const determineIndex = () => {
+  const router = useRouter();
+  const pathName = usePathname();
+  const expanded = useDashboardData((state) => state.expanded);
+
+  const determineIndex = (isDashboardPresent: boolean) => {
     const current = pathName.split("/")[2];
     for (let i = 0; i < paths.length; ++i) {
       if (paths[i] === current) {
-        return i + 1;
+        return i + (isDashboardPresent ? 1 : 0);
       }
     }
 
@@ -61,29 +88,17 @@ const DashboardNavigation = () => {
     return -1;
   };
 
-  const determineActiveChild = () => {
+  const determineActiveChild = (role: string) => {
     const splits: string[] = pathName.split("/");
     const parent: string | undefined = splits[2];
     const child = splits[3];
 
     if (parent === "payments") {
-      switch (child) {
-        case "transactions":
-          return 0;
-        case "payment-channels":
-          return 1;
-        case "invoice-management":
-          return 2;
-        case "refund-processing":
-          return 3;
-      }
+      return getPaymentChildActiveIndex(role, child);
     } else if (parent === "users") {
-      if (child === "tax-payers") return 0;
-      if (child === "admin-users") return 1;
+      return getUsersChildActiveIndex(role, child);
     } else if (splits[1] === "dashboard") {
-      if (parent === undefined) return 0;
-      if (parent === "informal-sector") return 1;
-      if (parent === "formal-sector") return 2;
+      return getDashboardActiveChildIndex(role, parent);
     }
 
     return -1;
@@ -94,128 +109,180 @@ const DashboardNavigation = () => {
     return navs[index].children.length > 0;
   };
 
-  const determineNavItems = () => {
-    let newNavs: iNavigationItem[] = [
-      {
+  const determineNavItems = (role: string) => {
+    let newNavs: iNavigationItem[] = [];
+    let newPaths: string[] = [];
+
+    if (canViewDashboard(role)) {
+      let dashboardData: iNavigationItem = {
         name: "Dashboard",
         icon: <Category2 size="24" variant="Bold" />,
         link: "",
-        children: [
-          {
-            name: "Overview",
-            icon: <MdOutlineBarChart size={20} />,
-            link: "/dashboard",
-          },
-          {
-            name: "Informal Sector",
-            icon: <LuStore size={20} />,
-            link: "/dashboard/informal-sector",
-          },
-          {
-            name: "Formal Sector",
-            icon: <PiBuildingOfficeDuotone size={20} />,
-            link: "/dashboard/formal-sector",
-          },
-        ],
-      },
-      {
+        children: [],
+      };
+
+      if (canViewDashboardOverview(role)) {
+        dashboardData.children.push({
+          name: "Overview",
+          icon: <MdOutlineBarChart size={20} />,
+          link: "/dashboard",
+        });
+      }
+
+      if (canViewDashboardInformalSector(role)) {
+        dashboardData.children.push({
+          name: "Informal Sector",
+          icon: <LuStore size={20} />,
+          link: "/dashboard/informal-sector",
+        });
+      }
+
+      if (canViewDashboardFormalSector(role)) {
+        dashboardData.children.push({
+          name: "Formal Sector",
+          icon: <PiBuildingOfficeDuotone size={20} />,
+          link: "/dashboard/formal-sector",
+        });
+      }
+
+      newNavs.push(dashboardData);
+    }
+
+    if (canViewPayments(role)) {
+      let paymentData: iNavigationItem = {
         name: "Payments",
         icon: <MdPayments size="24" />,
         link: "/dashboard/payments",
-        children: [
-          {
-            name: "Transactions",
-            icon: <Card size="20" />,
-            link: "/dashboard/payments/transactions",
-          },
-          {
-            name: "Payment Channels",
-            icon: <Bank size="20" variant="Bold" />,
-            link: "/dashboard/payments/payment-channels",
-          },
-          {
-            name: "Invoice Management",
-            icon: <IoReceiptOutline size={20} />,
-            link: "/dashboard/payments/invoice-management",
-          },
-          {
-            name: "Refund Processing",
-            icon: <HiOutlineReceiptRefund size="20" />,
-            link: "/dashboard/payments/refund-processing",
-          },
-        ],
-      },
-      {
+        children: [],
+      };
+
+      if (canViewPaymentTransactions(role)) {
+        paymentData.children.push({
+          name: "Transactions",
+          icon: <Card size="20" />,
+          link: "/dashboard/payments/transactions",
+        });
+      }
+
+      if (canViewPaymentChannels(role)) {
+        paymentData.children.push({
+          name: "Payment Channels",
+          icon: <Bank size="20" variant="Bold" />,
+          link: "/dashboard/payments/payment-channels",
+        });
+      }
+
+      if (canViewPaymentInvoices(role)) {
+        paymentData.children.push({
+          name: "Invoice Management",
+          icon: <IoReceiptOutline size={20} />,
+          link: "/dashboard/payments/invoice-management",
+        });
+      }
+
+      if (canViewPaymentRefunds(role)) {
+        paymentData.children.push({
+          name: "Refund Processing",
+          icon: <HiOutlineReceiptRefund size="20" />,
+          link: "/dashboard/payments/refund-processing",
+        });
+      }
+
+      newNavs.push(paymentData);
+      newPaths.push("payments");
+    }
+
+    if (canViewOrganizations(role)) {
+      newNavs.push({
         name: "Organizations",
         icon: <MdGroups2 size={26} />,
         link: "/dashboard/organizations",
         children: [],
-      },
-      {
+      });
+      newPaths.push("organizations");
+    }
+
+    if (canViewObjections(role)) {
+      newNavs.push({
         name: "Objections",
         icon: <BiSolidMessageSquareError size={22} />,
         link: "/dashboard/objections",
         children: [],
-      },
-      {
+      });
+      newPaths.push("objections");
+    }
+
+    if (canViewUsers(role)) {
+      let userData: iNavigationItem = {
         name: "User Management",
         icon: <Profile2User size="24" variant="Bold" />,
         link: "",
-        children: [
-          {
-            name: "Tax Payers",
-            icon: <Card size="24" />,
-            link: "/dashboard/users/tax-payers",
-          },
-          {
-            name: "Admin Users",
-            icon: <Bank size="24" />,
-            link: "/dashboard/users/admin-users",
-          },
-        ],
-      },
-      {
+        children: [],
+      };
+
+      if (canViewTaxPayers(role)) {
+        userData.children.push({
+          name: "Tax Payers",
+          icon: <Card size="24" />,
+          link: "/dashboard/users/tax-payers",
+        });
+      }
+
+      if (canViewAdminUsers(role)) {
+        userData.children.push({
+          name: "Admin Users",
+          icon: <Bank size="24" />,
+          link: "/dashboard/users/admin-users",
+        });
+      }
+
+      newNavs.push(userData);
+      newPaths.push("users");
+    }
+
+    if (canViewSupport(role)) {
+      newNavs.push({
         name: "Reports",
         icon: <ClipboardText size="24" variant="Bold" />,
         link: "/dashboard/reports",
         children: [],
-      },
-      {
+      });
+      newPaths.push("reports");
+    }
+
+    if (canViewSupport(role)) {
+      newNavs.push({
         name: "Support",
         icon: <I24Support size="24" variant="Bold" />,
         link: "/dashboard/support",
         children: [],
-      },
-      {
+      });
+      newPaths.push("support");
+    }
+
+    if (canViewSettings(role)) {
+      newNavs.push({
         name: "Settings",
         icon: <Setting size="24" variant="Bold" />,
         link: "/dashboard/settings",
         children: [],
-      },
-    ];
-    let newPaths: string[] = [
-      "payments",
-      "organizations",
-      "objections",
-      "users",
-      "reports",
-      "support",
-      "settings",
-    ];
+      });
+      newPaths.push("settings");
+    }
 
     setNavs(newNavs);
     setPaths(newPaths);
   };
 
-  const router = useRouter();
-  const pathName = usePathname();
-  const expanded = useDashboardData((state) => state.expanded);
-  const page = determineIndex();
-  const activeChild = hasChildren(page) ? determineActiveChild() : -1;
+  const role = useRevcoUserStore((state) => state.role);
+  const page = determineIndex(canViewDashboard(role));
+  const activeChild = hasChildren(page) ? determineActiveChild(role) : -1;
 
   useEffect(() => {
-    determineNavItems();
-  }, []);
+    if (role) {
+      determineNavItems(role);
+    }
+  }, [role]);
 
   return (
     <div

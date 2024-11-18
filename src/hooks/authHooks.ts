@@ -43,6 +43,7 @@ export interface iLoginResponse {
 export const useLogin = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [success, setSuccess] = useState<boolean>(false);
+  const [data, setData] = useState<string>("");
   const { requestApi } = useAxios();
   const { setToken } = useToken();
 
@@ -57,6 +58,7 @@ export const useLogin = () => {
     setSuccess(status);
 
     if (status) {
+      setData(data.data.role);
       setToken(data.data.token);
       useRevcoUserStore.setState({ ...data.data });
       toast.success(`Welcome back, ${data.data.lastName}`);
@@ -71,6 +73,7 @@ export const useLogin = () => {
     loading,
     success,
     login,
+    data,
   };
 };
 
