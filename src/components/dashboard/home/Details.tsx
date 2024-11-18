@@ -14,6 +14,7 @@ import { PiWalletFill, PiUsersFill } from "react-icons/pi";
 import { AiOutlineFileDone } from "react-icons/ai";
 import { FaHandshakeSimple } from "react-icons/fa6";
 import { MdGroupAdd } from "react-icons/md";
+import DropdownDatePicker from "@/components/reusable/DropdownDatePicker";
 
 interface iRevenueItem {
   value: number;
@@ -33,7 +34,7 @@ interface iPersonItem {
 
 const Details: FC<{ mode: string | null }> = ({ mode }) => {
   const [filter, setFilter] = useState<string>("Today");
-
+  const [isCustomDate, setIsCustomDate] = useState<boolean>(false);
   const {
     loading: loadingSummary,
     getStatisticsSummary,
@@ -92,12 +93,21 @@ const Details: FC<{ mode: string | null }> = ({ mode }) => {
                 name: v,
                 onClick: () => {
                   setFilter(v);
+                  setIsCustomDate(false);
                   const dates = getDateRange(v);
                   getStatisticsSummary(dates[0], dates[1]);
                 },
               }))}
-              value={filter}
+              value={isCustomDate ? "Custom" : filter}
               hint={"Select"}
+              customChild={
+                <DropdownDatePicker
+                  onDatesChanged={(start: string, end: string) => {
+                    getStatisticsSummary(start, end);
+                    setIsCustomDate(true);
+                  }}
+                />
+              }
             />
           </div>
         </div>

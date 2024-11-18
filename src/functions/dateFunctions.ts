@@ -227,7 +227,7 @@ const getDaysInMonth = (month: number, year: number) => {
 //   return [startDate, endDate];
 // };
 
-const convertToISODateString = (date: Date) => {
+export const convertToISODateString = (date: Date) => {
   return new Date(
     Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate())
   )

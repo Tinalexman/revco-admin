@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, FC } from "react";
+import React, { useState, useRef, useEffect, FC, ReactNode } from "react";
 import { IoMdArrowDropdown } from "react-icons/io";
 
 interface iMenuItem {
@@ -12,7 +12,8 @@ const Dropdown: FC<{
   hint: string;
   bare?: boolean;
   loading?: boolean;
-}> = ({ menus, value, hint, bare, loading }) => {
+  customChild?: ReactNode;
+}> = ({ menus, value, hint, bare, loading, customChild }) => {
   const [open, setOpen] = useState<boolean>(false);
   const dropdownRef = useRef<HTMLDivElement | null>(null);
 
@@ -71,7 +72,9 @@ const Dropdown: FC<{
       </div>
       {open && (
         <div
-          className={`flex justify-start items-center bg-white absolute z-50 p-2 w-fit left-0 right-0 rounded-lg top-8 shadow-custom`}
+          className={`flex justify-start items-center bg-white absolute right-0 z-50 p-2 w-fit ${
+            customChild === undefined ? "left-0" : "-left-12"
+          } rounded-lg top-8 shadow-custom`}
         >
           <div
             className={`w-full flex flex-col max-h-[200px] overflow-y-scroll gap-1 scrollbar-thin scrollbar-webkit `}
@@ -88,6 +91,7 @@ const Dropdown: FC<{
                 {menu.name}
               </div>
             ))}
+            {customChild !== undefined && customChild}
           </div>
         </div>
       )}

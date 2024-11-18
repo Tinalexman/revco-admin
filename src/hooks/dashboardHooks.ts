@@ -1,6 +1,7 @@
 import { useAxios } from "@/api/base";
 import { getDateRange } from "@/functions/dateFunctions";
 import { useToken } from "@/providers/AuthProvider";
+import axios from "axios";
 import { useState, useEffect } from "react";
 import toast from "react-hot-toast";
 
@@ -261,8 +262,9 @@ export const useDownloadRecentActivity = (mode?: string | null) => {
       {},
       {
         Authorization: `Bearer ${token}`,
-        ResponseType: "arraybuffer",
-        ContentType: "application/pdf",
+        Accept: "application/pdf",
+        "Response-Type": "arraybuffer",
+        "Content-Type": "application/pdf",
       }
     );
 
@@ -274,7 +276,7 @@ export const useDownloadRecentActivity = (mode?: string | null) => {
         data?.response?.data?.data ?? "An error occurred. Please try again"
       );
     } else {
-      const url = window.URL.createObjectURL(
+      const url = URL.createObjectURL(
         new Blob([data], { type: "application/pdf" })
       );
       const link = document.createElement("a");
@@ -284,7 +286,7 @@ export const useDownloadRecentActivity = (mode?: string | null) => {
       document.body.appendChild(link);
       link.click();
 
-      window.URL.revokeObjectURL(url);
+      URL.revokeObjectURL(url);
       link.remove();
     }
   };
