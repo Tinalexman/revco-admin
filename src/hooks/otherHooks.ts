@@ -1,5 +1,14 @@
 import { useAxios } from "@/api/base";
+import {
+  ROLE_ADMIN,
+  ROLE_PROJECT_REPORT,
+  ROLE_SUB_ADMIN_1,
+  ROLE_SUB_ADMIN_2,
+  ROLE_SUB_ADMIN_3,
+  ROLE_TAX_CLEARANCE,
+} from "@/functions/navigationFunctions";
 import { useToken } from "@/providers/AuthProvider";
+import { useRevcoUserStore } from "@/stores/userStore";
 import { useState, useEffect } from "react";
 import toast from "react-hot-toast";
 
@@ -193,6 +202,7 @@ export const useGetAllUserRoles = () => {
   const [data, setData] = useState<string[]>([]);
   const [success, setSuccess] = useState<boolean>(false);
   const { requestApi } = useAxios();
+  const role = useRevcoUserStore((state) => state.role);
 
   let getUserRoles = async () => {
     if (loading) return;
@@ -206,7 +216,32 @@ export const useGetAllUserRoles = () => {
     if (!status) {
       toast.error("An error occurred. Please try again");
     } else {
-      setData(data);
+      let roles: string[] = data.filter((dt: string) => {
+        return (
+          dt !== ROLE_ADMIN &&
+          dt !== ROLE_SUB_ADMIN_1 &&
+          dt !== ROLE_SUB_ADMIN_2 &&
+          dt !== ROLE_SUB_ADMIN_3 &&
+          dt !== ROLE_PROJECT_REPORT &&
+          dt !== ROLE_TAX_CLEARANCE
+        );
+      });
+
+      if (role === ROLE_ADMIN) {
+        roles.push(
+          ROLE_SUB_ADMIN_1,
+          ROLE_SUB_ADMIN_2,
+          ROLE_SUB_ADMIN_3,
+          ROLE_PROJECT_REPORT,
+          ROLE_TAX_CLEARANCE
+        );
+      } else if (role == ROLE_SUB_ADMIN_1) {
+        roles.push(ROLE_SUB_ADMIN_2, ROLE_SUB_ADMIN_3, ROLE_TAX_CLEARANCE);
+      } else if (role === ROLE_SUB_ADMIN_2) {
+        roles.push(ROLE_SUB_ADMIN_3);
+      }
+
+      setData(roles);
     }
   };
 

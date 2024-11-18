@@ -2,7 +2,6 @@ import React, { FC, useEffect, useState } from "react";
 import { IoClose } from "react-icons/io5";
 import { Form, Formik } from "formik";
 import Dropdown from "@/components/reusable/Dropdown";
-import CustomCheckbox from "@/components/reusable/CustomCheckbox";
 import {
   unformatNumberWithThreesAndFours,
   formatNumberWithThreesAndFours,
@@ -15,6 +14,10 @@ import {
 } from "@/hooks/otherHooks";
 import { useCreateUser } from "@/hooks/userHooks";
 import { Loader } from "@mantine/core";
+import {
+  ROLE_PROJECT_REPORT,
+  ROLE_SUB_ADMIN_1,
+} from "@/functions/navigationFunctions";
 
 const AddNewUser: FC<{ onClose: () => void; onCreate: () => void }> = ({
   onClose,
@@ -72,10 +75,19 @@ const AddNewUser: FC<{ onClose: () => void; onCreate: () => void }> = ({
             errors.name = "First Name and Last Name required";
           if (!values.email) errors.email = "Required";
           if (!values.phone) errors.phone = "Required";
-          if (!values.mda) errors.mda = "Required";
-          if (!values.mdaOffice) errors.mdaOffice = "Required";
-          if (!values.role) errors.role = "Required";
           if (!values.project) errors.project = "Required";
+          if (!values.role) {
+            errors.role = "Required";
+          } else {
+            if (
+              values.role !== ROLE_SUB_ADMIN_1 &&
+              values.role !== ROLE_PROJECT_REPORT
+            ) {
+              if (!values.mda) errors.mda = "Required";
+              if (!values.mdaOffice) errors.mdaOffice = "Required";
+            }
+          }
+
           return errors;
         }}
         onSubmit={async (values, { setSubmitting }) => {
@@ -87,13 +99,17 @@ const AddNewUser: FC<{ onClose: () => void; onCreate: () => void }> = ({
             email: values.email,
             phone: unformatNumberWithThreesAndFours(values.phone),
             role: values.role,
-            userMda: {
-              mdaId: mdaId,
-              mdaOfficeId: mdaOfficeId,
-              collectionLimit: 5000.0,
-              canCollect: true,
-              permissions: null,
-            },
+            userMda:
+              values.role === ROLE_PROJECT_REPORT ||
+              values.role === ROLE_SUB_ADMIN_1
+                ? undefined
+                : {
+                    mdaId: mdaId,
+                    mdaOfficeId: mdaOfficeId,
+                    collectionLimit: 5000.0,
+                    canCollect: true,
+                    permissions: null,
+                  },
             project: {
               projectId: projectId,
             },
@@ -105,12 +121,7 @@ const AddNewUser: FC<{ onClose: () => void; onCreate: () => void }> = ({
           errors,
           touched,
           handleChange,
-          handleBlur,
           handleSubmit,
-          isSubmitting,
-          isInitialValid,
-          isValid,
-          setSubmitting,
           setFieldValue,
         }) => (
           <Form
@@ -221,54 +232,60 @@ const AddNewUser: FC<{ onClose: () => void; onCreate: () => void }> = ({
                   {errors.role && <p className="text-err">{errors.role}</p>}
                 </div>
 
-                <div className="flex flex-col gap-0.5 w-full px-5 mt-4">
-                  <h3 className="text-reg-caption font-medium text-[#111213]">
-                    MDA
-                  </h3>
-                  <div className="w-full h-10">
-                    <Dropdown
-                      value={values.mda}
-                      menus={mdas.map((v) => ({
-                        name: v.name,
-                        onClick: () => {
-                          setFieldValue("mda", v.name);
-                          setMDAId(v.id);
-                          getMDAOffices(v.id);
-                        },
-                      }))}
-                      hint="Select MDA"
-                      loading={loadingGetMDAs}
-                    />
-                  </div>
-                  {errors.mda && <p className="text-err">{errors.mda}</p>}
-                </div>
+                {values.role !== ROLE_SUB_ADMIN_1 &&
+                  values.role !== ROLE_PROJECT_REPORT &&
+                  values.role !== "" && (
+                    <>
+                      <div className="flex flex-col gap-0.5 w-full px-5 mt-4">
+                        <h3 className="text-reg-caption font-medium text-[#111213]">
+                          MDA
+                        </h3>
+                        <div className="w-full h-10">
+                          <Dropdown
+                            value={values.mda}
+                            menus={mdas.map((v) => ({
+                              name: v.name,
+                              onClick: () => {
+                                setFieldValue("mda", v.name);
+                                setMDAId(v.id);
+                                getMDAOffices(v.id);
+                              },
+                            }))}
+                            hint="Select MDA"
+                            loading={loadingGetMDAs}
+                          />
+                        </div>
+                        {errors.mda && <p className="text-err">{errors.mda}</p>}
+                      </div>
 
-                <div className="flex flex-col gap-0.5 w-full px-5 mt-4">
-                  <h3 className="text-reg-caption font-medium text-[#111213]">
-                    MDA Office
-                  </h3>
-                  <div className="w-full h-10">
-                    <Dropdown
-                      value={values.mdaOffice}
-                      menus={mdaOffices.map((v) => ({
-                        name: v.name,
-                        onClick: () => {
-                          setFieldValue("mdaOffice", v.name);
-                          setMDAOfficeId(v.id);
-                        },
-                      }))}
-                      hint="Select MDA Office"
-                      loading={loadingMDAOffices}
-                    />
-                  </div>
-                  {errors.mdaOffice && (
-                    <p className="text-err">{errors.mdaOffice}</p>
+                      <div className="flex flex-col gap-0.5 w-full px-5 mt-4">
+                        <h3 className="text-reg-caption font-medium text-[#111213]">
+                          MDA Office
+                        </h3>
+                        <div className="w-full h-10">
+                          <Dropdown
+                            value={values.mdaOffice}
+                            menus={mdaOffices.map((v) => ({
+                              name: v.name,
+                              onClick: () => {
+                                setFieldValue("mdaOffice", v.name);
+                                setMDAOfficeId(v.id);
+                              },
+                            }))}
+                            hint="Select MDA Office"
+                            loading={loadingMDAOffices}
+                          />
+                        </div>
+                        {errors.mdaOffice && (
+                          <p className="text-err">{errors.mdaOffice}</p>
+                        )}
+                      </div>
+                    </>
                   )}
-                </div>
               </>
             )}
 
-            <div className="w-full flex justify-between items-center px-5 mt-10">
+            <div className="w-full flex justify-between items-center px-5 mt-10 mb-24">
               <button
                 onClick={onClose}
                 className="text-[#E94410] w-[48%] border-2 border-[#F6F6F7] h-10 flex justify-center gap-2 items-center rounded-lg"

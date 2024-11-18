@@ -3,7 +3,7 @@ import { getDateRange } from "@/functions/dateFunctions";
 import { useToken } from "@/providers/AuthProvider";
 import { useState, useEffect } from "react";
 import toast from "react-hot-toast";
-
+import axios from "axios";
 export interface iTaxPayer {
   data: iTaxPayerResponse[];
   count: number;
@@ -69,7 +69,7 @@ export interface iCreateUserPayload {
   phone: string;
   email: string;
   role: string;
-  userMda: {
+  userMda?: {
     mdaId: number;
     mdaOfficeId: number;
     canCollect: boolean;
@@ -142,7 +142,6 @@ export const useGetTaxPayers = () => {
 export const useDownloadTaxPayers = (mode?: string | null) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [success, setSuccess] = useState<boolean>(false);
-  const { requestApi } = useAxios();
   const token = useToken().getToken();
 
   let downloadReport = async (
@@ -153,54 +152,48 @@ export const useDownloadTaxPayers = (mode?: string | null) => {
     if (loading) return;
     setLoading(true);
 
-    let query = "";
-    if (mode !== undefined && mode !== null) {
-      query = `&isFormal=${
-        mode === "formal" ? "true" : mode === "informal" ? "false" : ""
-      }`;
-    }
-
-    let projectQuery = "";
-    if (projectId !== undefined) {
-      projectQuery = `&projectId=${projectId}`;
-    }
-
-    let roleQuery = "";
-    if (roleFilter !== undefined) {
-      roleQuery = `&roleFilter=${roleFilter}`;
-    }
-
-    const { data, status } = await requestApi(
-      `/mda-report/taxpayers/resource?pageNumber=${pageNumber}&pageSize=50${query}${projectQuery}${roleQuery}`,
-      "GET",
-      {},
-      {
-        Authorization: `Bearer ${token}`,
-        ResponseType: "arraybuffer",
-        ContentType: "application/pdf",
+    try {
+      let query = "";
+      if (mode !== undefined && mode !== null) {
+        query = `&isFormal=${
+          mode === "formal" ? "true" : mode === "informal" ? "false" : ""
+        }`;
       }
-    );
 
-    setLoading(false);
-    setSuccess(status);
+      let projectQuery = "";
+      if (projectId !== undefined) {
+        projectQuery = `&projectId=${projectId}`;
+      }
 
-    if (!status) {
-      toast.error(
-        data?.response?.data?.data ?? "An error occurred. Please try again"
+      let roleQuery = "";
+      if (roleFilter !== undefined) {
+        roleQuery = `&roleFilter=${roleFilter}`;
+      }
+
+      const response = await axios.get(
+        `https://core.revco.ng:9000/mda-report/taxpayers/resource?pageNumber=${pageNumber}&pageSize=50${query}${projectQuery}${roleQuery}`,
+        {
+          responseType: "arraybuffer",
+          headers: {
+            "Content-Type": "application/pdf",
+            Accept: "application/pdf",
+            Authorization: `Bearer ${token}`,
+          },
+        }
       );
-    } else {
-      const url = window.URL.createObjectURL(
-        new Blob([data], { type: "application/pdf" })
-      );
+
+      setLoading(false);
+      setSuccess(true);
+      const url = window.URL.createObjectURL(new Blob([response.data]));
       const link = document.createElement("a");
       link.href = url;
-      link.setAttribute("download", "tax payers.pdf");
-
+      link.setAttribute("download", `Tax Payers Report.pdf`);
       document.body.appendChild(link);
       link.click();
-
-      window.URL.revokeObjectURL(url);
-      link.remove();
+    } catch (e) {
+      toast.error("An error occurred while downloading the report");
+      setLoading(false);
+      setSuccess(false);
     }
   };
 

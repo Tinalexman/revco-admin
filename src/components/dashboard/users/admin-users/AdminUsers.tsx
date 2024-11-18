@@ -15,6 +15,8 @@ import AddNewUser from "./AddNewUser";
 import Link from "next/link";
 import { useGetAdminUsers } from "@/hooks/userHooks";
 import Paginator from "@/components/reusable/paginator/Paginator";
+import { canCreateNewUser } from "@/functions/navigationFunctions";
+import { useRevcoUserStore } from "@/stores/userStore";
 
 interface iAdminUser {
   name: string;
@@ -25,13 +27,11 @@ interface iAdminUser {
 }
 
 const AdminUsers = () => {
+  const role = useRevcoUserStore((state) => state.role);
   const [expanded, setExpanded] = useState<boolean>(false);
-
   const { loading, data, getUsers } = useGetAdminUsers();
-
   const [currentPage, setCurrentPage] = useState<number>(1);
   const totalPages = Math.ceil(data.count / 50);
-
   const [addNewUser, shouldAddNewUser] = useState<boolean>(false);
 
   function handlePageChange(page: number) {
@@ -81,13 +81,15 @@ const AdminUsers = () => {
                   handlePageChange={(page) => handlePageChange(page)}
                 />
               </div>
-              <button
-                onClick={() => shouldAddNewUser(true)}
-                className="bg-primary text-white rounded-lg h-9 gap-2 px-3 text-[0.825rem] flex items-center leading-[0.98rem]"
-              >
-                <IoIosAdd size={26} />
-                <h3>Add New User</h3>
-              </button>
+              {canCreateNewUser(role) && (
+                <button
+                  onClick={() => shouldAddNewUser(true)}
+                  className="bg-primary text-white rounded-lg h-9 gap-2 px-3 text-[0.825rem] flex items-center leading-[0.98rem]"
+                >
+                  <IoIosAdd size={26} />
+                  <h3>Add New User</h3>
+                </button>
+              )}
             </div>
             <div className="w-full overflow-x-auto">
               <table className="w-full overflow-x-auto">

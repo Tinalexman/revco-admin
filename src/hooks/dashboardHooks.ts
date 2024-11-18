@@ -226,7 +226,6 @@ export const useGetRecentActivity = (mode?: string | null) => {
 export const useDownloadRecentActivity = (mode?: string | null) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [success, setSuccess] = useState<boolean>(false);
-  const { requestApi } = useAxios();
   const token = useToken().getToken();
 
   let downloadReport = async (
@@ -239,55 +238,51 @@ export const useDownloadRecentActivity = (mode?: string | null) => {
     if (loading) return;
     setLoading(true);
 
-    let query = "";
-    if (mode !== undefined && mode !== null) {
-      query = `&isFormal=${
-        mode === "formal" ? "true" : mode === "informal" ? "false" : ""
-      }`;
-    }
-
-    let projectQuery = "";
-    if (projectId !== undefined) {
-      projectQuery = `&projectId=${projectId}`;
-    }
-
-    let mdaQuery = "";
-    if (mdaId !== undefined) {
-      mdaQuery = `&mdaId=${mdaId}`;
-    }
-
-    const { data, status } = await requestApi(
-      `/mda-report/transaction-activity/resource?pageNumber=${pageNumber}&pageSize=50&from=${from}&to=${to}${query}${projectQuery}${mdaQuery}`,
-      "GET",
-      {},
-      {
-        Authorization: `Bearer ${token}`,
-        Accept: "application/pdf",
-        "Response-Type": "arraybuffer",
-        "Content-Type": "application/pdf",
+    try {
+      let query = "";
+      if (mode !== undefined && mode !== null) {
+        query = `&isFormal=${
+          mode === "formal" ? "true" : mode === "informal" ? "false" : ""
+        }`;
       }
-    );
 
-    setLoading(false);
-    setSuccess(status);
+      let projectQuery = "";
+      if (projectId !== undefined) {
+        projectQuery = `&projectId=${projectId}`;
+      }
 
-    if (!status) {
-      toast.error(
-        data?.response?.data?.data ?? "An error occurred. Please try again"
+      let mdaQuery = "";
+      if (mdaId !== undefined) {
+        mdaQuery = `&mdaId=${mdaId}`;
+      }
+
+      const response = await axios.get(
+        `https://core.revco.ng:9000/mda-report/transaction-activity/resource?pageNumber=${pageNumber}&pageSize=50&from=${from}&to=${to}${query}${projectQuery}${mdaQuery}`,
+        {
+          responseType: "arraybuffer",
+          headers: {
+            "Content-Type": "application/pdf",
+            Accept: "application/pdf",
+            Authorization: `Bearer ${token}`,
+          },
+        }
       );
-    } else {
-      const url = URL.createObjectURL(
-        new Blob([data], { type: "application/pdf" })
-      );
+
+      setLoading(false);
+      setSuccess(true);
+      const url = window.URL.createObjectURL(new Blob([response.data]));
       const link = document.createElement("a");
       link.href = url;
-      link.setAttribute("download", "recent transactions.pdf");
-
+      link.setAttribute(
+        "download",
+        `Transaction Activity ${from} to ${to}.pdf`
+      );
       document.body.appendChild(link);
       link.click();
-
-      URL.revokeObjectURL(url);
-      link.remove();
+    } catch (e) {
+      toast.error("An error occurred while downloading the report");
+      setLoading(false);
+      setSuccess(false);
     }
   };
 
@@ -301,7 +296,6 @@ export const useDownloadRecentActivity = (mode?: string | null) => {
 export const useDownloadMDAReports = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [success, setSuccess] = useState<boolean>(false);
-  const { requestApi } = useAxios();
   const token = useToken().getToken();
 
   let downloadReport = async (
@@ -319,72 +313,66 @@ export const useDownloadMDAReports = () => {
     if (loading) return;
     setLoading(true);
 
-    let projectQuery = "";
-    if (projectId !== undefined) {
-      projectQuery = `&projectId=${projectId}`;
-    }
-
-    let mdaQuery = "";
-    if (mdaId !== undefined) {
-      mdaQuery = `&mdaId=${mdaId}`;
-    }
-
-    let mdaOfficeQuery = "";
-    if (mdaOfficeId !== undefined) {
-      mdaOfficeQuery = `&mdaOfficeId=${mdaOfficeId}`;
-    }
-
-    let userQuery = "";
-    if (userId !== undefined) {
-      userQuery = `&userId=${userId}`;
-    }
-
-    let categoryQuery = "";
-    if (category !== undefined) {
-      categoryQuery = `&category=${category}`;
-    }
-
-    let isFormalQuery = "";
-    if (isFormal !== undefined) {
-      isFormalQuery = `&isFormal=${isFormal}`;
-    }
-
-    let isObjectedQuery = "";
-    if (isObjected !== undefined) {
-      isObjectedQuery = `&isObjected=${isObjected}`;
-    }
-
-    const { data, status } = await requestApi(
-      `/mda-report/assessments/resource?pageNo=${pageNumber}&pageSize=50&fromDate=${from}&toDate=${end}${projectQuery}${mdaQuery}${mdaOfficeQuery}${userQuery}${categoryQuery}${isFormalQuery}${isObjectedQuery}`,
-      "GET",
-      {},
-      {
-        Authorization: `Bearer ${token}`,
-        ResponseType: "arraybuffer",
-        ContentType: "application/pdf",
+    try {
+      let projectQuery = "";
+      if (projectId !== undefined) {
+        projectQuery = `&projectId=${projectId}`;
       }
-    );
 
-    setLoading(false);
-    setSuccess(status);
+      let mdaQuery = "";
+      if (mdaId !== undefined) {
+        mdaQuery = `&mdaId=${mdaId}`;
+      }
 
-    if (!status) {
-      toast.error(
-        data?.response?.data?.data ?? "An error occurred. Please try again"
+      let mdaOfficeQuery = "";
+      if (mdaOfficeId !== undefined) {
+        mdaOfficeQuery = `&mdaOfficeId=${mdaOfficeId}`;
+      }
+
+      let userQuery = "";
+      if (userId !== undefined) {
+        userQuery = `&userId=${userId}`;
+      }
+
+      let categoryQuery = "";
+      if (category !== undefined) {
+        categoryQuery = `&category=${category}`;
+      }
+
+      let isFormalQuery = "";
+      if (isFormal !== undefined) {
+        isFormalQuery = `&isFormal=${isFormal}`;
+      }
+
+      let isObjectedQuery = "";
+      if (isObjected !== undefined) {
+        isObjectedQuery = `&isObjected=${isObjected}`;
+      }
+
+      const response = await axios.get(
+        `https://core.revco.ng:9000/mda-report/assessments/resource?pageNo=${pageNumber}&pageSize=50&fromDate=${from}&toDate=${end}${projectQuery}${mdaQuery}${mdaOfficeQuery}${userQuery}${categoryQuery}${isFormalQuery}${isObjectedQuery}`,
+        {
+          responseType: "arraybuffer",
+          headers: {
+            "Content-Type": "application/pdf",
+            Accept: "application/pdf",
+            Authorization: `Bearer ${token}`,
+          },
+        }
       );
-    } else {
-      const url = window.URL.createObjectURL(
-        new Blob([data], { type: "application/pdf" })
-      );
+
+      setLoading(false);
+      setSuccess(true);
+      const url = window.URL.createObjectURL(new Blob([response.data]));
       const link = document.createElement("a");
       link.href = url;
-      link.setAttribute("download", "assessment.pdf");
-
+      link.setAttribute("download", `MDA Reports ${from} to ${end}.pdf`);
       document.body.appendChild(link);
       link.click();
-
-      window.URL.revokeObjectURL(url);
-      link.remove();
+    } catch (e) {
+      toast.error("An error occurred while downloading the report");
+      setLoading(false);
+      setSuccess(false);
     }
   };
 

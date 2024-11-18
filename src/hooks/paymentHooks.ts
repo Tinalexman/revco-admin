@@ -4,6 +4,8 @@ import { useToken } from "@/providers/AuthProvider";
 import { useState, useEffect } from "react";
 import toast from "react-hot-toast";
 
+import axios from "axios";
+
 export interface iPaymentChannel {
   channel: string;
   percentage: string;
@@ -237,10 +239,9 @@ export const useGetRecentInvoices = (category?: string) => {
   };
 };
 
-export const useDownloadMDAReports = () => {
+export const useDownloadGeneratedInvoices = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [success, setSuccess] = useState<boolean>(false);
-  const { requestApi } = useAxios();
   const token = useToken().getToken();
 
   let downloadReport = async (
@@ -251,37 +252,31 @@ export const useDownloadMDAReports = () => {
     if (loading) return;
     setLoading(true);
 
-    const { data, status } = await requestApi(
-      `/mda-report/generated-invoices/resource?pageNumber=${pageNumber}&pageSize=50&from=${from}&to=${end}`,
-      "GET",
-      {},
-      {
-        Authorization: `Bearer ${token}`,
-        ResponseType: "arraybuffer",
-        ContentType: "application/pdf",
-      }
-    );
-
-    setLoading(false);
-    setSuccess(status);
-
-    if (!status) {
-      toast.error(
-        data?.response?.data?.data ?? "An error occurred. Please try again"
+    try {
+      const response = await axios.get(
+        `https://core.revco.ng:9000/mda-report/generated-invoices/resource?pageNumber=${pageNumber}&pageSize=50&from=${from}&to=${end}`,
+        {
+          responseType: "arraybuffer",
+          headers: {
+            "Content-Type": "application/pdf",
+            Accept: "application/pdf",
+            Authorization: `Bearer ${token}`,
+          },
+        }
       );
-    } else {
-      const url = window.URL.createObjectURL(
-        new Blob([data], { type: "application/pdf" })
-      );
+
+      setLoading(false);
+      setSuccess(true);
+      const url = window.URL.createObjectURL(new Blob([response.data]));
       const link = document.createElement("a");
       link.href = url;
-      link.setAttribute("download", "invoices.pdf");
-
+      link.setAttribute("download", `Generated Invoices ${from} to ${end}.pdf`);
       document.body.appendChild(link);
       link.click();
-
-      window.URL.revokeObjectURL(url);
-      link.remove();
+    } catch (e) {
+      toast.error("An error occurred while downloading the report");
+      setLoading(false);
+      setSuccess(false);
     }
   };
 
