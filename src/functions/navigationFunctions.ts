@@ -64,36 +64,34 @@ export const canViewDashboard = (role: string) => {
 
 export const canViewDashboardOverview = (role: string) => {
   return (
-    role !== "" &&
-    role !== ROLE_AGENT &&
-    role !== ROLE_BANK_STAFF &&
-    role !== ROLE_INDIVIDUAL &&
-    role !== ROLE_NON_INDIVIDUAL
+    role === ROLE_SUB_ADMIN_1 ||
+    role === ROLE_ADMIN ||
+    role === ROLE_PROJECT_REPORT
   );
 };
 
 export const canViewDashboardFormalSector = (role: string) => {
   return (
-    role !== "" &&
-    role !== ROLE_AGENT &&
-    role !== ROLE_BANK_STAFF &&
-    role !== ROLE_INDIVIDUAL &&
-    role !== ROLE_NON_INDIVIDUAL
+    role === ROLE_SUB_ADMIN_1 ||
+    role === ROLE_ADMIN ||
+    role === ROLE_PROJECT_REPORT
   );
 };
 
 export const canViewDashboardInformalSector = (role: string) => {
   return (
-    role !== "" &&
-    role !== ROLE_AGENT &&
-    role !== ROLE_BANK_STAFF &&
-    role !== ROLE_INDIVIDUAL &&
-    role !== ROLE_NON_INDIVIDUAL
+    role === ROLE_SUB_ADMIN_1 ||
+    role === ROLE_ADMIN ||
+    role === ROLE_PROJECT_REPORT
   );
 };
 
 export const canViewPayments = (role: string) => {
-  return true;
+  return (
+    role === ROLE_SUB_ADMIN_1 ||
+    role === ROLE_ADMIN ||
+    role === ROLE_PROJECT_REPORT
+  );
 };
 
 export const canViewPaymentTransactions = (role: string) => {
@@ -102,16 +100,19 @@ export const canViewPaymentTransactions = (role: string) => {
 
 export const canViewPaymentChannels = (role: string) => {
   return (
-    role !== "" &&
-    role !== ROLE_AGENT &&
-    role !== ROLE_BANK_STAFF &&
-    role !== ROLE_INDIVIDUAL &&
-    role !== ROLE_NON_INDIVIDUAL
+    role === ROLE_SUB_ADMIN_1 ||
+    role === ROLE_ADMIN ||
+    role === ROLE_PROJECT_REPORT
   );
 };
 
 export const canViewPaymentInvoices = (role: string) => {
-  return true;
+  return (
+    role === ROLE_SUB_ADMIN_2 ||
+    role === ROLE_SUB_ADMIN_1 ||
+    role === ROLE_ADMIN ||
+    role === ROLE_PROJECT_REPORT
+  );
 };
 
 export const canViewPaymentRefunds = (role: string) => {

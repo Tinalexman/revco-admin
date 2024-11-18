@@ -1,8 +1,9 @@
 import { useAxios } from "@/api/base";
 import { useToken } from "@/providers/AuthProvider";
-import { Content } from "next/font/google";
 import { useState, useEffect } from "react";
 import toast from "react-hot-toast";
+
+import axios from "axios";
 
 export interface iReport {
   id: number;
@@ -192,44 +193,41 @@ export const useDeleteReport = (reportId: string | number) => {
 export const useDownloadReport = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [success, setSuccess] = useState<boolean>(false);
-  const { requestApi } = useAxios();
   const token = useToken().getToken();
 
-  let downloadReport = async (reportId: string | number) => {
+  let downloadReport = async (
+    reportType: string,
+    reportRange: string,
+    reportId: string | number
+  ) => {
     if (loading) return;
     setLoading(true);
 
-    const { data, status } = await requestApi(
-      `/mda-report/get/get-report?id=${reportId}&type=PDF`,
-      "GET",
-      {},
-      {
-        Authorization: `Bearer ${token}`,
-        ResponseType: "arraybuffer",
-        ContentType: "application/pdf",
-      }
-    );
-
-    setLoading(false);
-    setSuccess(status);
-
-    if (!status) {
-      toast.error(
-        data?.response?.data?.data ?? "An error occurred. Please try again"
+    try {
+      const response = await axios.get(
+        `https://core.revco.ng:9000/mda-report/get/get-report?id=${reportId}&type=PDF`,
+        {
+          responseType: "arraybuffer",
+          headers: {
+            "Content-Type": "application/pdf",
+            Accept: "application/pdf",
+            Authorization: `Bearer ${token}`,
+          },
+        }
       );
-    } else {
-      const url = window.URL.createObjectURL(
-        new Blob([data], { type: "application/pdf" })
-      );
+
+      setLoading(false);
+      setSuccess(true);
+      const url = window.URL.createObjectURL(new Blob([response.data]));
       const link = document.createElement("a");
       link.href = url;
-      link.setAttribute("download", "report.pdf");
-
+      link.setAttribute("download", `${reportType} ${reportRange}.pdf`);
       document.body.appendChild(link);
       link.click();
-
-      window.URL.revokeObjectURL(url);
-      link.remove();
+    } catch (e) {
+      toast.error("An error occurred while downloading the report");
+      setLoading(false);
+      setSuccess(false);
     }
   };
 

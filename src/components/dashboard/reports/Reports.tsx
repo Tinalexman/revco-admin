@@ -107,7 +107,13 @@ const Reports = () => {
                           <div
                             onClick={() => {
                               setSelectedReport(report.id);
-                              downloadReport(report.id);
+                              downloadReport(
+                                toLeadingCase(
+                                  report.reportType.replaceAll("_", " ")
+                                ),
+                                `${report.from} to ${report.to}`,
+                                report.id
+                              );
                             }}
                             className="cursor-pointer bg-[#E4ECF7] rounded size-6 grid place-content-center text-[#292D32]"
                           >
