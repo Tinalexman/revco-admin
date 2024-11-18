@@ -6,7 +6,27 @@ import toast from "react-hot-toast";
 
 import axios from "axios";
 
+export interface iRecentActivity {
+  count: number;
+  data: iRecentActivityResponse[];
+}
+
+export interface iRecentActivityResponse {
+  txid: string;
+  mda: string;
+  invoiceAmount: number;
+  paymentDate: string;
+  username: string;
+  description: string;
+  generatedDate: string;
+  channel: any;
+  type: string;
+  phoneNumber: string;
+  paid: boolean;
+}
+
 export interface iPaymentChannel {
+  total: number;
   channel: string;
   percentage: string;
 }
@@ -367,6 +387,65 @@ export const useGenerateNonIndividualInvoice = () => {
     loading,
     success,
     generate,
+    data,
+  };
+};
+
+export const useGetRecentTransactionActivity = (mode?: string | null) => {
+  const [loading, setLoading] = useState<boolean>(false);
+  const [success, setSuccess] = useState<boolean>(false);
+  const [data, setData] = useState<iRecentActivity>({
+    count: 0,
+    data: [],
+  });
+  const { requestApi } = useAxios();
+  const token = useToken().getToken();
+
+  let getActivity = async (start: string, end: string, pageNo: string) => {
+    if (loading) return;
+
+    setLoading(true);
+    let query = "";
+    if (mode !== undefined && mode !== null) {
+      query = `&isFormal=${
+        mode === "formal" ? "true" : mode === "informal" ? "false" : ""
+      }`;
+    }
+
+    const { data, status } = await requestApi(
+      `/mda-report/transaction-activity?pageNumber=${pageNo}&pageSize=50&from=${start}&to=${end}${query}`,
+      "GET",
+      {},
+      {
+        Authorization: `Bearer ${token}`,
+      }
+    );
+
+    setLoading(false);
+    setSuccess(status);
+
+    if (status) {
+      setData(data);
+    }
+
+    if (!status) {
+      toast.error(
+        data?.response?.data?.data ?? "An error occurred. Please try again"
+      );
+    }
+  };
+
+  useEffect(() => {
+    if (token) {
+      const currentDate = getDateRange("Today");
+      getActivity(currentDate[0], currentDate[0], "1");
+    }
+  }, [token]);
+
+  return {
+    loading,
+    success,
+    getActivity,
     data,
   };
 };

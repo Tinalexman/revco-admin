@@ -5,6 +5,20 @@ import axios from "axios";
 import { useState, useEffect } from "react";
 import toast from "react-hot-toast";
 
+export interface iRecentMDAActivity {
+  mda: string;
+  mdaCode: string;
+  abbreviation: string;
+  retainingValue: string;
+  revenueCount: string; // number
+  revenueGenerated: string; // number
+}
+
+export interface iRecentMDAActivityResponse {
+  count: number;
+  data: iRecentMDAActivity[];
+}
+
 export interface iRecentActivity {
   count: number;
   data: iRecentActivityResponse[];
@@ -164,10 +178,10 @@ export interface iRecentActivityDetailsResponse {
   };
 }
 
-export const useGetRecentActivity = (mode?: string | null) => {
+export const useGetRecentMDAActivity = (mode?: string | null) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [success, setSuccess] = useState<boolean>(false);
-  const [data, setData] = useState<iRecentActivity>({
+  const [data, setData] = useState<iRecentMDAActivityResponse>({
     count: 0,
     data: [],
   });
@@ -186,7 +200,7 @@ export const useGetRecentActivity = (mode?: string | null) => {
     }
 
     const { data, status } = await requestApi(
-      `/mda-report/transaction-activity?pageNumber=${pageNo}&pageSize=50&from=${start}&to=${end}${query}`,
+      `/mda-report/mda/revenue-generated?pageNumber=${pageNo}&pageSize=50&from=${start}&to=${end}${query}`,
       "GET",
       {},
       {

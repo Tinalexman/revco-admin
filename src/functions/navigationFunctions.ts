@@ -51,10 +51,10 @@ export const determineFirstPage = (role: string) => {
 
 export const canViewDashboard = (role: string) => {
   return (
-    role !== ROLE_AGENT &&
-    role !== ROLE_BANK_STAFF &&
-    role !== ROLE_INDIVIDUAL &&
-    role !== ROLE_NON_INDIVIDUAL
+    role === ROLE_ADMIN ||
+    role === ROLE_SUB_ADMIN_1 ||
+    role === ROLE_SUB_ADMIN_2 ||
+    role === ROLE_SUB_ADMIN_3
   );
 };
 
@@ -113,71 +113,50 @@ export const canViewPaymentInvoices = (role: string) => {
 
 export const canViewPaymentRefunds = (role: string) => {
   return (
-    role !== "" &&
-    role !== ROLE_AGENT &&
-    role !== ROLE_BANK_STAFF &&
-    role !== ROLE_INDIVIDUAL &&
-    role !== ROLE_NON_INDIVIDUAL
+    role === ROLE_ADMIN ||
+    role === ROLE_SUB_ADMIN_1 ||
+    role === ROLE_SUB_ADMIN_2 ||
+    role === ROLE_SUB_ADMIN_3
   );
 };
 
 export const canViewOrganizations = (role: string) => {
   return (
-    role !== "" &&
-    role !== ROLE_AGENT &&
-    role !== ROLE_BANK_STAFF &&
-    role !== ROLE_INDIVIDUAL &&
-    role !== ROLE_NON_INDIVIDUAL
+    role === ROLE_ADMIN ||
+    role === ROLE_SUB_ADMIN_1 ||
+    role === ROLE_SUB_ADMIN_2
   );
 };
 
 export const canViewObjections = (role: string) => {
   return (
-    role !== "" &&
-    role !== ROLE_AGENT &&
-    role !== ROLE_BANK_STAFF &&
-    role !== ROLE_INDIVIDUAL &&
-    role !== ROLE_NON_INDIVIDUAL
+    role === ROLE_ADMIN ||
+    role === ROLE_SUB_ADMIN_1 ||
+    role === ROLE_SUB_ADMIN_2
   );
 };
 
 export const canViewUsers = (role: string) => {
   return (
-    role !== "" &&
-    role !== ROLE_AGENT &&
-    role !== ROLE_BANK_STAFF &&
-    role !== ROLE_INDIVIDUAL &&
-    role !== ROLE_NON_INDIVIDUAL
+    role === ROLE_ADMIN ||
+    role === ROLE_SUB_ADMIN_1 ||
+    role === ROLE_SUB_ADMIN_2
   );
 };
 
 export const canViewAdminUsers = (role: string) => {
-  return (
-    role !== "" &&
-    role !== ROLE_AGENT &&
-    role !== ROLE_BANK_STAFF &&
-    role !== ROLE_INDIVIDUAL &&
-    role !== ROLE_NON_INDIVIDUAL
-  );
+  return role === ROLE_ADMIN || role === ROLE_SUB_ADMIN_1;
 };
 
 export const canViewTaxPayers = (role: string) => {
-  return (
-    role !== "" &&
-    role !== ROLE_AGENT &&
-    role !== ROLE_BANK_STAFF &&
-    role !== ROLE_INDIVIDUAL &&
-    role !== ROLE_NON_INDIVIDUAL
-  );
+  return role === ROLE_ADMIN || role === ROLE_SUB_ADMIN_1;
 };
 
 export const canViewReports = (role: string) => {
   return (
-    role !== "" &&
-    role !== ROLE_AGENT &&
-    role !== ROLE_BANK_STAFF &&
-    role !== ROLE_INDIVIDUAL &&
-    role !== ROLE_NON_INDIVIDUAL
+    role === ROLE_ADMIN ||
+    role === ROLE_SUB_ADMIN_1 ||
+    role === ROLE_SUB_ADMIN_2
   );
 };
 

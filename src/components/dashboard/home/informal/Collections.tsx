@@ -6,7 +6,7 @@ import { IoReceiptSharp } from "react-icons/io5";
 import { PiWalletFill, PiUsersFill } from "react-icons/pi";
 import { AiOutlineFileDone } from "react-icons/ai";
 import { FaHandshakeSimple } from "react-icons/fa6";
-import Activity from "../../common/Activity";
+import Activity from "../Activity";
 import { useInformalSector } from "@/stores/informalSector";
 
 interface iRevenueItem {

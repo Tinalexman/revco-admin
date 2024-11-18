@@ -13,7 +13,7 @@ import { PiUsersFill, PiWalletFill } from "react-icons/pi";
 import TaxPayersImage from "@/assets/dashboard/tax payers.png";
 import { MdGroupAdd } from "react-icons/md";
 import Statistics from "../statistics/Statistics";
-import Activity from "../../common/Activity";
+import Activity from "../Activity";
 import { useInformalSector } from "@/stores/informalSector";
 
 interface iRevenueItem {

@@ -3,7 +3,7 @@
 import React from "react";
 
 import Details from "@/components/dashboard/home/Details";
-import Activity from "@/components/dashboard/common/Activity";
+import Activity from "@/components/dashboard/home/Activity";
 import Statistics from "@/components/dashboard/home/statistics/Statistics";
 
 const Dashboard = () => {

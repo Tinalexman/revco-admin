@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import Activity from "../../common/Activity";
+import Activity from "./Activity";
 import Details from "./Details";
 
 const Transactions = () => {

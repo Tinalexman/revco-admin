@@ -1,15 +1,15 @@
 import React, { FC, useState } from "react";
-import Filters from "./Filters";
+import Filters from "@/components/dashboard/common/Filters";
 import { Drawer } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { IoIosArrowDown } from "react-icons/io";
 import { IoEye } from "react-icons/io5";
-import ViewTransaction from "./ViewTransaction";
+import ViewTransaction from "@/components/dashboard/common/ViewTransaction";
 import {
   useDownloadRecentActivity,
-  useGetRecentActivity,
   useSearchRecentActivity,
 } from "@/hooks/dashboardHooks";
+import { useGetRecentTransactionActivity } from "@/hooks/paymentHooks";
 import { Loader } from "@mantine/core";
 import Paginator from "@/components/reusable/paginator/Paginator";
 import {
@@ -34,7 +34,7 @@ const Activity: FC<{ mode?: string | null; showModePicker?: boolean }> = ({
     loading,
     data: transactions,
     getActivity,
-  } = useGetRecentActivity(mode);
+  } = useGetRecentTransactionActivity(mode);
 
   const {
     loading: loadingSearch,

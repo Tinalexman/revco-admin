@@ -20,6 +20,7 @@ import { useRevcoUserStore } from "@/stores/userStore";
 export interface iPaymentChannel {
   name: string;
   type: string;
+  total: number;
   status: string;
   statusText: string;
   success: string;
@@ -40,9 +41,9 @@ const PaymentChannels = () => {
 
   const { data, loading } = useGetPaymentChannels();
 
-
   const channels: iPaymentChannel[] = data.map((dt, i) => ({
     name: dt.channel,
+    total: dt.total,
     type: "Online",
     status: STATE_SUCCESS,
     statusText: "Active",
@@ -93,14 +94,14 @@ const PaymentChannels = () => {
             <p className="font-semibold text-dash-header text-gray-5">
               Payment Channels
             </p>
-            {
-              isAdmin && <button
+            {isAdmin && (
+              <button
                 onClick={openAddChannel}
                 className="bg-primary text-white rounded-lg h-9 gap-2 px-3 text-[0.825rem] flex items-center leading-[0.98rem]"
               >
                 Add New Channel <IoMdAdd />
               </button>
-            }
+            )}
           </div>
           <div className="w-full bg-white p-5 flex flex-col gap-3 rounded-xl">
             <div className="w-full flex justify-between items-center">
@@ -133,13 +134,16 @@ const PaymentChannels = () => {
                       Status
                     </th>
                     <th scope="col" className="text-start px-4">
+                      Total
+                    </th>
+                    <th scope="col" className="text-start px-4">
                       Success Rate
                     </th>
-                    {
-                      isAdmin && <th scope="col" className="text-start px-4">
+                    {isAdmin && (
+                      <th scope="col" className="text-start px-4">
                         Actions
                       </th>
-                    }
+                    )}
                   </tr>
                 </thead>
                 <tbody>
@@ -156,36 +160,41 @@ const PaymentChannels = () => {
                           text={chn.statusText}
                         />
                       </td>
+                      <td className="p-4">
+                        {chn.total.toLocaleString("en-US")}
+                      </td>
                       <td className="p-4">{chn.success}%</td>
 
-                      {isAdmin && <td className="flex gap-1 p-4">
-                        <div
-                          onClick={() => openEditDrawer(chn)}
-                          className="cursor-pointer bg-[#E4ECF7] rounded size-6 grid place-content-center text-[#292D32]"
-                        >
-                          <RiEdit2Fill size={16} />
-                        </div>
-                        <div
-                          onClick={() => openActionModal(chn)}
-                          className="cursor-pointer bg-[#FDC6C6] rounded size-6 grid place-content-center text-[#D50000]"
-                        >
-                          <TiCancel size={16} />
-                        </div>
-                      </td>}
+                      {isAdmin && (
+                        <td className="flex gap-1 p-4">
+                          <div
+                            onClick={() => openEditDrawer(chn)}
+                            className="cursor-pointer bg-[#E4ECF7] rounded size-6 grid place-content-center text-[#292D32]"
+                          >
+                            <RiEdit2Fill size={16} />
+                          </div>
+                          <div
+                            onClick={() => openActionModal(chn)}
+                            className="cursor-pointer bg-[#FDC6C6] rounded size-6 grid place-content-center text-[#D50000]"
+                          >
+                            <TiCancel size={16} />
+                          </div>
+                        </td>
+                      )}
                     </tr>
                   ))}
                 </tbody>
               </table>
-              {
-                loading && <div className="w-full h-60 grid place-content-center">
+              {loading && (
+                <div className="w-full h-60 grid place-content-center">
                   <Loader color="primary.6" />
                 </div>
-              }
-              {
-                !loading && data.length === 0 && <div className="w-full h-60 grid place-content-center text-[#3A3A3A] font-medium text-[1rem] leading-[1.125rem]">
+              )}
+              {!loading && data.length === 0 && (
+                <div className="w-full h-60 grid place-content-center text-[#3A3A3A] font-medium text-[1rem] leading-[1.125rem]">
                   No payment channels available
                 </div>
-              }
+              )}
             </div>
           </div>
         </div>
