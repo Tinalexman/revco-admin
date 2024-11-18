@@ -2,6 +2,16 @@ export const ROLE_AGENT: string = "Agent";
 export const ROLE_INDIVIDUAL: string = "Individual";
 export const ROLE_NON_INDIVIDUAL: string = "Non-Individual";
 export const ROLE_BANK_STAFF: string = "Bank-Staff";
+export const ROLE_DEFAULT: string = "Default";
+export const ROLE_ADMIN: string = "Admin";
+export const ROLE_SUPERVISOR: string = "Supervisor";
+export const ROLE_INDEPENDENT_OPERATOR = "Independent-Operator";
+export const ROLE_ENUMERATOR = "Enumerator";
+export const ROLE_SUB_ADMIN_3 = "Sub-Admin3";
+export const ROLE_SUB_ADMIN_2 = "Sub-Admin2";
+export const ROLE_SUB_ADMIN_1 = "Sub-Admin1";
+export const ROLE_PROJECT_REPORT = "Project-Report";
+export const ROLE_AGENT_REMIT = "Agent-Remit";
 
 export const determineFirstPage = (role: string) => {
   if (canViewDashboard(role)) {
@@ -263,5 +273,5 @@ export const canViewTargetPage = (role: string, path: string) => {
     return canViewSettings(role);
   }
 
-  return false;
+  return true;
 };
