@@ -10,6 +10,8 @@ export const ROLE_PROJECT_REPORT = "Project-Report";
 export const ROLE_TAX_CLEARANCE = "Tax-Clearance";
 
 export const determineFirstPage = (role: string) => {
+  role = role.trim();
+
   if (canViewDashboard(role)) {
     if (canViewDashboardOverview(role)) {
       return "/dashboard";
@@ -60,6 +62,7 @@ export const canViewDashboard = (role: string) => {
 
 export const canViewDashboardOverview = (role: string) => {
   return (
+    role === ROLE_SUB_ADMIN_2 ||
     role === ROLE_SUB_ADMIN_1 ||
     role === ROLE_ADMIN ||
     role === ROLE_PROJECT_REPORT
@@ -145,11 +148,19 @@ export const canViewUsers = (role: string) => {
 };
 
 export const canViewAdminUsers = (role: string) => {
-  return role === ROLE_ADMIN || role === ROLE_SUB_ADMIN_1;
+  return (
+    role === ROLE_ADMIN ||
+    role === ROLE_SUB_ADMIN_1 ||
+    role === ROLE_SUB_ADMIN_2
+  );
 };
 
 export const canViewTaxPayers = (role: string) => {
-  return role === ROLE_ADMIN || role === ROLE_SUB_ADMIN_1;
+  return (
+    role === ROLE_ADMIN ||
+    role === ROLE_SUB_ADMIN_1 ||
+    role === ROLE_SUB_ADMIN_2
+  );
 };
 
 export const canViewReports = (role: string) => {
