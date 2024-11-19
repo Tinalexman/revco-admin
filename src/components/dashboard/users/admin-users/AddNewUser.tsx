@@ -238,7 +238,7 @@ const AddNewUser: FC<{ onClose: () => void; onCreate: () => void }> = ({
                     <>
                       <div className="flex flex-col gap-0.5 w-full px-5 mt-4">
                         <h3 className="text-reg-caption font-medium text-[#111213]">
-                          MDA
+                          MDA/Organization
                         </h3>
                         <div className="w-full h-10">
                           <Dropdown
@@ -260,7 +260,7 @@ const AddNewUser: FC<{ onClose: () => void; onCreate: () => void }> = ({
 
                       <div className="flex flex-col gap-0.5 w-full px-5 mt-4">
                         <h3 className="text-reg-caption font-medium text-[#111213]">
-                          MDA Office
+                          Office/Branch
                         </h3>
                         <div className="w-full h-10">
                           <Dropdown

@@ -74,11 +74,7 @@ export const canViewDashboardInformalSector = (role: string) => {
 };
 
 export const canViewPayments = (role: string) => {
-  return (
-    role === ROLE_SUB_ADMIN_1 ||
-    role === ROLE_ADMIN ||
-    role === ROLE_PROJECT_REPORT
-  );
+  return role !== ROLE_INDIVIDUAL && role !== ROLE_NON_INDIVIDUAL;
 };
 
 export const canViewPaymentTransactions = (role: string) => {
@@ -259,3 +255,6 @@ export const canCreateNewUser = (role: string) => {
 // Sub 2 users cant view admin users but can view your users like organization users
 // Settings, for sub2 and below dont have notification settings
 // Banks cannot object
+
+// Only  admin should be selecting project type when creating user
+//
