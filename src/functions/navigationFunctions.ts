@@ -10,8 +10,6 @@ export const ROLE_PROJECT_REPORT = "Project-Report";
 export const ROLE_TAX_CLEARANCE = "Tax-Clearance";
 
 export const determineFirstPage = (role: string) => {
-  role = role.trim();
-
   if (canViewDashboard(role)) {
     if (canViewDashboardOverview(role)) {
       return "/dashboard";
@@ -52,36 +50,26 @@ export const determineFirstPage = (role: string) => {
 };
 
 export const canViewDashboard = (role: string) => {
-  return (
-    role === ROLE_ADMIN ||
-    role === ROLE_SUB_ADMIN_1 ||
-    role === ROLE_SUB_ADMIN_2 ||
-    role === ROLE_SUB_ADMIN_3
-  );
+  return role !== ROLE_INDIVIDUAL && role !== ROLE_NON_INDIVIDUAL;
 };
 
 export const canViewDashboardOverview = (role: string) => {
-  return (
-    role === ROLE_SUB_ADMIN_2 ||
-    role === ROLE_SUB_ADMIN_1 ||
-    role === ROLE_ADMIN ||
-    role === ROLE_PROJECT_REPORT
-  );
+  return role !== ROLE_INDIVIDUAL && role !== ROLE_NON_INDIVIDUAL;
 };
 
 export const canViewDashboardFormalSector = (role: string) => {
   return (
     role === ROLE_SUB_ADMIN_1 ||
-    role === ROLE_ADMIN ||
-    role === ROLE_PROJECT_REPORT
+    role === ROLE_PROJECT_REPORT ||
+    role === ROLE_ADMIN
   );
 };
 
 export const canViewDashboardInformalSector = (role: string) => {
   return (
     role === ROLE_SUB_ADMIN_1 ||
-    role === ROLE_ADMIN ||
-    role === ROLE_PROJECT_REPORT
+    role === ROLE_PROJECT_REPORT ||
+    role === ROLE_ADMIN
   );
 };
 
@@ -94,7 +82,7 @@ export const canViewPayments = (role: string) => {
 };
 
 export const canViewPaymentTransactions = (role: string) => {
-  return true;
+  return role !== ROLE_INDIVIDUAL && role !== ROLE_NON_INDIVIDUAL;
 };
 
 export const canViewPaymentChannels = (role: string) => {
@@ -106,20 +94,14 @@ export const canViewPaymentChannels = (role: string) => {
 };
 
 export const canViewPaymentInvoices = (role: string) => {
-  return (
-    role === ROLE_SUB_ADMIN_2 ||
-    role === ROLE_SUB_ADMIN_1 ||
-    role === ROLE_ADMIN ||
-    role === ROLE_PROJECT_REPORT
-  );
+  return role !== ROLE_INDIVIDUAL && role !== ROLE_NON_INDIVIDUAL;
 };
 
 export const canViewPaymentRefunds = (role: string) => {
   return (
-    role === ROLE_ADMIN ||
     role === ROLE_SUB_ADMIN_1 ||
-    role === ROLE_SUB_ADMIN_2 ||
-    role === ROLE_SUB_ADMIN_3
+    role === ROLE_ADMIN ||
+    role === ROLE_PROJECT_REPORT
   );
 };
 
@@ -127,16 +109,12 @@ export const canViewOrganizations = (role: string) => {
   return (
     role === ROLE_ADMIN ||
     role === ROLE_SUB_ADMIN_1 ||
-    role === ROLE_SUB_ADMIN_2
+    role === ROLE_PROJECT_REPORT
   );
 };
 
 export const canViewObjections = (role: string) => {
-  return (
-    role === ROLE_ADMIN ||
-    role === ROLE_SUB_ADMIN_1 ||
-    role === ROLE_SUB_ADMIN_2
-  );
+  return role !== ROLE_INDIVIDUAL && role !== ROLE_NON_INDIVIDUAL;
 };
 
 export const canViewUsers = (role: string) => {
@@ -151,7 +129,7 @@ export const canViewAdminUsers = (role: string) => {
   return (
     role === ROLE_ADMIN ||
     role === ROLE_SUB_ADMIN_1 ||
-    role === ROLE_SUB_ADMIN_2
+    role === ROLE_PROJECT_REPORT
   );
 };
 
@@ -159,7 +137,7 @@ export const canViewTaxPayers = (role: string) => {
   return (
     role === ROLE_ADMIN ||
     role === ROLE_SUB_ADMIN_1 ||
-    role === ROLE_SUB_ADMIN_2
+    role === ROLE_PROJECT_REPORT
   );
 };
 
@@ -167,16 +145,17 @@ export const canViewReports = (role: string) => {
   return (
     role === ROLE_ADMIN ||
     role === ROLE_SUB_ADMIN_1 ||
-    role === ROLE_SUB_ADMIN_2
+    role === ROLE_SUB_ADMIN_2 ||
+    role === ROLE_PROJECT_REPORT
   );
 };
 
 export const canViewSupport = (role: string) => {
-  return true;
+  return role !== ROLE_INDIVIDUAL && role !== ROLE_NON_INDIVIDUAL;
 };
 
 export const canViewSettings = (role: string) => {
-  return true;
+  return role !== ROLE_INDIVIDUAL && role !== ROLE_NON_INDIVIDUAL;
 };
 
 export const getPaymentChildActiveIndex = (role: string, child: string) => {
@@ -271,3 +250,12 @@ export const canCreateNewUser = (role: string) => {
     role === ROLE_SUB_ADMIN_3
   );
 };
+
+// ONLY SUB-ADMIN1 AND PROJECT CAN VIEW COMMISSIONS ON ANY PAGE
+// SUB-ADMIN2 AND BELOW CANNOT VIEW FORMAL AND INFORMAL ISH
+// Dashboard header changes based on the user role: sub2 welcom to ministry portal. if agent, welcome to agent portal
+
+// ON invoice management, have cards, to show totoal invoices generated, total paid and total unpaid at the top
+// Sub 2 users cant view admin users but can view your users like organization users
+// Settings, for sub2 and below dont have notification settings
+// Banks cannot object

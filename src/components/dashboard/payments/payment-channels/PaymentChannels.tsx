@@ -114,7 +114,7 @@ const PaymentChannels = () => {
               </h2>
             </div>
             <div className="w-full justify-between items-center flex">
-              <Filters />
+              <Filters showDatePicker={false} />
               <button className="bg-[#F0E6FC] rounded text-primary flex gap-3 items-center px-3 h-10">
                 <p className="text-[0.815rem] leading-[0.975rem]">Export</p>
                 <IoIosArrowDown />
