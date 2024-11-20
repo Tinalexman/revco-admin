@@ -39,7 +39,7 @@ const GeneralOverview = () => {
     loading: loadingSummary,
     data: statsSummary,
     getStatisticsSummary,
-  } = useGetStatisticsSummary("informal");
+  } = useGetStatisticsSummary(true, "informal");
 
   const revenueItems: iRevenueItem[] = [
     {
@@ -68,8 +68,10 @@ const GeneralOverview = () => {
     },
   ];
 
-  const { data: userActivity, loading: loadingActivity } =
-    useGetUserActivity("informal");
+  const { data: userActivity, loading: loadingActivity } = useGetUserActivity(
+    true,
+    "informal"
+  );
 
   const personItem: iPersonItem = {
     title: "Total Tax Payers",
@@ -215,7 +217,7 @@ const GeneralOverview = () => {
         </div>
       </div>
 
-      <Statistics mode={"informal"} />
+      <Statistics isSuperUser={true} mode={"informal"} />
       <Activity mode={"informal"} />
     </div>
   );

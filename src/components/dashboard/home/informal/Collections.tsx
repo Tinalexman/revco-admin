@@ -22,7 +22,7 @@ const Collections = () => {
     loading: loadingSummary,
     data: statsSummary,
     getStatisticsSummary,
-  } = useGetStatisticsSummary("informal");
+  } = useGetStatisticsSummary(true, "informal");
 
   const revenueItems: iRevenueItem[] = [
     {

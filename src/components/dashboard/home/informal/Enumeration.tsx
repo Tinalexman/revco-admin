@@ -33,8 +33,10 @@ interface iPersonItem {
   background: StaticImageData;
 }
 const Enumeration = () => {
-  const { data: userActivity, loading: loadingActivity } =
-    useGetUserActivity("informal");
+  const { data: userActivity, loading: loadingActivity } = useGetUserActivity(
+    true,
+    "informal"
+  );
   const personItems: iPersonItem[] = [
     {
       title: "Total Tax Payers",
