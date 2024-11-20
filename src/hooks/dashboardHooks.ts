@@ -428,7 +428,10 @@ export const useSearchRecentActivity = () => {
     setSuccess(status);
 
     if (status) {
-      setData(data);
+      setData({
+        data: data.data?.data ?? [],
+        count: data.data?.count ?? 0,
+      });
     }
 
     if (!status) {

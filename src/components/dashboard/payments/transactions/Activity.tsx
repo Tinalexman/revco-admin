@@ -21,6 +21,7 @@ import StatusContainer, {
   STATE_PENDING,
   STATE_SUCCESS,
 } from "@/components/reusable/StatusContainer";
+import { set } from "react-datepicker/dist/date_utils";
 
 const Activity: FC<{ mode?: string | null; showModePicker?: boolean }> = ({
   mode,
@@ -30,6 +31,7 @@ const Activity: FC<{ mode?: string | null; showModePicker?: boolean }> = ({
   const [activeMode, setActiveMode] = useState<string>(overviewModes[0]);
   const [hasSearch, setHasSearch] = useState<boolean>(false);
   const [expanded, setExpanded] = useState<boolean>(false);
+  const [search, setSearch] = useState<string>("");
   const {
     loading,
     data: transactions,
@@ -68,12 +70,18 @@ const Activity: FC<{ mode?: string | null; showModePicker?: boolean }> = ({
     close();
   };
 
-  const totalPages = Math.ceil(transactions.count / 50);
+  const totalPages = Math.ceil(
+    (hasSearch ? searchedData.count : transactions.count) / 50
+  );
   const [currentPage, setCurrentPage] = useState<number>(1);
 
   function handlePageChange(page: number) {
     setCurrentPage(page);
-    getActivity(dateRange.start, dateRange.end, `${page}`);
+    if (hasSearch) {
+      searchActivity(search, `${page}`, dateRange.start, dateRange.end);
+    } else {
+      getActivity(dateRange.start, dateRange.end, `${page}`);
+    }
   }
 
   const getList = () => {
@@ -82,7 +90,7 @@ const Activity: FC<{ mode?: string | null; showModePicker?: boolean }> = ({
         0,
         expanded ? transactions.data.length : 10
       );
-    } else if (!loading && hasSearch && searchedData.data.length > 0) {
+    } else if (!loadingSearch && hasSearch && searchedData.data.length > 0) {
       return searchedData.data.slice(
         0,
         expanded ? searchedData.data.length : 10
@@ -147,13 +155,12 @@ const Activity: FC<{ mode?: string | null; showModePicker?: boolean }> = ({
               getActivity(start, end, `${currentPage}`);
             }}
             onSearch={(val) => {
+              setSearch(val);
               setHasSearch(val.length > 0);
-              searchActivity(
-                val,
-                `${currentPage}`,
-                dateRange.start,
-                dateRange.end
-              );
+              setCurrentPage(1);
+              if (val.length > 0) {
+                searchActivity(val, `1`, dateRange.start, dateRange.end);
+              }
             }}
           />
           <div className="w-[35%]">
