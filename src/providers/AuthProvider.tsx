@@ -17,7 +17,11 @@ export default function AuthProvider({
 
   useEffect(() => {
     const token = getToken();
-    if (token === undefined && pathName !== "/auth/login") {
+    if (
+      token === undefined &&
+      pathName !== "/" &&
+      !pathName.startsWith("/auth")
+    ) {
       toast.error("Please login to continue");
       router.replace("/auth/login");
     }
