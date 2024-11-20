@@ -5,8 +5,13 @@ import React from "react";
 import { VscTools } from "react-icons/vsc";
 import Details from "./Details";
 import UserList from "./UserList";
+import { canViewCommissions } from "@/functions/navigationFunctions";
+import { useRevcoUserStore } from "@/stores/userStore";
 
 const TaxPayers = () => {
+  const role = useRevcoUserStore((state) => state.role);
+  const isSuperUser = canViewCommissions(role);
+
   return (
     <div className="w-full flex flex-col gap-2.5">
       <div className="px-8 bg-white w-full h-[4.5rem]">
@@ -29,7 +34,7 @@ const TaxPayers = () => {
         </div>
       </div>
       <div className="py-5 px-10 w-full flex flex-col gap-2.5">
-        <Details />
+        <Details isSuperUser={isSuperUser} />
         <UserList />
       </div>
     </div>

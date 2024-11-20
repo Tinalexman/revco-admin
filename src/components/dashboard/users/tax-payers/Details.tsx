@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { FC, useState } from "react";
 import Dropdown from "@/components/reusable/Dropdown";
 
 import { Profile, Profile2User } from "iconsax-react";
@@ -18,13 +18,13 @@ interface iPersonItem {
   background: StaticImageData;
 }
 
-const Details = () => {
+const Details: FC<{ isSuperUser: boolean }> = ({ isSuperUser }) => {
   const [filter, setFilter] = useState<string>("Today");
   const {
     data: userActivity,
     loading: loadingActivity,
     getActivity,
-  } = useGetUserActivity();
+  } = useGetUserActivity(isSuperUser);
   const personItems: iPersonItem[] = [
     {
       title: "Total Tax Payers",
