@@ -252,7 +252,11 @@ export const canCreateNewUser = (role: string) => {
 };
 
 export const canViewCommissions = (role: string) => {
-  return role === ROLE_ADMIN || ROLE_SUB_ADMIN_1 || ROLE_PROJECT_REPORT;
+  return (
+    role === ROLE_ADMIN ||
+    role === ROLE_SUB_ADMIN_1 ||
+    role === ROLE_PROJECT_REPORT
+  );
 };
 
 // ONLY SUB-ADMIN1 AND PROJECT CAN VIEW COMMISSIONS ON ANY PAGE

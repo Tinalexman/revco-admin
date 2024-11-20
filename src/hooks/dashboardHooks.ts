@@ -446,7 +446,10 @@ export const useSearchRecentActivity = () => {
   };
 };
 
-export const useGetStatisticsSummary = (mode?: string | null) => {
+export const useGetStatisticsSummary = (
+  showToastOnError: boolean,
+  mode?: string | null
+) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [data, setData] = useState<iStatisticsSummaryResponse>({
     totalAmountRemitted: 0,
@@ -485,7 +488,7 @@ export const useGetStatisticsSummary = (mode?: string | null) => {
 
     setLoading(false);
 
-    if (!status) {
+    if (!status && showToastOnError) {
       toast.error(
         data?.response?.data?.data ?? "An error occurred. Please try again"
       );
@@ -558,7 +561,10 @@ export const useGetTransactionSummary = (mode?: string | null) => {
   };
 };
 
-export const useGetMetrics = (mode?: string | null) => {
+export const useGetMetrics = (
+  showToastOnError: boolean,
+  mode?: string | null
+) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [success, setSuccess] = useState<boolean>(false);
   const [data, setData] = useState<iMdaMetricsResponse[]>([]);
@@ -588,7 +594,7 @@ export const useGetMetrics = (mode?: string | null) => {
     setLoading(false);
     setSuccess(status);
 
-    if (!status) {
+    if (!status && showToastOnError) {
       toast.error(
         data?.response?.data?.data ?? "An error occurred. Please try again"
       );
@@ -611,7 +617,10 @@ export const useGetMetrics = (mode?: string | null) => {
   };
 };
 
-export const useGetUserActivity = (mode?: string | null) => {
+export const useGetUserActivity = (
+  showToastOnError: boolean,
+  mode?: string | null
+) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [success, setSuccess] = useState<boolean>(false);
   const [data, setData] = useState<iUserActivityResponse>({
@@ -647,7 +656,7 @@ export const useGetUserActivity = (mode?: string | null) => {
     setLoading(false);
     setSuccess(status);
 
-    if (!status) {
+    if (!status && showToastOnError) {
       toast.error(
         data?.response?.data?.data ?? "An error occurred. Please try again"
       );
@@ -670,7 +679,10 @@ export const useGetUserActivity = (mode?: string | null) => {
   };
 };
 
-export const useGetTransactionChannelsPieData = (mode?: string | null) => {
+export const useGetTransactionChannelsPieData = (
+  showToastOnError: boolean,
+  mode?: string | null
+) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [success, setSuccess] = useState<boolean>(false);
   const [data, setData] = useState<iTransactionChannelChartDataResponse[]>([]);
@@ -700,7 +712,7 @@ export const useGetTransactionChannelsPieData = (mode?: string | null) => {
     setLoading(false);
     setSuccess(status);
 
-    if (!status) {
+    if (!status && showToastOnError) {
       toast.error(
         data?.response?.data?.data ?? "An error occurred. Please try again"
       );
@@ -723,7 +735,10 @@ export const useGetTransactionChannelsPieData = (mode?: string | null) => {
   };
 };
 
-export const useGetTransactionStatusPieData = (mode?: string | null) => {
+export const useGetTransactionStatusPieData = (
+  showToastOnError: boolean,
+  mode?: string | null
+) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [success, setSuccess] = useState<boolean>(false);
   const [data, setData] = useState<iTransactionStatusChartDataResponse>({
@@ -757,7 +772,7 @@ export const useGetTransactionStatusPieData = (mode?: string | null) => {
     setLoading(false);
     setSuccess(status);
 
-    if (!status) {
+    if (!status && showToastOnError) {
       toast.error(
         data?.response?.data?.data ?? "An error occurred. Please try again"
       );
@@ -780,7 +795,10 @@ export const useGetTransactionStatusPieData = (mode?: string | null) => {
   };
 };
 
-export const useGetTransactionRevenuePieData = (mode?: string | null) => {
+export const useGetTransactionRevenuePieData = (
+  showToastOnError: boolean,
+  mode?: string | null
+) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [success, setSuccess] = useState<boolean>(false);
   const [data, setData] = useState<iTransactionRevenueChartDataResponse>({
@@ -815,7 +833,7 @@ export const useGetTransactionRevenuePieData = (mode?: string | null) => {
     setLoading(false);
     setSuccess(status);
 
-    if (!status) {
+    if (!status && showToastOnError) {
       toast.error(
         data?.response?.data?.data ?? "An error occurred. Please try again"
       );

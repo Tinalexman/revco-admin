@@ -161,7 +161,7 @@ const PaymentChannels = () => {
                         />
                       </td>
                       <td className="p-4">
-                        {chn.total.toLocaleString("en-US")}
+                        ₦{chn.total.toLocaleString("en-US")}
                       </td>
                       <td className="p-4">{chn.success}%</td>
 

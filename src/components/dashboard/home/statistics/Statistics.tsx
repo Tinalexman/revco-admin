@@ -10,31 +10,36 @@ import {
   useGetTransactionRevenuePieData,
 } from "@/hooks/dashboardHooks";
 import { Loader } from "@mantine/core";
+import { canViewCommissions } from "@/functions/navigationFunctions";
+import { useRevcoUserStore } from "@/stores/userStore";
 
-const Statistics: FC<{ mode: string | null }> = ({ mode }) => {
+const Statistics: FC<{ mode: string | null; isSuperUser: boolean }> = ({
+  mode,
+  isSuperUser,
+}) => {
   const {
     data: metrics,
     getMetrics,
     loading: loadingMetrics,
-  } = useGetMetrics(mode);
+  } = useGetMetrics(isSuperUser, mode);
 
   const {
     loading: loadingTransactionChannelsPieData,
     data: transactionChannels,
     getPieChannelsData,
-  } = useGetTransactionChannelsPieData(mode);
+  } = useGetTransactionChannelsPieData(isSuperUser, mode);
 
   const {
     loading: loadingTransactionStatusPieData,
     data: transactionStatus,
     getPieStatusData,
-  } = useGetTransactionStatusPieData(mode);
+  } = useGetTransactionStatusPieData(isSuperUser, mode);
 
   const {
     loading: loadingTransactionRevenuePieData,
     data: transactionRevenue,
     getPieRevenueData,
-  } = useGetTransactionRevenuePieData(mode);
+  } = useGetTransactionRevenuePieData(isSuperUser, mode);
 
   const totalRevenue: number =
     transactionRevenue["TARABA STATE INTERNAL REVENUE SERVICE "] +
@@ -207,30 +212,32 @@ const Statistics: FC<{ mode: string | null }> = ({ mode }) => {
         )}
       </div>
 
-      <div className="w-full grid grid-cols-3 gap-2.5">
-        {transactionData.map((data, i) => (
-          <TransactionCard
-            key={i}
-            data={data}
-            loading={
-              i === 0
-                ? loadingTransactionChannelsPieData
-                : i === 1
-                ? loadingTransactionStatusPieData
-                : loadingTransactionRevenuePieData
-            }
-            onFilterChanged={(value) => {
-              if (i === 0) {
-                getPieChannelsData(value);
-              } else if (i === 1) {
-                getPieStatusData(value);
-              } else if (i === 2) {
-                getPieRevenueData(value);
+      {isSuperUser && (
+        <div className="w-full grid grid-cols-3 gap-2.5">
+          {transactionData.map((data, i) => (
+            <TransactionCard
+              key={i}
+              data={data}
+              loading={
+                i === 0
+                  ? loadingTransactionChannelsPieData
+                  : i === 1
+                  ? loadingTransactionStatusPieData
+                  : loadingTransactionRevenuePieData
               }
-            }}
-          />
-        ))}
-      </div>
+              onFilterChanged={(value) => {
+                if (i === 0) {
+                  getPieChannelsData(value);
+                } else if (i === 1) {
+                  getPieStatusData(value);
+                } else if (i === 2) {
+                  getPieRevenueData(value);
+                }
+              }}
+            />
+          ))}
+        </div>
+      )}
     </div>
   );
 };

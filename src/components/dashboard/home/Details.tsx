@@ -34,14 +34,17 @@ interface iPersonItem {
   background: StaticImageData;
 }
 
-const Details: FC<{ mode: string | null }> = ({ mode }) => {
+const Details: FC<{ mode: string | null; isSuperUser: boolean }> = ({
+  mode,
+  isSuperUser,
+}) => {
   const [filter, setFilter] = useState<string>("Today");
   const [isCustomDate, setIsCustomDate] = useState<boolean>(false);
   const {
     loading: loadingSummary,
     getStatisticsSummary,
     data: statsSummary,
-  } = useGetStatisticsSummary(mode);
+  } = useGetStatisticsSummary(isSuperUser, mode);
 
   const revenueItems: iRevenueItem[] = [
     {
@@ -70,8 +73,10 @@ const Details: FC<{ mode: string | null }> = ({ mode }) => {
     },
   ];
 
-  const { data: userActivity, loading: loadingActivity } =
-    useGetUserActivity(mode);
+  const { data: userActivity, loading: loadingActivity } = useGetUserActivity(
+    isSuperUser,
+    mode
+  );
 
   const personItem: iPersonItem = {
     title: "Total Tax Payers",
@@ -81,9 +86,6 @@ const Details: FC<{ mode: string | null }> = ({ mode }) => {
     corporate: userActivity.corporations,
     background: TaxPayersImage,
   };
-
-  const role = useRevcoUserStore((state) => state.role);
-  const isSuperUser = canViewCommissions(role);
 
   return (
     <div className="w-full flex flex-col gap-2.5">
@@ -117,7 +119,11 @@ const Details: FC<{ mode: string | null }> = ({ mode }) => {
           </div>
         </div>
       </div>
-      <div className="w-full grid grid-cols-4 gap-2.5">
+      <div
+        className={`w-full grid ${
+          isSuperUser ? "grid-cols-4" : "grid-cols-3"
+        } gap-2.5`}
+      >
         {revenueItems.slice(0, isSuperUser ? 4 : 3).map((it, i) => (
           <div
             className="bg-white w-full rounded-xl px-6 py-3 gap-6 h-44 flex flex-col justify-end items-start"
