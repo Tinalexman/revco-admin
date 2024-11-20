@@ -20,9 +20,9 @@ const FormalSector = () => {
         </div>
       </div>
       <div className="py-5 px-10 w-full flex flex-col gap-2.5">
-        <Details mode={"formal"} />
-        <Statistics mode={"formal"} />
-        <Activity mode={"formal"} />
+        <Details isSuperUser={true} mode={"formal"} />
+        <Statistics isSuperUser={true} mode={"formal"} />
+        <Activity showModePicker={true} mode={"formal"} />
       </div>
     </div>
   );
