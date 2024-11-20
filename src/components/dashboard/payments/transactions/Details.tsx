@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { FC, useState } from "react";
 
 import Dropdown from "@/components/reusable/Dropdown";
 import { useGetStatisticsSummary } from "@/hooks/dashboardHooks";
@@ -17,14 +17,14 @@ interface iRevenueItem {
   icon: any;
 }
 
-const Details = () => {
+const Details: FC<{ isSuperUser: boolean }> = ({ isSuperUser }) => {
   const [filter, setFilter] = useState<string>("Today");
 
   const {
     loading: loadingSummary,
     getStatisticsSummary,
     data: statsSummary,
-  } = useGetStatisticsSummary();
+  } = useGetStatisticsSummary(isSuperUser);
 
   const revenueItems: iRevenueItem[] = [
     {
@@ -74,8 +74,12 @@ const Details = () => {
           />
         </div>
       </div>
-      <div className="w-full grid grid-cols-4 gap-2.5">
-        {revenueItems.map((it, i) => (
+      <div
+        className={`w-full grid ${
+          isSuperUser ? "grid-cols-4" : "grid-cols-3"
+        } gap-2.5`}
+      >
+        {revenueItems.slice(0, isSuperUser ? 4 : 3).map((it, i) => (
           <div
             className="bg-white w-full rounded-xl px-6 py-3 gap-6 h-44 flex flex-col justify-end items-start"
             key={i}
