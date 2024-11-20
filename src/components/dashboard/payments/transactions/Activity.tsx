@@ -44,11 +44,8 @@ const Activity: FC<{ mode?: string | null; showModePicker?: boolean }> = ({
     searchActivity,
   } = useSearchRecentActivity();
 
-  const {
-    loading: loadingDownload,
-    downloadReport,
-    success,
-  } = useDownloadRecentActivity(mode);
+  const { loading: loadingDownload, downloadReport } =
+    useDownloadRecentActivity(mode);
 
   const currentDate = getDateRange("Today");
   const [dateRange, setDateRange] = useState<iDateRange>({
@@ -265,7 +262,6 @@ const Activity: FC<{ mode?: string | null; showModePicker?: boolean }> = ({
               ))}
             </tbody>
           </table>
-
           {((loading && !hasSearch) || (loadingSearch && hasSearch)) && (
             <div className="w-full h-60 grid place-content-center">
               <Loader color="primary.6" />

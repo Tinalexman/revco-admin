@@ -1,26 +1,15 @@
 import React, { FC, useState } from "react";
 import Filters from "../common/Filters";
-import { Drawer } from "@mantine/core";
-import { useDisclosure } from "@mantine/hooks";
 import { IoIosArrowDown } from "react-icons/io";
 import { IoEye } from "react-icons/io5";
-import ViewTransaction from "../common/ViewTransaction";
 import {
-  useDownloadRecentActivity,
+  useDownloadMDAReports,
   useGetRecentMDAActivity,
-  useSearchRecentActivity,
+  useSearchRecentMDAActivity,
 } from "@/hooks/dashboardHooks";
 import { Loader } from "@mantine/core";
 import Paginator from "@/components/reusable/paginator/Paginator";
-import {
-  convertDateWithDashesAndTime,
-  getDateRange,
-  iDateRange,
-} from "@/functions/dateFunctions";
-import StatusContainer, {
-  STATE_PENDING,
-  STATE_SUCCESS,
-} from "@/components/reusable/StatusContainer";
+import { getDateRange, iDateRange } from "@/functions/dateFunctions";
 
 const Activity: FC<{ mode?: string | null; showModePicker?: boolean }> = ({
   mode,
@@ -29,6 +18,7 @@ const Activity: FC<{ mode?: string | null; showModePicker?: boolean }> = ({
   const overviewModes: string[] = ["All", "Informal Sector", "Formal Sector"];
   const [activeMode, setActiveMode] = useState<string>(overviewModes[0]);
   const [hasSearch, setHasSearch] = useState<boolean>(false);
+  const [search, setSearch] = useState<string>("");
   const [expanded, setExpanded] = useState<boolean>(false);
   const {
     loading,
@@ -37,10 +27,12 @@ const Activity: FC<{ mode?: string | null; showModePicker?: boolean }> = ({
   } = useGetRecentMDAActivity(mode);
 
   const {
-    loading: loadingDownload,
-    downloadReport,
-    success,
-  } = useDownloadRecentActivity(mode);
+    loading: loadingSearch,
+    data: searchedData,
+    searchActivity,
+  } = useSearchRecentMDAActivity();
+
+  const { loading: loadingDownload, downloadReport } = useDownloadMDAReports();
 
   const currentDate = getDateRange("Today");
   const [dateRange, setDateRange] = useState<iDateRange>({
@@ -48,19 +40,30 @@ const Activity: FC<{ mode?: string | null; showModePicker?: boolean }> = ({
     end: currentDate[0],
   });
 
-  const totalPages = Math.ceil(transactions.count / 50);
+  const totalPages = Math.ceil(
+    (hasSearch ? searchedData.count : transactions.count) / 50
+  );
   const [currentPage, setCurrentPage] = useState<number>(1);
 
   function handlePageChange(page: number) {
     setCurrentPage(page);
-    getActivity(dateRange.start, dateRange.end, `${page}`);
+    if (hasSearch) {
+      searchActivity(search, `${page}`, dateRange.start, dateRange.end);
+    } else {
+      getActivity(dateRange.start, dateRange.end, `${page}`);
+    }
   }
 
   const getList = () => {
-    if (!loading && transactions.data.length > 0) {
+    if (!loading && !hasSearch && transactions.data.length > 0) {
       return transactions.data.slice(
         0,
         expanded ? transactions.data.length : 10
+      );
+    } else if (!loadingSearch && hasSearch && searchedData.data.length > 0) {
+      return searchedData.data.slice(
+        0,
+        expanded ? searchedData.data.length : 10
       );
     }
 
@@ -122,7 +125,12 @@ const Activity: FC<{ mode?: string | null; showModePicker?: boolean }> = ({
               getActivity(start, end, `${currentPage}`);
             }}
             onSearch={(val) => {
+              setSearch(val);
               setHasSearch(val.length > 0);
+              setCurrentPage(1);
+              if (val.length > 0) {
+                searchActivity(val, `1`, dateRange.start, dateRange.end);
+              }
             }}
           />
           <div className="w-[35%]">
@@ -202,14 +210,19 @@ const Activity: FC<{ mode?: string | null; showModePicker?: boolean }> = ({
             </tbody>
           </table>
 
-          {loading && (
+          {((loading && !hasSearch) || (loadingSearch && hasSearch)) && (
             <div className="w-full h-60 grid place-content-center">
               <Loader color="primary.6" />
             </div>
           )}
-          {!loading && transactions.data.length === 0 && (
+          {!loading && !hasSearch && transactions.data.length === 0 && (
             <div className="w-full h-60 grid place-content-center text-[#3A3A3A] font-medium text-[1rem] leading-[1.125rem]">
               No recent MDA activity
+            </div>
+          )}
+          {!loadingSearch && hasSearch && searchedData.data.length === 0 && (
+            <div className="w-full h-60 grid place-content-center text-[#3A3A3A] font-medium text-[1rem] leading-[1.125rem]">
+              No activities match your search query
             </div>
           )}
         </div>

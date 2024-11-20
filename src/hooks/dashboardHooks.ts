@@ -237,6 +237,59 @@ export const useGetRecentMDAActivity = (mode?: string | null) => {
   };
 };
 
+export const useSearchRecentMDAActivity = () => {
+  const [loading, setLoading] = useState<boolean>(false);
+  const [success, setSuccess] = useState<boolean>(false);
+  const [data, setData] = useState<iRecentMDAActivityResponse>({
+    count: 0,
+    data: [],
+  });
+  const { requestApi } = useAxios();
+  const token = useToken().getToken();
+
+  let searchActivity = async (
+    search: string,
+    pageNo: string,
+    start: string,
+    end: string
+  ) => {
+    setLoading(true);
+
+    const { data, status } = await requestApi(
+      ``,
+      // `/enroll/invoice-search?search=${search}&pageNumber=${pageNo}&pageSize=50&fromDate=${start}&toDate=${end}`,
+      "GET",
+      {},
+      {
+        Authorization: `Bearer ${token}`,
+      }
+    );
+
+    setLoading(false);
+    setSuccess(status);
+
+    if (status) {
+      setData({
+        data: data.data?.data ?? [],
+        count: data.data?.count ?? 0,
+      });
+    }
+
+    if (!status) {
+      toast.error(
+        data?.response?.data?.data ?? "An error occurred. Please try again"
+      );
+    }
+  };
+
+  return {
+    loading,
+    success,
+    searchActivity,
+    data,
+  };
+};
+
 export const useDownloadRecentActivity = (mode?: string | null) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [success, setSuccess] = useState<boolean>(false);
