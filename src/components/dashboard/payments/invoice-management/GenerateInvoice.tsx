@@ -25,6 +25,10 @@ import {
   unformatNumberWithThreesAndFours,
 } from "@/functions/numberFunctions";
 import InvoiceGenerated from "./InvoiceGenerated";
+import { useRevcoUserStore } from "@/stores/userStore";
+import { ROLE_ADMIN } from "@/functions/navigationFunctions";
+
+const TARABA_PROJECT_ID = 1;
 
 const GenerateInvoice: FC<{ onClose: () => void }> = ({ onClose }) => {
   const {
@@ -55,14 +59,26 @@ const GenerateInvoice: FC<{ onClose: () => void }> = ({ onClose }) => {
     getRevenueHeads,
   } = useGetMDAServices();
 
-  const { data: projectHeads, loading: loadingProjectHeads } =
-    useGetProjectHeads();
+  const {
+    loading: loadingProjectHeads,
+    data: projectHeads,
+    success: gottenProjectHeads,
+  } = useGetProjectHeads();
 
-  const [project, setProject] = useState<string>("");
+  const [projectId, setProjectId] = useState<number>(-1);
   const [mdaId, setMDAId] = useState<number>(-1);
   const [revenueId, setRevenueId] = useState<number>(-1);
-  const [projectId, setProjectId] = useState<number>(-1);
+  const [project, setProject] = useState<string>("");
   const [readOnlyAmount, setReadOnlyAmount] = useState<boolean>(false);
+  const role = useRevcoUserStore((state) => state.role);
+  const isAdmin = role === ROLE_ADMIN;
+
+  useEffect(() => {
+    setProjectId(isAdmin ? -1 : TARABA_PROJECT_ID);
+    if (!isAdmin) {
+      getMDA(TARABA_PROJECT_ID);
+    }
+  }, [role]);
 
   return (
     <div className="w-full bg-[#FEFEFE] px-5 py-8 flex flex-col items-center gap-6 overflow-y-scroll scrollbar-custom">
@@ -101,8 +117,8 @@ const GenerateInvoice: FC<{ onClose: () => void }> = ({ onClose }) => {
           validate={(values) => {
             const errors: any = {};
 
-            if (projectId === -1) {
-              errors.projectId = "Required";
+            if (projectId === -1 && isAdmin) {
+              errors.project = "Required";
             }
 
             if (!values.customerName) {
@@ -292,115 +308,115 @@ const GenerateInvoice: FC<{ onClose: () => void }> = ({ onClose }) => {
                 )}
               </div>
 
+              {isAdmin && (
+                <div className="flex flex-col gap-0.5 w-full">
+                  <h3 className="text-reg-caption font-medium text-[#111213]">
+                    Project Type
+                  </h3>
+                  <div className="w-full h-10">
+                    <Dropdown
+                      value={project}
+                      menus={projectHeads.map((v) => ({
+                        name: v.projectName,
+                        onClick: () => {
+                          setProject(v.projectName);
+                          setProjectId(v.projectId);
+                          getMDA(v.projectId);
+                        },
+                      }))}
+                      loading={loadingProjectHeads}
+                      hint="Select Project Type"
+                    />
+                  </div>
+                  {errors.project && (
+                    <p className="text-err">{errors.project}</p>
+                  )}
+                </div>
+              )}
+
               <div className="flex flex-col gap-0.5 w-full">
                 <h3 className="text-reg-caption font-medium text-[#111213]">
-                  Project Type
+                  Customer Type
                 </h3>
                 <div className="w-full h-10">
                   <Dropdown
-                    value={project}
-                    menus={projectHeads.map((v) => ({
-                      name: v.projectName,
+                    value={values.customerType}
+                    menus={["Individual", "Corporate"].map((v) => ({
+                      name: v,
                       onClick: () => {
-                        setProject(v.projectName);
-                        setProjectId(v.projectId);
-                        getMDA(v.projectId);
+                        setFieldValue("customerType", v);
                       },
                     }))}
-                    loading={loadingProjectHeads}
-                    hint="Select Project Type"
+                    hint="Select Customer Type"
                   />
                 </div>
-                {errors.project && <p className="text-err">{errors.project}</p>}
+                {errors.customerType && (
+                  <p className="text-err">{errors.customerType}</p>
+                )}
               </div>
 
-              {projectId !== -1 && (
-                <>
-                  <div className="flex flex-col gap-0.5 w-full">
-                    <h3 className="text-reg-caption font-medium text-[#111213]">
-                      Customer Type
-                    </h3>
-                    <div className="w-full h-10">
-                      <Dropdown
-                        value={values.customerType}
-                        menus={["Individual", "Corporate"].map((v) => ({
-                          name: v,
-                          onClick: () => {
-                            setFieldValue("customerType", v);
-                          },
-                        }))}
-                        hint="Select Customer Type"
-                      />
-                    </div>
-                    {errors.customerType && (
-                      <p className="text-err">{errors.customerType}</p>
-                    )}
-                  </div>
+              <div className="flex flex-col gap-0.5 w-full">
+                <h3 className="text-reg-caption font-medium text-[#111213]">
+                  Services
+                </h3>
+                <div className="w-full h-10">
+                  <Dropdown
+                    value={values.mda}
+                    menus={mdas.map((v) => ({
+                      name: v.name,
+                      onClick: () => {
+                        setFieldValue("mda", v.name);
+                        getRevenueHeads(projectId, v.id);
+                        setMDAId(v.id);
+                      },
+                    }))}
+                    hint="Select MDA"
+                    loading={loadingGetMDAs}
+                  />
+                </div>
+                {errors.mda && <p className="text-err">{errors.mda}</p>}
+                <div className="w-full h-10 mt-2">
+                  <Dropdown
+                    value={values.revenueHead}
+                    menus={revenueHeads.map((v) => ({
+                      name: v.name,
+                      onClick: () => {
+                        setFieldValue("revenueHead", v.name);
+                        setRevenueId(v.id);
+                        setFieldValue("amount", `${v.amount}`);
+                        setReadOnlyAmount(v.amount !== 0);
+                      },
+                    }))}
+                    hint="Select Revenue Head"
+                    loading={loadingGetRevenueHeads}
+                  />
+                </div>
+                {errors.revenueHead && (
+                  <p className="text-err">{errors.revenueHead}</p>
+                )}
+              </div>
 
-                  <div className="flex flex-col gap-0.5 w-full">
-                    <h3 className="text-reg-caption font-medium text-[#111213]">
-                      Services
-                    </h3>
-                    <div className="w-full h-10">
-                      <Dropdown
-                        value={values.mda}
-                        menus={mdas.map((v) => ({
-                          name: v.name,
-                          onClick: () => {
-                            setFieldValue("mda", v.name);
-                            getRevenueHeads(projectId, v.id);
-                            setMDAId(v.id);
-                          },
-                        }))}
-                        hint="Select MDA"
-                        loading={loadingGetMDAs}
-                      />
-                    </div>
-                    {errors.mda && <p className="text-err">{errors.mda}</p>}
-                    <div className="w-full h-10 mt-2">
-                      <Dropdown
-                        value={values.revenueHead}
-                        menus={revenueHeads.map((v) => ({
-                          name: v.name,
-                          onClick: () => {
-                            setFieldValue("revenueHead", v.name);
-                            setRevenueId(v.id);
-                            setFieldValue("amount", `${v.amount}`);
-                            setReadOnlyAmount(v.amount !== 0);
-                          },
-                        }))}
-                        hint="Select Revenue Head"
-                        loading={loadingGetRevenueHeads}
-                      />
-                    </div>
-                    {errors.revenueHead && (
-                      <p className="text-err">{errors.revenueHead}</p>
-                    )}
-                  </div>
-
-                  <div className="flex flex-col gap-0.5 w-full">
-                    <h3 className="text-reg-caption font-medium text-[#111213]">
-                      Total Amount
-                    </h3>
-                    <input
-                      type="text"
-                      name="amount"
-                      value={values.amount}
-                      onChange={(e) => {
-                        const res = e.target.value.replace(/,/g, "");
-                        if (!isNaN(Number(res))) {
-                          setFieldValue("amount", formatAmountWithCommas(res));
-                        }
-                      }}
-                      readOnly={readOnlyAmount}
-                      className="px-4 drawer-input "
-                    />
-                    {errors.amount && touched.amount && (
-                      <p className="text-err">{errors.amount}</p>
-                    )}
-                  </div>
-                </>
-              )}
+              <div className="flex flex-col gap-0.5 w-full">
+                <h3 className="text-reg-caption font-medium text-[#111213]">
+                  Total Amount
+                </h3>
+                <input
+                  type="text"
+                  name="amount"
+                  value={values.amount}
+                  onChange={(e) => {
+                    const res = e.target.value.replace(/,/g, "");
+                    if (!isNaN(Number(res))) {
+                      setFieldValue("amount", formatAmountWithCommas(res));
+                    }
+                  }}
+                  readOnly={readOnlyAmount}
+                  className="px-4 drawer-input "
+                />
+                {errors.amount && touched.amount && (
+                  <p className="text-err">{errors.amount}</p>
+                )}
+              </div>
 
               <div className="w-full flex justify-between items-center mt-10">
                 <button
