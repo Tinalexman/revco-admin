@@ -129,6 +129,10 @@ export const canViewAdminUsers = (role: string) => {
   );
 };
 
+export const canViewSelectUsers = (role: string) => {
+  return role === ROLE_SUB_ADMIN_2 || role === ROLE_SUB_ADMIN_3;
+};
+
 export const canViewTaxPayers = (role: string) => {
   return (
     role === ROLE_ADMIN ||
@@ -245,6 +249,10 @@ export const canCreateNewUser = (role: string) => {
     role === ROLE_SUB_ADMIN_2 ||
     role === ROLE_SUB_ADMIN_3
   );
+};
+
+export const canViewCommissions = (role: string) => {
+  return role === ROLE_ADMIN || ROLE_SUB_ADMIN_1 || ROLE_PROJECT_REPORT;
 };
 
 // ONLY SUB-ADMIN1 AND PROJECT CAN VIEW COMMISSIONS ON ANY PAGE

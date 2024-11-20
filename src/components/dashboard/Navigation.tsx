@@ -13,6 +13,7 @@ import {
   Category2,
   ClipboardText,
   I24Support,
+  Profile,
   Profile2User,
   Setting,
 } from "iconsax-react";
@@ -39,6 +40,7 @@ import {
   canViewPayments,
   canViewPaymentTransactions,
   canViewReports,
+  canViewSelectUsers,
   canViewSettings,
   canViewSupport,
   canViewTaxPayers,
@@ -234,6 +236,14 @@ const DashboardNavigation = () => {
           name: "Admin Users",
           icon: <Bank size="24" />,
           link: "/dashboard/users/admin-users",
+        });
+      }
+
+      if (canViewSelectUsers(role)) {
+        userData.children.push({
+          name: "Users",
+          icon: <Profile size="24" variant="Bold" />,
+          link: "/dashboard/users/mda-users",
         });
       }
 

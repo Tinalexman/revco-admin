@@ -15,6 +15,8 @@ import { AiOutlineFileDone } from "react-icons/ai";
 import { FaHandshakeSimple } from "react-icons/fa6";
 import { MdGroupAdd } from "react-icons/md";
 import DropdownDatePicker from "@/components/reusable/DropdownDatePicker";
+import { useRevcoUserStore } from "@/stores/userStore";
+import { canViewCommissions } from "@/functions/navigationFunctions";
 
 interface iRevenueItem {
   value: number;
@@ -80,6 +82,9 @@ const Details: FC<{ mode: string | null }> = ({ mode }) => {
     background: TaxPayersImage,
   };
 
+  const role = useRevcoUserStore((state) => state.role);
+  const isSuperUser = canViewCommissions(role);
+
   return (
     <div className="w-full flex flex-col gap-2.5">
       <div className="h-fit py-3 bg-white rounded-xl w-full flex flex-col gap-2 px-7">
@@ -113,7 +118,7 @@ const Details: FC<{ mode: string | null }> = ({ mode }) => {
         </div>
       </div>
       <div className="w-full grid grid-cols-4 gap-2.5">
-        {revenueItems.map((it, i) => (
+        {revenueItems.slice(0, isSuperUser ? 4 : 3).map((it, i) => (
           <div
             className="bg-white w-full rounded-xl px-6 py-3 gap-6 h-44 flex flex-col justify-end items-start"
             key={i}
@@ -132,114 +137,116 @@ const Details: FC<{ mode: string | null }> = ({ mode }) => {
           </div>
         ))}
       </div>
-      <div className="w-full grid grid-cols-2 gap-2.5">
-        <div className="relative overflow-hidden bg-white w-full rounded-xl px-6 py-3 gap-6 h-[18rem] flex flex-col items-start">
-          <div className="bg-primary-accent rounded-full p-2">
-            <MdGroupAdd size={20} className="text-primary" />
+      {isSuperUser && (
+        <div className="w-full grid grid-cols-2 gap-2.5">
+          <div className="relative overflow-hidden bg-white w-full rounded-xl px-6 py-3 gap-6 h-[18rem] flex flex-col items-start">
+            <div className="bg-primary-accent rounded-full p-2">
+              <MdGroupAdd size={20} className="text-primary" />
+            </div>
+            <div className="flex flex-col gap-6">
+              <div className="flex flex-col">
+                <h3 className="text-small text-[#9EA4AA]">
+                  Total Amount due to Participant 1 (4.6%)
+                </h3>
+                {loadingSummary ? (
+                  <Loader color="primary.6" size={24} />
+                ) : (
+                  <h2 className="text-dash-intro-header font-semibold text-gray-5">
+                    ₦
+                    {statsSummary.totalCommissionInNaira.Paysure?.toLocaleString(
+                      "en-US"
+                    ) ?? 0}
+                  </h2>
+                )}
+              </div>
+              <div className="flex flex-col">
+                <h3 className="text-small text-[#9EA4AA]">
+                  Total Amount due to Participant 2 (1.6%)
+                </h3>
+                {loadingSummary ? (
+                  <Loader color="primary.6" size={24} />
+                ) : (
+                  <h2 className="text-dash-intro-header font-semibold text-gray-5">
+                    ₦
+                    {statsSummary.totalCommissionInNaira[
+                      "Participant 1"
+                    ]?.toLocaleString("en-US") ?? 0}
+                  </h2>
+                )}
+              </div>
+              <div className="flex flex-col">
+                <h3 className="text-small text-[#9EA4AA]">
+                  Total Amount due to Participant 3 (3.8%)
+                </h3>
+                {loadingSummary ? (
+                  <Loader color="primary.6" size={24} />
+                ) : (
+                  <h2 className="text-dash-intro-header font-semibold text-gray-5">
+                    ₦
+                    {statsSummary.totalCommissionInNaira[
+                      "Participant 2"
+                    ]?.toLocaleString("en-US") ?? 0}
+                  </h2>
+                )}
+              </div>
+            </div>
           </div>
-          <div className="flex flex-col gap-6">
-            <div className="flex flex-col">
-              <h3 className="text-small text-[#9EA4AA]">
-                Total Amount due to Participant 1 (4.6%)
-              </h3>
-              {loadingSummary ? (
-                <Loader color="primary.6" size={24} />
-              ) : (
-                <h2 className="text-dash-intro-header font-semibold text-gray-5">
-                  ₦
-                  {statsSummary.totalCommissionInNaira.Paysure?.toLocaleString(
-                    "en-US"
-                  ) ?? 0}
-                </h2>
-              )}
-            </div>
-            <div className="flex flex-col">
-              <h3 className="text-small text-[#9EA4AA]">
-                Total Amount due to Participant 2 (1.6%)
-              </h3>
-              {loadingSummary ? (
-                <Loader color="primary.6" size={24} />
-              ) : (
-                <h2 className="text-dash-intro-header font-semibold text-gray-5">
-                  ₦
-                  {statsSummary.totalCommissionInNaira[
-                    "Participant 1"
-                  ]?.toLocaleString("en-US") ?? 0}
-                </h2>
-              )}
-            </div>
-            <div className="flex flex-col">
-              <h3 className="text-small text-[#9EA4AA]">
-                Total Amount due to Participant 3 (3.8%)
-              </h3>
-              {loadingSummary ? (
-                <Loader color="primary.6" size={24} />
-              ) : (
-                <h2 className="text-dash-intro-header font-semibold text-gray-5">
-                  ₦
-                  {statsSummary.totalCommissionInNaira[
-                    "Participant 2"
-                  ]?.toLocaleString("en-US") ?? 0}
-                </h2>
-              )}
-            </div>
-          </div>
-        </div>
 
-        <div className="relative overflow-hidden bg-white w-full rounded-xl px-6 py-3 gap-6 h-[18rem] flex flex-col justify-between items-start">
-          <div className="bg-primary-accent rounded-full p-2">
-            {personItem.icon}
-          </div>
-          <div className="w-[70%] flex justify-between">
-            <div className="w-fit flex flex-col">
-              <h3 className="text-med-button text-[#9EA4AA]">
-                {personItem.title}
-              </h3>
-              {loadingActivity ? (
-                <Loader color="primary.6" size={24} />
-              ) : (
-                <h2 className="text-dash-intro-header font-semibold text-gray-5">
-                  {personItem.value}
-                </h2>
-              )}
+          <div className="relative overflow-hidden bg-white w-full rounded-xl px-6 py-3 gap-6 h-[18rem] flex flex-col justify-between items-start">
+            <div className="bg-primary-accent rounded-full p-2">
+              {personItem.icon}
             </div>
-            <div className="w-fit flex gap-2 items-center">
-              <div className="flex flex-col w-fit">
-                <h3 className="text-[0.69rem] leading-[1.085rem] text-gray-5 font-medium">
-                  Individual
+            <div className="w-[70%] flex justify-between">
+              <div className="w-fit flex flex-col">
+                <h3 className="text-med-button text-[#9EA4AA]">
+                  {personItem.title}
                 </h3>
                 {loadingActivity ? (
                   <Loader color="primary.6" size={24} />
                 ) : (
-                  <h2 className="text-[1.185rem] leading-[1.4rem] font-semibold text-gray-5">
-                    {personItem.individual}
+                  <h2 className="text-dash-intro-header font-semibold text-gray-5">
+                    {personItem.value}
                   </h2>
                 )}
               </div>
-              <div className="w-[1px] h-full bg-[#8E8E93]" />
-              <div className="flex flex-col w-fit">
-                <h3 className="text-[0.69rem] leading-[1.085rem] text-gray-5 font-medium">
-                  Corporate
-                </h3>
-                {loadingActivity ? (
-                  <Loader color="primary.6" size={24} />
-                ) : (
-                  <h2 className="text-[1.185rem] leading-[1.4rem] font-semibold text-gray-5">
-                    {personItem.corporate}
-                  </h2>
-                )}
+              <div className="w-fit flex gap-2 items-center">
+                <div className="flex flex-col w-fit">
+                  <h3 className="text-[0.69rem] leading-[1.085rem] text-gray-5 font-medium">
+                    Individual
+                  </h3>
+                  {loadingActivity ? (
+                    <Loader color="primary.6" size={24} />
+                  ) : (
+                    <h2 className="text-[1.185rem] leading-[1.4rem] font-semibold text-gray-5">
+                      {personItem.individual}
+                    </h2>
+                  )}
+                </div>
+                <div className="w-[1px] h-full bg-[#8E8E93]" />
+                <div className="flex flex-col w-fit">
+                  <h3 className="text-[0.69rem] leading-[1.085rem] text-gray-5 font-medium">
+                    Corporate
+                  </h3>
+                  {loadingActivity ? (
+                    <Loader color="primary.6" size={24} />
+                  ) : (
+                    <h2 className="text-[1.185rem] leading-[1.4rem] font-semibold text-gray-5">
+                      {personItem.corporate}
+                    </h2>
+                  )}
+                </div>
               </div>
             </div>
+            <Image
+              src={personItem.background}
+              alt={personItem.title}
+              width={300}
+              height={200}
+              className={`absolute bottom-0 right-0 ${"w-[25%]"} h-auto`}
+            />
           </div>
-          <Image
-            src={personItem.background}
-            alt={personItem.title}
-            width={300}
-            height={200}
-            className={`absolute bottom-0 right-0 ${"w-[25%]"} h-auto`}
-          />
         </div>
-      </div>
+      )}
     </div>
   );
 };
