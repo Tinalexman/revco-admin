@@ -44,7 +44,6 @@ const ViewOrganizationContent = () => {
   const { data, loading, getUsers } = useGetOrganizationUsers();
   const [currentPage, setCurrentPage] = useState<number>(1);
   const totalPages = Math.ceil(data.count / 50);
-
   const [addNewUser, shouldAddNewUser] = useState<boolean>(false);
 
   function handlePageChange(page: number) {

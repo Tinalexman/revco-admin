@@ -256,8 +256,7 @@ export const useSearchRecentMDAActivity = () => {
     setLoading(true);
 
     const { data, status } = await requestApi(
-      ``,
-      // `/enroll/invoice-search?search=${search}&pageNumber=${pageNo}&pageSize=50&fromDate=${start}&toDate=${end}`,
+      `/mda-report/mda/revenue-generated?pageNumber=${pageNo}&pageSize=50&from=${start}&to=${end}&search${search}`,
       "GET",
       {},
       {

@@ -32,10 +32,54 @@ export interface iCreateDisputePayload {
   agentAssignedTo: number;
 }
 
-export interface iAgent {
+export interface iSupportStaff {
   id: number;
+  createdBy: number;
+  createdDate: string;
+  isActive: boolean;
+  sortBy: any;
+  orderBy: any;
+  recordsPerPage: number;
+  from: number;
   firstName: string;
   lastName: string;
+  otherNames: null;
+  email: string;
+  phone: string;
+  lastUpdatedDate: any;
+  role: string;
+  lastLoginDate: any;
+  loginFailedDate: any;
+  loginFailedCount: number;
+  isEmailConfirmed: boolean;
+  isPhoneConfirmed: boolean;
+  emailConfirmedDate: string;
+  phoneConfirmedDate: any;
+  emailConfirmationCode: any;
+  phoneConfirmationCode: any;
+  resetPasswordRequestDate: any;
+  resetPasswordCode: any;
+  resetPasswordCount: number;
+  passwordHash: any;
+  passwordSalt: any;
+  businessId: number;
+  updatedBy: number;
+  updatedDate: any;
+  isDefaultPass: boolean;
+  permissions: any;
+  password: any;
+  defaultPass: boolean;
+  authorities: {
+    authority: string;
+  }[];
+  username: string;
+  emailConfirmed: boolean;
+  phoneConfirmed: boolean;
+  enabled: boolean;
+  accountNonExpired: boolean;
+  accountNonLocked: boolean;
+  credentialsNonExpired: boolean;
+  active: boolean;
 }
 
 export const useGetAllDisputes = () => {
@@ -124,19 +168,19 @@ export const useCreateDispute = () => {
   };
 };
 
-export const useGetAllAgents = () => {
+export const useGetAllSupportStaff = () => {
   const [loading, setLoading] = useState<boolean>(false);
-  const [data, setData] = useState<iAgent[]>([]);
+  const [data, setData] = useState<iSupportStaff[]>([]);
   const [success, setSuccess] = useState<boolean>(false);
   const { requestApi } = useAxios();
   const token = useToken().getToken();
 
-  let getAgents = async () => {
+  let getStaff = async () => {
     if (loading) return;
     setLoading(true);
 
     const { data, status } = await requestApi(
-      `/admin/users?multiple_filter=Agent&sort=asc&page=1&per_page=100`,
+      `/support/support-staffs`,
       "GET",
       {}
     );
@@ -155,7 +199,7 @@ export const useGetAllAgents = () => {
 
   useEffect(() => {
     if (token) {
-      getAgents();
+      getStaff();
     }
   }, [token]);
 
@@ -163,7 +207,7 @@ export const useGetAllAgents = () => {
     loading,
     data,
     success,
-    getAgents,
+    getStaff,
   };
 };
 

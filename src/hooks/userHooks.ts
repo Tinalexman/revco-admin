@@ -58,6 +58,25 @@ export interface iAdminUser {
   active: boolean;
 }
 
+export interface iSub2User {
+  userId: number;
+  name: string;
+  mdaId: number;
+  mdaOfficeId: number;
+  mdaName: string;
+  email: string;
+  role: string;
+  status: boolean;
+  mdaOfficeName: string;
+  canCollect: boolean;
+  collectionLimit: number;
+}
+
+export interface iSub2UserResponse {
+  data: iSub2User[];
+  count: number;
+}
+
 export interface iAdminUserResponse {
   data: iAdminUser[];
   count: number;
@@ -380,5 +399,55 @@ export const useResetUserPassword = () => {
     loading,
     success,
     reset,
+  };
+};
+
+export const useGetSubAdmin2Users = () => {
+  const [loading, setLoading] = useState<boolean>(false);
+  const [success, setSuccess] = useState<boolean>(false);
+  const [data, setData] = useState<iSub2UserResponse>({
+    data: [],
+    count: 0,
+  });
+  const { requestApi } = useAxios();
+  const token = useToken().getToken();
+
+  let getUsers = async (pageNo: string) => {
+    if (loading) return;
+
+    setLoading(true);
+
+    const { data, status } = await requestApi(
+      `/mda-report/mda/mdas/user?pageNo=${pageNo}&pageSize=50`,
+      "GET",
+      {},
+      {
+        Authorization: `Bearer ${token}`,
+      }
+    );
+
+    setLoading(false);
+    setSuccess(status);
+
+    if (!status) {
+      toast.error(
+        data?.response?.data?.data ?? "An error occurred. Please try again"
+      );
+    } else {
+      setData(data);
+    }
+  };
+
+  useEffect(() => {
+    if (token) {
+      getUsers("1");
+    }
+  }, [token]);
+
+  return {
+    loading,
+    success,
+    getUsers,
+    data,
   };
 };

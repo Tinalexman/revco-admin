@@ -32,7 +32,7 @@ const Activity: FC<{ mode?: string | null; showModePicker?: boolean }> = ({
     searchActivity,
   } = useSearchRecentMDAActivity();
 
-  const { loading: loadingDownload, downloadReport } = useDownloadMDAReports();
+  // const { loading: loadingDownload, downloadReport } = useDownloadMDAReports();
 
   const currentDate = getDateRange("Today");
   const [dateRange, setDateRange] = useState<iDateRange>({
@@ -140,7 +140,7 @@ const Activity: FC<{ mode?: string | null; showModePicker?: boolean }> = ({
               handlePageChange={(page) => handlePageChange(page)}
             />
           </div>
-          <button
+          {/* <button
             onClick={() => {
               downloadReport(currentPage, dateRange.start, dateRange.end);
             }}
@@ -154,7 +154,7 @@ const Activity: FC<{ mode?: string | null; showModePicker?: boolean }> = ({
                 <IoIosArrowDown />
               </>
             )}
-          </button>
+          </button> */}
         </div>
         <div className="relative overflow-x-auto scrollbar-thin scrollbar-webkit w-full">
           <table className="w-[100%] ">

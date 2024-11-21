@@ -3,7 +3,7 @@ import { Drawer, Loader } from "@mantine/core";
 import { IoClose } from "react-icons/io5";
 import { Form, Formik } from "formik";
 import Dropdown from "@/components/reusable/Dropdown";
-import { useCreateDispute, useGetAllAgents } from "@/hooks/supportHooks";
+import { useCreateDispute, useGetAllSupportStaff } from "@/hooks/supportHooks";
 
 interface iCreateTicket {
   username: string;
@@ -19,7 +19,7 @@ const CreateNewTicket: FC<{ close: () => void; onCreate: () => void }> = ({
   onCreate,
 }) => {
   const { loading, success, createDispute } = useCreateDispute();
-  const { loading: loadingAgents, data: agents } = useGetAllAgents();
+  const { loading: loadingAgents, data: agents } = useGetAllSupportStaff();
   const [agentId, setAgentId] = useState<number>(-1);
 
   useEffect(() => {
