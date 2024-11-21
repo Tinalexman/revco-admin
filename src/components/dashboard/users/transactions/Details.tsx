@@ -47,7 +47,7 @@ const Details: FC<{ id: string }> = ({ id }) => {
           <Filters
             onDatesChanged={(start, end) => {
               setDateData({ start, end });
-              getTransactions(`${currentPage}`, dateData.start, dateData.end);
+              getTransactions(`${currentPage}`, start, end);
             }}
             showDatePicker={false}
           />

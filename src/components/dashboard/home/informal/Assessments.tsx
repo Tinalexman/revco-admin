@@ -44,7 +44,7 @@ const Assessments = () => {
     loading: loadingList,
     data: objections,
     getObjections,
-  } = useGetObjections();
+  } = useGetObjections(true);
   const [expanded, setExpanded] = useState<boolean>(false);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const totalPages = Math.ceil(objections.count / 50);

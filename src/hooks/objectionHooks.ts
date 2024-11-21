@@ -113,7 +113,7 @@ export const useGetObjectionSummary = (fromObjections: boolean) => {
   };
 };
 
-export const useGetObjections = () => {
+export const useGetObjections = (isInformal?: boolean) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [success, setSuccess] = useState<boolean>(false);
   const [data, setData] = useState<iObjectionAssessmentResponse>({
@@ -133,7 +133,9 @@ export const useGetObjections = () => {
     setLoading(true);
 
     const { data, status } = await requestApi(
-      `/mda-report/assessments?pageNo=${pageNo}&pageSize=50&fromDate=${start}&toDate=${end}`,
+      `/mda-report/assessments?pageNo=${pageNo}&pageSize=50&fromDate=${start}&toDate=${end}${
+        isInformal ? "&isFormal=false" : ""
+      }`,
       "GET",
       {},
       {
