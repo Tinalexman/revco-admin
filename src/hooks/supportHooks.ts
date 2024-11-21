@@ -29,7 +29,7 @@ export interface iCreateDisputePayload {
   category: string;
   priority: string;
   status: string;
-  agentAssignedTo: number;
+  agentAssignedTo?: number;
 }
 
 export interface iSupportStaff {
@@ -193,7 +193,7 @@ export const useGetAllSupportStaff = () => {
         data?.response?.data?.data ?? "An error occurred. Please try again"
       );
     } else {
-      setData(data.data.data);
+      setData(data);
     }
   };
 

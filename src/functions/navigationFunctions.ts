@@ -37,6 +37,8 @@ export const determineFirstPage = (role: string) => {
       return "/dashboard/users/admin-users";
     } else if (canViewTaxPayers(role)) {
       return "/dashboard/users/tax-payers";
+    } else if (canViewSelectUsers(role)) {
+      return "/dashboard/users/mda-users";
     }
   } else if (canViewReports(role)) {
     return "/dashboard/reports";
@@ -190,6 +192,7 @@ export const getUsersChildActiveIndex = (role: string, child: string) => {
   if (child === "admin-users") {
     return canViewTaxPayers(role) ? 1 : 0;
   }
+  if (child === "mda-users") return 0;
   return -1;
 };
 
@@ -229,6 +232,8 @@ export const canViewTargetPage = (role: string, path: string) => {
     return canViewAdminUsers(role);
   } else if (path.startsWith("/dashboard/users/tax-payers")) {
     return canViewTaxPayers(role);
+  } else if (path.startsWith("/dashboard/users/mda-users")) {
+    return canViewSelectUsers(role);
   } else if (path.startsWith("/dashboard/users")) {
     return canViewUsers(role);
   } else if (path.startsWith("/dashboard/reports")) {
@@ -256,6 +261,14 @@ export const canViewCommissions = (role: string) => {
     role === ROLE_ADMIN ||
     role === ROLE_SUB_ADMIN_1 ||
     role === ROLE_PROJECT_REPORT
+  );
+};
+
+export const canCreateNewSupportTickets = (role: string) => {
+  return (
+    role === ROLE_ADMIN ||
+    role === ROLE_SUB_ADMIN_1 ||
+    role === ROLE_SUB_ADMIN_2
   );
 };
 

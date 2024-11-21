@@ -255,7 +255,7 @@ const UserList = () => {
                   }}
                   viewTransactions={() => {
                     router.push(
-                      `/dashboard/users/transactions?id=${currentUser.taxPayerID}`
+                      `/dashboard/users/transactions?id=${currentUser.taxPayerID}&name=${currentUser.name}`
                     );
                   }}
                 />

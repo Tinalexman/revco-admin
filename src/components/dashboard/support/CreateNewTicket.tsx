@@ -4,6 +4,8 @@ import { IoClose } from "react-icons/io5";
 import { Form, Formik } from "formik";
 import Dropdown from "@/components/reusable/Dropdown";
 import { useCreateDispute, useGetAllSupportStaff } from "@/hooks/supportHooks";
+import { useRevcoUserStore } from "@/stores/userStore";
+import { canCreateNewSupportTickets } from "@/functions/navigationFunctions";
 
 interface iCreateTicket {
   username: string;
@@ -21,6 +23,8 @@ const CreateNewTicket: FC<{ close: () => void; onCreate: () => void }> = ({
   const { loading, success, createDispute } = useCreateDispute();
   const { loading: loadingAgents, data: agents } = useGetAllSupportStaff();
   const [agentId, setAgentId] = useState<number>(-1);
+  const role = useRevcoUserStore((state) => state.role);
+  const isAllowedToAddUsers = canCreateNewSupportTickets(role);
 
   useEffect(() => {
     if (!loading && success) {
@@ -69,7 +73,8 @@ const CreateNewTicket: FC<{ close: () => void; onCreate: () => void }> = ({
                 if (!values.description) errors.description = "Required";
                 if (!values.category) errors.category = "Required";
                 if (!values.priority) errors.priority = "Required";
-                if (!values.agent) errors.agent = "Required";
+                if (isAllowedToAddUsers && !values.agent)
+                  errors.agent = "Required";
                 if (!values.status) errors.status = "Required";
 
                 return errors;
@@ -81,7 +86,7 @@ const CreateNewTicket: FC<{ close: () => void; onCreate: () => void }> = ({
                   description: values.description,
                   category: values.category.toUpperCase().replaceAll(" ", "_"),
                   priority: values.priority.toUpperCase(),
-                  agentAssignedTo: agentId,
+                  agentAssignedTo: isAllowedToAddUsers ? agentId : undefined,
                   status: values.status.toUpperCase().replaceAll(" ", "_"),
                 });
               }}
@@ -207,28 +212,33 @@ const CreateNewTicket: FC<{ close: () => void; onCreate: () => void }> = ({
                     )}
                   </div>
 
-                  <div className="flex flex-col gap-0.5 w-full">
-                    <h3 className="text-reg-caption font-medium text-[#111213]">
-                      Assign to Agent
-                    </h3>
-                    <div className="w-full h-10">
-                      <Dropdown
-                        value={values.agent}
-                        menus={agents.map((v) => ({
-                          name: `${v.firstName} ${v.lastName}`,
-                          onClick: () => {
-                            setFieldValue(
-                              "agent",
-                              `${v.firstName} ${v.lastName}`
-                            );
-                            setAgentId(v.id);
-                          },
-                        }))}
-                        hint="List of available agents"
-                      />
+                  {isAllowedToAddUsers && (
+                    <div className="flex flex-col gap-0.5 w-full">
+                      <h3 className="text-reg-caption font-medium text-[#111213]">
+                        Assign to Agent
+                      </h3>
+                      <div className="w-full h-10">
+                        <Dropdown
+                          value={values.agent}
+                          menus={agents.map((v) => ({
+                            name: `${v.firstName} ${v.lastName}`,
+                            onClick: () => {
+                              setFieldValue(
+                                "agent",
+                                `${v.firstName} ${v.lastName}`
+                              );
+                              setAgentId(v.id);
+                            },
+                          }))}
+                          loading={loadingAgents}
+                          hint="List of available agents"
+                        />
+                      </div>
+                      {errors.agent && (
+                        <p className="text-err">{errors.agent}</p>
+                      )}
                     </div>
-                    {errors.agent && <p className="text-err">{errors.agent}</p>}
-                  </div>
+                  )}
 
                   <div className="w-full flex justify-between items-center">
                     <button

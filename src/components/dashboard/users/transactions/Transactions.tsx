@@ -10,7 +10,13 @@ import { IoIosArrowForward } from "react-icons/io";
 
 const Transactions = () => {
   return (
-    <Suspense fallback={<Loader />}>
+    <Suspense
+      fallback={
+        <div className="w-full h-full grid place-content-center">
+          <Loader color="primary.6" />
+        </div>
+      }
+    >
       <Content />
     </Suspense>
   );
@@ -20,9 +26,10 @@ const Content = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const id = searchParams.get("id");
+  const name = searchParams.get("name");
 
   useEffect(() => {
-    if (id === null) {
+    if (id === null || name === null) {
       router.back();
     }
   }, [router]);
