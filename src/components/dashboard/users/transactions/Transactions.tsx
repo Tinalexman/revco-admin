@@ -8,7 +8,6 @@ import { VscTools } from "react-icons/vsc";
 import Details from "./Details";
 import { IoIosArrowForward } from "react-icons/io";
 
-
 const Transactions = () => {
   return (
     <Suspense fallback={<Loader />}>
@@ -20,11 +19,10 @@ const Transactions = () => {
 const Content = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const phoneNumber = searchParams.get("phoneNumber");
-  const name = searchParams.get("name")
+  const id = searchParams.get("id");
 
   useEffect(() => {
-    if (phoneNumber === null || name === null) {
+    if (id === null) {
       router.back();
     }
   }, [router]);
@@ -52,19 +50,15 @@ const Content = () => {
       </div>
       <div className="py-5 px-10 w-full flex flex-col gap-2.5">
         <div className="h-14 bg-white rounded-xl w-full flex items-center gap-3 px-7">
-          <p className="font-semibold text-reg-caption text-gray-5">
-            Users
-          </p>
+          <p className="font-semibold text-reg-caption text-gray-5">Users</p>
           <IoIosArrowForward className="text-gray-5" size={24} />
-          <p className="font-medium text-reg-caption text-gray-5">
-            {name!}
-          </p>
+          <p className="font-medium text-reg-caption text-gray-5">{name!}</p>
           <IoIosArrowForward className="text-gray-5" size={24} />
           <p className="font-normal text-reg-caption text-gray-5">
             Transaction History
           </p>
         </div>
-        <Details name={name!} phoneNumber={phoneNumber!} />
+        <Details id={id!} />
       </div>
     </div>
   );

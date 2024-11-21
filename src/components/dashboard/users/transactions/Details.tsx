@@ -15,16 +15,10 @@ interface iDateData {
   end: string;
 }
 
-const Details: FC<{ name: string; phoneNumber: string }> = ({
-  name,
-  phoneNumber,
-}) => {
+const Details: FC<{ id: string }> = ({ id }) => {
   const [expanded, setExpanded] = useState<boolean>(false);
   const currentDate = getDateRange("Today");
-  const { data, loading, getTransactions } = useGetUserTransactions(
-    name,
-    phoneNumber
-  );
+  const { data, loading, getTransactions } = useGetUserTransactions(id);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const totalPages = Math.ceil(data.count / 10);
   const [dateData, setDateData] = useState<iDateData>({

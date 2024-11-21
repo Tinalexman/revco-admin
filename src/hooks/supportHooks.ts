@@ -180,7 +180,7 @@ export const useGetAllSupportStaff = () => {
     setLoading(true);
 
     const { data, status } = await requestApi(
-      `/support/support-staffs`,
+      `/mda-report/support/support-staffs`,
       "GET",
       {}
     );

@@ -273,7 +273,7 @@ export const useGetAdminUsers = () => {
   };
 };
 
-export const useGetUserTransactions = (name: string, phoneNumber: string) => {
+export const useGetUserTransactions = (id: string | number) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [success, setSuccess] = useState<boolean>(false);
   const [data, setData] = useState<iUserTransaction>({
@@ -289,7 +289,7 @@ export const useGetUserTransactions = (name: string, phoneNumber: string) => {
     setLoading(true);
 
     const { data, status } = await requestApi(
-      `/mda-report/taxPayer/transactionHistory?pageNumber=${pageNo}&pageSize=10&from=${from}&to=${to}&name=${name}&phone=${phoneNumber}`,
+      `/mda-report/taxPayer/transactionHistory?pageNumber=${pageNo}&pageSize=10&from=${from}&to=${to}&userId=${id}`,
       "GET",
       {},
       {
