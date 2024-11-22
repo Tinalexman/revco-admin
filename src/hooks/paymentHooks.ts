@@ -401,7 +401,12 @@ export const useGetRecentTransactionActivity = (mode?: string | null) => {
   const { requestApi } = useAxios();
   const token = useToken().getToken();
 
-  let getActivity = async (start: string, end: string, pageNo: string) => {
+  let getActivity = async (
+    start: string,
+    end: string,
+    pageNo: string,
+    isFormal?: boolean
+  ) => {
     if (loading) return;
 
     setLoading(true);
@@ -410,6 +415,9 @@ export const useGetRecentTransactionActivity = (mode?: string | null) => {
       query = `&isFormal=${
         mode === "formal" ? "true" : mode === "informal" ? "false" : ""
       }`;
+    }
+    if (isFormal !== undefined) {
+      query = `&isFormal=${isFormal ? "true" : "false"}`;
     }
 
     const { data, status } = await requestApi(

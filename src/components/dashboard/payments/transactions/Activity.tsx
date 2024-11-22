@@ -21,7 +21,6 @@ import StatusContainer, {
   STATE_PENDING,
   STATE_SUCCESS,
 } from "@/components/reusable/StatusContainer";
-import { set } from "react-datepicker/dist/date_utils";
 
 const Activity: FC<{ mode?: string | null; showModePicker?: boolean }> = ({
   mode,
@@ -36,7 +35,7 @@ const Activity: FC<{ mode?: string | null; showModePicker?: boolean }> = ({
     loading,
     data: transactions,
     getActivity,
-  } = useGetRecentTransactionActivity(mode);
+  } = useGetRecentTransactionActivity();
 
   const {
     loading: loadingSearch,
@@ -77,7 +76,14 @@ const Activity: FC<{ mode?: string | null; showModePicker?: boolean }> = ({
     if (hasSearch) {
       searchActivity(search, `${page}`, dateRange.start, dateRange.end);
     } else {
-      getActivity(dateRange.start, dateRange.end, `${page}`);
+      getActivity(
+        dateRange.start,
+        dateRange.end,
+        `${page}`,
+        activeMode === overviewModes[0]
+          ? undefined
+          : activeMode === overviewModes[2]
+      );
     }
   }
 
@@ -110,7 +116,8 @@ const Activity: FC<{ mode?: string | null; showModePicker?: boolean }> = ({
                     getActivity(
                       dateRange.start,
                       dateRange.end,
-                      `${currentPage}`
+                      `${currentPage}`,
+                      i === 0 ? undefined : i !== 1
                     );
                   }}
                   key={i}
@@ -149,7 +156,14 @@ const Activity: FC<{ mode?: string | null; showModePicker?: boolean }> = ({
                 start,
                 end,
               });
-              getActivity(start, end, `${currentPage}`);
+              getActivity(
+                start,
+                end,
+                `${currentPage}`,
+                activeMode === overviewModes[0]
+                  ? undefined
+                  : activeMode === overviewModes[2]
+              );
             }}
             onSearch={(val) => {
               setSearch(val);
