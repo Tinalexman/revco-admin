@@ -272,6 +272,24 @@ export const canCreateNewSupportTickets = (role: string) => {
   );
 };
 
+export const convertRole = (role: string) => {
+  if (role === ROLE_SUB_ADMIN_1) {
+    return "Project Admin";
+  } else if (role === ROLE_SUB_ADMIN_2) {
+    return "MDA/Organization Admin";
+  } else if (role === ROLE_SUB_ADMIN_3) {
+    return "Office/Branch Admin";
+  } else if (role === ROLE_NON_INDIVIDUAL) {
+    return "Corporate";
+  } else if (role === ROLE_TAX_CLEARANCE) {
+    return "Tax Clearance Admin";
+  } else if (role === ROLE_PROJECT_REPORT) {
+    return "State Governor";
+  }
+
+  return role;
+};
+
 // ONLY SUB-ADMIN1 AND PROJECT CAN VIEW COMMISSIONS ON ANY PAGE
 // SUB-ADMIN2 AND BELOW CANNOT VIEW FORMAL AND INFORMAL ISH
 // Dashboard header changes based on the user role: sub2 welcom to ministry portal. if agent, welcome to agent portal

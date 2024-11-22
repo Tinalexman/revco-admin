@@ -15,6 +15,7 @@ import {
 import { useCreateUser } from "@/hooks/userHooks";
 import { Loader } from "@mantine/core";
 import {
+  convertRole,
   ROLE_PROJECT_REPORT,
   ROLE_SUB_ADMIN_1,
 } from "@/functions/navigationFunctions";
@@ -220,7 +221,7 @@ const AddNewUser: FC<{ onClose: () => void; onCreate: () => void }> = ({
                     <Dropdown
                       value={values.role}
                       menus={userRoles.map((v) => ({
-                        name: v,
+                        name: convertRole(v),
                         onClick: () => {
                           setFieldValue("role", v);
                         },

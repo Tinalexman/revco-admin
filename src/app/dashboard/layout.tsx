@@ -2,6 +2,14 @@
 
 import DashboardNavigation from "@/components/dashboard/Navigation";
 import DashboardSizerIcon from "@/components/reusable/DashboardSizerIcon";
+import {
+  convertRole,
+  ROLE_NON_INDIVIDUAL,
+  ROLE_SUB_ADMIN_1,
+  ROLE_SUB_ADMIN_2,
+  ROLE_SUB_ADMIN_3,
+  ROLE_TAX_CLEARANCE,
+} from "@/functions/navigationFunctions";
 import { useToken } from "@/providers/AuthProvider";
 import { useDashboardData } from "@/stores/dashboardStore";
 import { useRevcoUserStore } from "@/stores/userStore";
@@ -11,7 +19,6 @@ import { BiLogOutCircle } from "react-icons/bi";
 import { IoIosArrowDown } from "react-icons/io";
 
 const Layout: FC<{ children: ReactNode }> = ({ children }) => {
-  const search = useDashboardData((state) => state.searchFilter);
   const expanded = useDashboardData((state) => state.expanded);
   const role = useRevcoUserStore((state) => state.role);
   const { removeToken, removeOther } = useToken();
@@ -75,7 +82,7 @@ const Layout: FC<{ children: ReactNode }> = ({ children }) => {
               className="border-0 cursor-pointer border-gray-4 flex w-fit px-4 py-2 gap-2 items-center"
             >
               <Profile size="24" variant="Bold" />
-              <p className="text-reg-body">{role}</p>
+              <p className="text-reg-body">{convertRole(role)}</p>
               <IoIosArrowDown className="text-black " size={22} />
               <div
                 className={`absolute transition-all duration-300 ease-out z-10 top-16 right-5 w-[12rem] rounded-[8px] bg-white shadow-custom flex flex-col gap-2 ${

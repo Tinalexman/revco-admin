@@ -15,7 +15,7 @@ import AddNewUser from "./AddNewUser";
 import Link from "next/link";
 import { useGetAdminUsers } from "@/hooks/userHooks";
 import Paginator from "@/components/reusable/paginator/Paginator";
-import { canCreateNewUser } from "@/functions/navigationFunctions";
+import { canCreateNewUser, convertRole } from "@/functions/navigationFunctions";
 import { useRevcoUserStore } from "@/stores/userStore";
 
 interface iAdminUser {
@@ -125,7 +125,7 @@ const AdminUsers = () => {
                             {user.firstName} {user.lastName}
                           </td>
                           <td className="p-4">{user.email}</td>
-                          <td className="p-4">{user.role}</td>
+                          <td className="p-4">{convertRole(user.role)}</td>
                           <td className="p-4">
                             <StatusContainer
                               status={
