@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import { IoIosArrowDown } from "react-icons/io";
 import { FaReceipt } from "react-icons/fa6";
-import { IoEye } from "react-icons/io5";
+import { IoEye, IoReceiptSharp } from "react-icons/io5";
 import Filters from "../../common/Filters";
 import { Drawer, Loader } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
@@ -14,19 +14,23 @@ import StatusContainer, {
 } from "@/components/reusable/StatusContainer";
 
 import {
+  allFilters,
   convertDateWithDashesAndTime,
   getDateRange,
+  iDateRange,
 } from "@/functions/dateFunctions";
 import GenerateInvoice from "./GenerateInvoice";
 import { useGetRecentInvoices } from "@/hooks/paymentHooks";
 import Paginator from "@/components/reusable/paginator/Paginator";
 import Link from "next/link";
-import { iPaidReceiptData } from "@/components/reusable/receipts/Paid";
-import { iPendingReceiptData } from "@/components/reusable/receipts/Pending";
+import { useGetStatisticsSummary } from "@/hooks/dashboardHooks";
+import Dropdown from "@/components/reusable/Dropdown";
 
-interface iDateData {
-  start: string;
-  end: string;
+interface iRevenueItem {
+  value: number;
+  title: string;
+  subtitle: number;
+  icon: any;
 }
 
 const InvoiceManagement = () => {
@@ -36,14 +40,43 @@ const InvoiceManagement = () => {
     { open: openGenerateInvoice, close: closeGenerateInvoice },
   ] = useDisclosure(false);
 
+  const {
+    loading: loadingSummary,
+    getStatisticsSummary,
+    data: statsSummary,
+  } = useGetStatisticsSummary(true);
+
+  const [filter, setFilter] = useState<string>("Today");
+
   const currentDate = getDateRange("Today");
   const { loading, data, getInvoices } = useGetRecentInvoices();
   const totalPages = Math.ceil(data.count / 50);
   const [currentPage, setCurrentPage] = useState<number>(1);
-  const [dateData, setDateData] = useState<iDateData>({
+  const [dateData, setDateData] = useState<iDateRange>({
     start: currentDate[0],
     end: currentDate[0],
   });
+
+  const revenueItems: iRevenueItem[] = [
+    {
+      title: "Total Invoices Generated",
+      value: statsSummary.totalInvoiceCount,
+      subtitle: 3000,
+      icon: <IoReceiptSharp size={20} className="text-primary" />,
+    },
+    {
+      title: "Total Paid Invoices",
+      value: statsSummary.totalPaidInvoiceCount,
+      subtitle: 3000,
+      icon: <IoReceiptSharp size={20} className="text-primary" />,
+    },
+    {
+      title: "Total Unpaid Invoices",
+      value: statsSummary.unpaidCount,
+      subtitle: 3000,
+      icon: <IoReceiptSharp size={20} className="text-primary" />,
+    },
+  ];
 
   function handlePageChange(page: number) {
     setCurrentPage(page);
@@ -68,12 +101,50 @@ const InvoiceManagement = () => {
             <p className="font-semibold text-dash-header text-gray-5">
               Invoice Management
             </p>
-            <button
-              onClick={openGenerateInvoice}
-              className="bg-primary text-white rounded-lg h-9 gap-2 px-3 text-[0.825rem] flex items-center leading-[0.98rem]"
-            >
-              Generate New Invoice <FaReceipt />
-            </button>
+            <div className="w-fit gap-3 items-center flex">
+              <div className="w-[110px]">
+                <Dropdown
+                  menus={allFilters.map((v, i) => ({
+                    name: v,
+                    onClick: () => {
+                      setFilter(v);
+                      const dateRange = getDateRange(v);
+                      getStatisticsSummary(dateRange[0], dateRange[1]);
+                    },
+                  }))}
+                  value={filter}
+                  hint={"Select"}
+                />
+              </div>
+              <button
+                onClick={openGenerateInvoice}
+                className="bg-primary text-white rounded-lg h-9 gap-2 px-3 text-[0.825rem] flex items-center leading-[0.98rem]"
+              >
+                Generate New Invoice <FaReceipt />
+              </button>
+            </div>
+          </div>
+          <div className={`w-full grid grid-cols-3 gap-2.5`}>
+            {revenueItems.map((it, i) => (
+              <div
+                className="bg-white w-full rounded-xl px-6 py-3 gap-6 h-44 flex flex-col justify-end items-start"
+                key={i}
+              >
+                <div className="bg-primary-accent rounded-full p-2">
+                  {it.icon}
+                </div>
+                <div className="w-full flex flex-col">
+                  <h3 className="text-med-button text-[#9EA4AA]">{it.title}</h3>
+                  {loadingSummary ? (
+                    <Loader color="primary.6" size={24} />
+                  ) : (
+                    <h2 className="text-dash-intro-header font-semibold text-gray-5">
+                      {it.value.toLocaleString("en-US")}
+                    </h2>
+                  )}
+                </div>
+              </div>
+            ))}
           </div>
           <div className="w-full bg-white p-5 flex flex-col gap-3 rounded-xl">
             <div className="w-full flex justify-between items-center">

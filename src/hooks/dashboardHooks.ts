@@ -74,6 +74,9 @@ export interface iStatisticsSummaryResponse {
     "Participant 2": number;
   };
   totalAmountRemitted: number;
+  totalInvoiceCount: number;
+  totalPaidInvoiceCount: number;
+  unpaidCount: number;
 }
 
 export interface iRemittanceSummaryResponse {
@@ -516,6 +519,9 @@ export const useGetStatisticsSummary = (
     },
     totalInvoiceGeneratedInNaira: 0,
     totalRevenue: 0,
+    totalInvoiceCount: 0,
+    totalPaidInvoiceCount: 0,
+    unpaidCount: 0,
   });
   const { requestApi } = useAxios();
   const token = useToken().getToken();
