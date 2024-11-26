@@ -28,7 +28,7 @@ const AddNewUser: FC<{ onClose: () => void; onCreate: () => void }> = ({
   onClose,
   onCreate,
 }) => {
-  const [projectId, setProjectId] = useState<number>(-1);
+  const [projectId, setProjectId] = useState<number>(TARABA_PROJECT_ID);
   const [mdaId, setMDAId] = useState<number>(-1);
   const [mdaOfficeId, setMDAOfficeId] = useState<number>(-1);
 
@@ -52,6 +52,10 @@ const AddNewUser: FC<{ onClose: () => void; onCreate: () => void }> = ({
       onCreate();
     }
   }, [loadingCreateUser, success]);
+
+  useEffect(() => {
+    if (role !== ROLE_ADMIN) getMDA(TARABA_PROJECT_ID);
+  }, [role]);
 
   return (
     <div className="w-full bg-[#FEFEFE] pt-8 pb-12 flex flex-col items-center gap-6 overflow-y-scroll scrollbar-custom">
@@ -184,6 +188,7 @@ const AddNewUser: FC<{ onClose: () => void; onCreate: () => void }> = ({
                 onChange={(e) => {
                   const res = unformatNumberWithThreesAndFours(e.target.value);
                   if (isNaN(Number(res))) return;
+                  if (res.length > 11) return;
                   setFieldValue("phone", formatNumberWithThreesAndFours(res));
                 }}
                 placeholder="e.g 080 1234 5678"
