@@ -12,6 +12,7 @@ import { ArrowLeft, ArrowRight } from "iconsax-react";
 import { LuMail } from "react-icons/lu";
 import { useForgotPassword } from "@/hooks/authHooks";
 import BackButton from "@/components/reusable/BackButton";
+import { deployedBaseUrl } from "@/api/base";
 
 interface iManualLoginPayload {
   email: string;
@@ -21,17 +22,11 @@ const ResetPassword = () => {
   const { success, loading, forgot } = useForgotPassword();
   const [sent, hasSent] = useState<boolean>(false);
 
-
-
   useEffect(() => {
     if (!loading && success) {
       hasSent(true);
     }
-
-  }, [loading, success])
-
-
-
+  }, [loading, success]);
 
   return (
     <div className="h-fit w-[27.5rem] flex flex-col items-center justify-center gap-10">
@@ -66,9 +61,8 @@ const ResetPassword = () => {
           onSubmit={async (values, { setSubmitting }) => {
             if (!sent) {
               setSubmitting(false);
-              forgot(values.email)
+              forgot(values.email, `${deployedBaseUrl}/auth/set-password`);
             }
-
           }}
         >
           {({
@@ -111,10 +105,18 @@ const ResetPassword = () => {
                   </>
                 ) : (
                   <div className="w-full h-full grid place-content-center">
-                    {
-                      loading ? <Loader color="white.6" size={24} /> : <div className="w-fit gap-2 flex items-center"><p>Send Reset Link</p>
-                        <ArrowRight size="26" color="#FFFFFF" variant="Broken" /> </div>
-                    }
+                    {loading ? (
+                      <Loader color="white.6" size={24} />
+                    ) : (
+                      <div className="w-fit gap-2 flex items-center">
+                        <p>Send Reset Link</p>
+                        <ArrowRight
+                          size="26"
+                          color="#FFFFFF"
+                          variant="Broken"
+                        />{" "}
+                      </div>
+                    )}
                   </div>
                 )}
               </button>

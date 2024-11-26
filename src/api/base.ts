@@ -8,6 +8,8 @@ interface iResponse {
   data?: any;
 }
 
+export const deployedBaseUrl = "https://revco-admin.vercel.app";
+
 export const useAxios = () => {
   const baseURL = "https://core.revco.ng:9000";
   const api = axios.create({

@@ -121,16 +121,17 @@ export const useForgotPassword = () => {
   const [success, setSuccess] = useState<boolean>(false);
   const { requestApi } = useAxios();
 
-  let forgot = async (email: string) => {
+  let forgot = async (email: string, forwardTo: string) => {
     if (loading) return;
 
     setLoading(true);
 
     const { data, status } = await requestApi(
-      "/auth/forgotpassword/v2",
+      "/auth/forgot-password/v2",
       "POST",
       {
         email,
+        forwardTo,
       }
     );
 
@@ -164,7 +165,7 @@ export const useResetPassword = () => {
     setLoading(true);
 
     const { data, status } = await requestApi(
-      "/auth/resetpassword/v2",
+      "/auth/reset-password/v2",
       "POST",
       payload
     );

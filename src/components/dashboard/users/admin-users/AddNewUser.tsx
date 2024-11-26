@@ -21,6 +21,7 @@ import {
   ROLE_SUB_ADMIN_1,
 } from "@/functions/navigationFunctions";
 import { useRevcoUserStore } from "@/stores/userStore";
+import { deployedBaseUrl } from "@/api/base";
 
 const TARABA_PROJECT_ID = 1;
 
@@ -125,7 +126,7 @@ const AddNewUser: FC<{ onClose: () => void; onCreate: () => void }> = ({
             project: {
               projectId: isAdmin ? projectId : TARABA_PROJECT_ID,
             },
-            forwardTo: "https://revco-admin.vercel.app/auth/set-password",
+            forwardTo: `${deployedBaseUrl}/auth/set-password`,
           });
         }}
       >
