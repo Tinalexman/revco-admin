@@ -98,6 +98,7 @@ export interface iCreateUserPayload {
   project: {
     projectId: number;
   };
+  forwardTo: string;
 }
 
 export interface iResetPasswordPayload {
@@ -336,7 +337,7 @@ export const useCreateUser = () => {
     setLoading(true);
 
     const { data, status } = await requestApi(
-      `/auth/createuser`,
+      `/auth/createuser/v2`,
       "POST",
       payload,
       {

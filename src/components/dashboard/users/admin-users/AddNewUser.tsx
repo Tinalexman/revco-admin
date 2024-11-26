@@ -16,9 +16,13 @@ import { useCreateUser } from "@/hooks/userHooks";
 import { Loader } from "@mantine/core";
 import {
   convertRole,
+  ROLE_ADMIN,
   ROLE_PROJECT_REPORT,
   ROLE_SUB_ADMIN_1,
 } from "@/functions/navigationFunctions";
+import { useRevcoUserStore } from "@/stores/userStore";
+
+const TARABA_PROJECT_ID = 1;
 
 const AddNewUser: FC<{ onClose: () => void; onCreate: () => void }> = ({
   onClose,
@@ -27,6 +31,9 @@ const AddNewUser: FC<{ onClose: () => void; onCreate: () => void }> = ({
   const [projectId, setProjectId] = useState<number>(-1);
   const [mdaId, setMDAId] = useState<number>(-1);
   const [mdaOfficeId, setMDAOfficeId] = useState<number>(-1);
+
+  const role = useRevcoUserStore((state) => state.role);
+  const isAdmin = role === ROLE_ADMIN;
 
   const { loading: loadingGetMDAs, data: mdas, getMDA } = useGetMDAs();
   const { data: projectHeads, loading: loadingProjectHeads } =
@@ -76,7 +83,7 @@ const AddNewUser: FC<{ onClose: () => void; onCreate: () => void }> = ({
             errors.name = "First Name and Last Name required";
           if (!values.email) errors.email = "Required";
           if (!values.phone) errors.phone = "Required";
-          if (!values.project) errors.project = "Required";
+          if (isAdmin && !values.project) errors.project = "Required";
           if (!values.role) {
             errors.role = "Required";
           } else {
@@ -112,8 +119,9 @@ const AddNewUser: FC<{ onClose: () => void; onCreate: () => void }> = ({
                     permissions: null,
                   },
             project: {
-              projectId: projectId,
+              projectId: isAdmin ? projectId : TARABA_PROJECT_ID,
             },
+            forwardTo: "https://revco-admin.vercel.app/auth/set-password",
           });
         }}
       >
@@ -189,102 +197,107 @@ const AddNewUser: FC<{ onClose: () => void; onCreate: () => void }> = ({
               Account Settings
             </div>
 
-            <div className="flex flex-col gap-0.5 w-full px-5 mt-4">
-              <h3 className="text-reg-caption font-medium text-[#111213]">
-                Project Type
-              </h3>
-              <div className="w-full h-10">
-                <Dropdown
-                  value={values.project}
-                  menus={projectHeads.map((v) => ({
-                    name: v.projectName,
-                    onClick: () => {
-                      setFieldValue("project", v.projectName);
-                      setProjectId(v.projectId);
-                      getMDA(v.projectId);
-                    },
-                  }))}
-                  loading={loadingProjectHeads}
-                  hint="Select Project Type"
-                />
-              </div>
-              {errors.project && <p className="text-err">{errors.project}</p>}
-            </div>
-
-            {projectId !== -1 && (
-              <>
-                <div className="flex flex-col gap-0.5 w-full px-5 mt-2">
-                  <h3 className="text-reg-caption font-medium text-[#111213]">
-                    User Role
-                  </h3>
-                  <div className="w-full h-10">
-                    <Dropdown
-                      value={values.role}
-                      menus={userRoles.map((v) => ({
-                        name: convertRole(v),
-                        onClick: () => {
-                          setFieldValue("role", v);
-                        },
-                      }))}
-                      loading={loadingUserRoles}
-                      hint="Select User Role"
-                    />
-                  </div>
-                  {errors.role && <p className="text-err">{errors.role}</p>}
+            {isAdmin && (
+              <div className="flex flex-col gap-0.5 w-full px-5 mt-4">
+                <h3 className="text-reg-caption font-medium text-[#111213]">
+                  Project Type
+                </h3>
+                <div className="w-full h-10">
+                  <Dropdown
+                    value={values.project}
+                    menus={projectHeads.map((v) => ({
+                      name: v.projectName,
+                      onClick: () => {
+                        setFieldValue("project", v.projectName);
+                        setProjectId(v.projectId);
+                        getMDA(v.projectId);
+                      },
+                    }))}
+                    loading={loadingProjectHeads}
+                    hint="Select Project Type"
+                  />
                 </div>
-
-                {values.role !== ROLE_SUB_ADMIN_1 &&
-                  values.role !== ROLE_PROJECT_REPORT &&
-                  values.role !== "" && (
-                    <>
-                      <div className="flex flex-col gap-0.5 w-full px-5 mt-4">
-                        <h3 className="text-reg-caption font-medium text-[#111213]">
-                          MDA/Organization
-                        </h3>
-                        <div className="w-full h-10">
-                          <Dropdown
-                            value={values.mda}
-                            menus={mdas.map((v) => ({
-                              name: v.name,
-                              onClick: () => {
-                                setFieldValue("mda", v.name);
-                                setMDAId(v.id);
-                                getMDAOffices(v.id);
-                              },
-                            }))}
-                            hint="Select MDA"
-                            loading={loadingGetMDAs}
-                          />
-                        </div>
-                        {errors.mda && <p className="text-err">{errors.mda}</p>}
-                      </div>
-
-                      <div className="flex flex-col gap-0.5 w-full px-5 mt-4">
-                        <h3 className="text-reg-caption font-medium text-[#111213]">
-                          Office/Branch
-                        </h3>
-                        <div className="w-full h-10">
-                          <Dropdown
-                            value={values.mdaOffice}
-                            menus={mdaOffices.map((v) => ({
-                              name: v.name,
-                              onClick: () => {
-                                setFieldValue("mdaOffice", v.name);
-                                setMDAOfficeId(v.id);
-                              },
-                            }))}
-                            hint="Select MDA Office"
-                            loading={loadingMDAOffices}
-                          />
-                        </div>
-                        {errors.mdaOffice && (
-                          <p className="text-err">{errors.mdaOffice}</p>
-                        )}
-                      </div>
-                    </>
-                  )}
-              </>
+                {errors.project && <p className="text-err">{errors.project}</p>}
+              </div>
             )}
+
+            {(isAdmin && projectId !== -1) ||
+              (!isAdmin && (
+                <>
+                  <div className="flex flex-col gap-0.5 w-full px-5 mt-2">
+                    <h3 className="text-reg-caption font-medium text-[#111213]">
+                      User Role
+                    </h3>
+                    <div className="w-full h-10">
+                      <Dropdown
+                        value={convertRole(values.role)}
+                        menus={userRoles.map((v) => ({
+                          name: convertRole(v),
+                          onClick: () => {
+                            setFieldValue("role", v);
+                          },
+                        }))}
+                        loading={loadingUserRoles}
+                        hint="Select User Role"
+                      />
+                    </div>
+                    {errors.role && <p className="text-err">{errors.role}</p>}
+                  </div>
+
+                  {values.role !== ROLE_SUB_ADMIN_1 &&
+                    values.role !== ROLE_PROJECT_REPORT &&
+                    values.role !== "" && (
+                      <>
+                        <div className="flex flex-col gap-0.5 w-full px-5 mt-4">
+                          <h3 className="text-reg-caption font-medium text-[#111213]">
+                            MDA/Organization
+                          </h3>
+                          <div className="w-full h-10">
+                            <Dropdown
+                              value={values.mda}
+                              menus={mdas.map((v) => ({
+                                name: v.name,
+                                onClick: () => {
+                                  setFieldValue("mda", v.name);
+                                  setMDAId(v.id);
+                                  getMDAOffices(v.id);
+                                },
+                              }))}
+                              hint="Select MDA/Organization"
+                              loading={loadingGetMDAs}
+                            />
+                          </div>
+                          {errors.mda && (
+                            <p className="text-err">{errors.mda}</p>
+                          )}
+                        </div>
+
+                        <div className="flex flex-col gap-0.5 w-full px-5 mt-4">
+                          <h3 className="text-reg-caption font-medium text-[#111213]">
+                            Office/Branch
+                          </h3>
+                          <div className="w-full h-10">
+                            <Dropdown
+                              value={values.mdaOffice}
+                              menus={mdaOffices.map((v) => ({
+                                name: v.name,
+                                onClick: () => {
+                                  setFieldValue("mdaOffice", v.name);
+                                  setMDAOfficeId(v.id);
+                                },
+                              }))}
+                              hint="Select Office/Branch"
+                              loading={loadingMDAOffices}
+                            />
+                          </div>
+                          {errors.mdaOffice && (
+                            <p className="text-err">{errors.mdaOffice}</p>
+                          )}
+                        </div>
+                      </>
+                    )}
+                </>
+              ))}
 
             <div className="w-full flex justify-between items-center px-5 mt-10 mb-24">
               <button

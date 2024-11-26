@@ -12,6 +12,7 @@ export interface iLoginPayload {
 
 export interface iResetPayload {
   resetCode: string;
+  confirmPassword: string;
   password: string;
 }
 
@@ -125,9 +126,13 @@ export const useForgotPassword = () => {
 
     setLoading(true);
 
-    const { data, status } = await requestApi("/auth/forgotpassword", "POST", {
-      email,
-    });
+    const { data, status } = await requestApi(
+      "/auth/forgotpassword/v2",
+      "POST",
+      {
+        email,
+      }
+    );
 
     setLoading(false);
     setSuccess(status);
@@ -159,7 +164,7 @@ export const useResetPassword = () => {
     setLoading(true);
 
     const { data, status } = await requestApi(
-      "/auth/resetpassword",
+      "/auth/resetpassword/v2",
       "POST",
       payload
     );

@@ -24,13 +24,6 @@ const TaxPayers = () => {
               Manage all tax payers
             </h3>
           </div>
-          <Link
-            href={"/dashboard/users/roles-and-permissions"}
-            className="bg-primary text-white rounded-lg h-9 gap-2 px-3 text-[0.825rem] flex items-center leading-[0.98rem]"
-          >
-            <VscTools size={18} color="#FFFFFF" />
-            <h3>User Roles & Permissions</h3>
-          </Link>
         </div>
       </div>
       <div className="py-5 px-10 w-full flex flex-col gap-2.5">

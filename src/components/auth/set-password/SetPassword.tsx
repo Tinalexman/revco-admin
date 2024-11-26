@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState, Suspense, useEffect } from "react";
-import Link from "next/link";
 import Image from "next/image";
 import Logo from "@/assets/Revco.svg";
 
@@ -19,8 +18,7 @@ const SetPassword = () => {
       <SetPasswordContent />
     </Suspense>
   );
-}
-
+};
 
 const SetPasswordContent = () => {
   const [showPassword, setShowPassword] = useState<boolean>(false);
@@ -33,8 +31,7 @@ const SetPasswordContent = () => {
     if (success && !loading) {
       router.replace("/auth/login");
     }
-
-  }, [success, loading])
+  }, [success, loading]);
 
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -44,8 +41,7 @@ const SetPasswordContent = () => {
     if (code === null) {
       router.back();
     }
-
-  }, [code])
+  }, [code]);
 
   return (
     <div className="h-fit w-[27.5rem] flex flex-col items-center justify-center gap-10">
@@ -57,7 +53,7 @@ const SetPasswordContent = () => {
         height={25}
       />
       <div className="flex flex-col gap-5 w-full px-6 py-8">
-        <h1 className="text-med-h5 text-gray-2">User Registration</h1>
+        <h1 className="text-med-h5 text-gray-2">Set Password</h1>
         <Formik
           initialValues={{
             confirmPassword: "",
@@ -96,8 +92,9 @@ const SetPasswordContent = () => {
             setSubmitting(false);
             reset({
               password: values.password,
+              confirmPassword: values.confirmPassword,
               resetCode: code!,
-            })
+            });
           }}
         >
           {({
@@ -182,10 +179,14 @@ const SetPasswordContent = () => {
                 type="submit"
                 className={`bg-primary rounded-lg w-full  h-10 flex justify-center items-center gap-2 text-med-button text-white `}
               >
-                {
-                  loading ? <Loader color="white.6" size={24} /> : <><p>Continue</p>
-                    <ArrowRight size="26" color="#FFFFFF" variant="Broken" /></>
-                }
+                {loading ? (
+                  <Loader color="white.6" size={24} />
+                ) : (
+                  <>
+                    <p>Continue</p>
+                    <ArrowRight size="26" color="#FFFFFF" variant="Broken" />
+                  </>
+                )}
               </button>
             </Form>
           )}

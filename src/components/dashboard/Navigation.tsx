@@ -286,6 +286,10 @@ const DashboardNavigation = () => {
   };
 
   const role = useRevcoUserStore((state) => state.role);
+  const firstName = useRevcoUserStore((state) => state.firstName);
+  const lastName = useRevcoUserStore((state) => state.lastName);
+  const project = useRevcoUserStore((state) => state.project);
+
   const page = determineIndex(canViewDashboard(role));
   const activeChild = hasChildren(page) ? determineActiveChild(role) : -1;
 
@@ -305,13 +309,19 @@ const DashboardNavigation = () => {
         <div
           className={`${
             expanded ? "scale-100" : "scale-0"
-          } w-fit object-cover duration-300 transition-all ease-out flex flex-col items-center`}
+          } w-fit object-cover duration-300 transition-all ease-out flex flex-col gap-2 items-center`}
         >
           <Image
             src={Logo}
             alt="logo"
             className="w-[7rem] h-auto object-cover"
           />
+          <h1 className="text-dash-header text-[#333333] font-semibold">
+            {project}
+          </h1>
+          <p className="text-small text-[#555555]">
+            {firstName} {lastName}
+          </p>
         </div>
       </div>
       <div className={`flex flex-col w-full gap-2.5`}>
