@@ -9,43 +9,43 @@ export const ROLE_SUB_ADMIN_1 = "Sub-Admin1";
 export const ROLE_PROJECT_REPORT = "Project-Report";
 export const ROLE_TAX_CLEARANCE = "Tax-Clearance";
 
-export const determineFirstPage = (role: string) => {
+export const determineFirstPage = (state: string, role: string) => {
   if (canViewDashboard(role)) {
     if (canViewDashboardOverview(role)) {
-      return "/dashboard";
+      return `/${state}/dashboard`;
     } else if (canViewDashboardInformalSector(role)) {
-      return "/dashboard/informal-sector";
+      return `/${state}/dashboard/informal-sector`;
     } else if (canViewDashboardFormalSector(role)) {
-      return "/dashboard/formal-sector";
+      return `/${state}/dashboard/formal-sector`;
     }
   } else if (canViewPayments(role)) {
     if (canViewPaymentTransactions(role)) {
-      return "/dashboard/payments/transactions";
+      return `/${state}/dashboard/payments/transactions`;
     } else if (canViewPaymentChannels(role)) {
-      return "/dashboard/payments/payment-channels";
+      return `/${state}/dashboard/payments/payment-channels`;
     } else if (canViewPaymentInvoices(role)) {
-      return "/dashboard/payments/invoice-management";
+      return `/${state}/dashboard/payments/invoice-management`;
     } else if (canViewPaymentRefunds(role)) {
-      return "/dashboard/payments/refund-processing";
+      return `/${state}/dashboard/payments/refund-processing`;
     }
   } else if (canViewOrganizations(role)) {
-    return "/dashboard/organizations";
+    return `/${state}/dashboard/organizations`;
   } else if (canViewObjections(role)) {
-    return "/dashboard/objections";
+    return `/${state}/dashboard/objections`;
   } else if (canViewUsers(role)) {
     if (canViewAdminUsers(role)) {
-      return "/dashboard/users/admin-users";
+      return `/${state}/dashboard/users/admin-users`;
     } else if (canViewTaxPayers(role)) {
-      return "/dashboard/users/tax-payers";
+      return `/${state}/dashboard/users/tax-payers`;
     } else if (canViewSelectUsers(role)) {
-      return "/dashboard/users/mda-users";
+      return `/${state}/dashboard/users/mda-users`;
     }
   } else if (canViewReports(role)) {
-    return "/dashboard/reports";
+    return `/${state}/dashboard/reports`;
   } else if (canViewSupport(role)) {
-    return "/dashboard/support";
+    return `/${state}/dashboard/support`;
   } else if (canViewSettings(role)) {
-    return "/dashboard/settings";
+    return `/${state}/dashboard/settings`;
   }
 
   return "/auth/login";

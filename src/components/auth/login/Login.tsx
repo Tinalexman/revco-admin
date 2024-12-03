@@ -75,6 +75,7 @@ const Login = () => {
 
   useEffect(() => {
     if (success && !loading) {
+      const currentState = "taraba";
       if (remember) {
         const payload = Buffer.from(JSON.stringify(values)).toString("base64");
         setOther("rvc-auth", payload);
@@ -82,7 +83,7 @@ const Login = () => {
         removeOther("rvc-auth");
       }
 
-      router.replace(determineFirstPage(data));
+      router.replace(determineFirstPage(currentState, data));
     }
   }, [success, loading]);
 
@@ -157,7 +158,7 @@ const Login = () => {
           <button
             disabled={loading}
             type="submit"
-            className={`bg-primary rounded-lg w-full  h-10 flex justify-center items-center gap-2 text-med-button text-white `}
+            className={`bg-[#6500E0] rounded-lg w-full h-10 flex justify-center items-center gap-2 text-med-button text-white`}
           >
             {loading ? (
               <Loader color="white.6" size={24} />

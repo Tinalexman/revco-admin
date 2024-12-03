@@ -41,16 +41,16 @@ export const metadata: Metadata = {
 };
 
 const primary: MantineColorsTuple = [
-  "#f6eaff",
-  "#e6d0ff",
-  "#c89cff",
-  "#aa64fe",
-  "#9037fd",
-  "#801bfd",
-  "#780bfe",
-  "#6600e3",
-  "#5b00cb",
-  "#4d00b2",
+  "#ebfff3",
+  "#d5fee6",
+  "#a5fdca",
+  "#73fdac",
+  "#50fd92",
+  "#3ffd83",
+  "#36fe79",
+  "#2be267",
+  "#1ec85b",
+  "#00ad4b",
 ];
 
 const white: MantineColorsTuple = [
@@ -136,7 +136,9 @@ export default function RootLayout({
       <head>
         <ColorSchemeScript defaultColorScheme="light" />
       </head>
-      <body className={`${podvoka.variable} ${inter.className} ${poppins.variable} antialiased`}>
+      <body
+        className={`${podvoka.variable} ${inter.className} ${poppins.variable} antialiased`}
+      >
         <Toaster />
         <MantineProvider theme={theme}>
           <AuthProvider>

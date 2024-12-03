@@ -2,18 +2,13 @@
 
 import DashboardNavigation from "@/components/dashboard/Navigation";
 import DashboardSizerIcon from "@/components/reusable/DashboardSizerIcon";
-import {
-  convertRole,
-  ROLE_NON_INDIVIDUAL,
-  ROLE_SUB_ADMIN_1,
-  ROLE_SUB_ADMIN_2,
-  ROLE_SUB_ADMIN_3,
-  ROLE_TAX_CLEARANCE,
-} from "@/functions/navigationFunctions";
+import { setRevcoColorTheme } from "@/constants/color-schemes";
+import { convertRole } from "@/functions/navigationFunctions";
 import { useToken } from "@/providers/AuthProvider";
 import { useDashboardData } from "@/stores/dashboardStore";
 import { useRevcoUserStore } from "@/stores/userStore";
-import { Moon, SearchNormal1, Notification, Profile } from "iconsax-react";
+import { Profile } from "iconsax-react";
+import { usePathname } from "next/navigation";
 import React, { FC, ReactNode, useEffect, useState, useRef } from "react";
 import { BiLogOutCircle } from "react-icons/bi";
 import { IoIosArrowDown } from "react-icons/io";
@@ -24,6 +19,7 @@ const Layout: FC<{ children: ReactNode }> = ({ children }) => {
   const { removeToken, removeOther } = useToken();
   const [open, setOpen] = useState<boolean>(false);
   const dropdownRef = useRef<HTMLDivElement | null>(null);
+  const pathName = usePathname();
 
   const handleOutsideClick = (event: MouseEvent) => {
     if (
@@ -35,6 +31,8 @@ const Layout: FC<{ children: ReactNode }> = ({ children }) => {
   };
 
   useEffect(() => {
+    const scheme: string = pathName.split("/")[1];
+    setRevcoColorTheme(scheme, window.document.documentElement);
     document.addEventListener("mousedown", handleOutsideClick);
 
     return () => {

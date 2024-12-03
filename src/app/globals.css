@@ -47,27 +47,27 @@
 }
 
 .auth-input {
-  @apply bg-gray-6 outline-none focus:ring-2 focus:ring-purple-300 placeholder:text-gray-3 font-medium placeholder:text-[0.875rem] text-[0.875rem] text-black leading-[1.5rem] rounded-lg h-10 px-4 py-3;
+  @apply bg-gray-6 outline-none focus:ring-2 focus:ring-gray-400 placeholder:text-gray-3 font-medium placeholder:text-[0.875rem] text-[0.875rem] text-black leading-[1.5rem] rounded-lg h-10 px-4 py-3;
 }
 
 .main-input {
-  @apply bg-white w-full outline-none focus:ring-2 focus:ring-purple-300 border border-gray-4 rounded-full h-10 placeholder:text-[#89868D] text-black text-[0.75rem] leading-[1.125rem];
+  @apply bg-white w-full outline-none focus:ring-2 focus:ring-gray-400 border border-gray-4 rounded-full h-10 placeholder:text-[#89868D] text-black text-[0.75rem] leading-[1.125rem];
 }
 
 .drawer-input {
-  @apply bg-white w-full outline-none focus:ring-2 focus:ring-purple-300 border border-gray-4 rounded-lg h-10 placeholder:text-gray-3 text-black text-[0.875rem] leading-[1.25rem];
+  @apply bg-white w-full outline-none focus:ring-2 focus:ring-gray-400 border border-gray-4 rounded-lg h-10 placeholder:text-gray-3 text-black text-[0.875rem] leading-[1.25rem];
 }
 
 .drawer-textarea {
-  @apply bg-white w-full outline-none resize-none focus:ring-2 focus:ring-purple-300 border border-gray-4 rounded-lg h-20 placeholder:text-gray-3 text-black text-[0.875rem] leading-[1.25rem];
+  @apply bg-white w-full outline-none resize-none focus:ring-2 focus:ring-gray-400 border border-gray-4 rounded-lg h-20 placeholder:text-gray-3 text-black text-[0.875rem] leading-[1.25rem];
 }
 
 ::selection {
-  @apply bg-purple-500 text-white;
+  @apply bg-gray-400 text-white;
 }
 
 ::-moz-selection {
-  @apply bg-purple-500 text-white;
+  @apply bg-gray-400 text-white;
 }
 
 .scrollbar-custom {

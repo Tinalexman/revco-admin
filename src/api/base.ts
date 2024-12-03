@@ -21,9 +21,7 @@ export const useAxios = () => {
   const errorHandler = (error: any) => {
     const statusCode = error.response?.status;
     if (statusCode && statusCode !== 401) {
-      // console.error(error)
     } else {
-      // clear customer login
     }
     return Promise.reject(error);
   };

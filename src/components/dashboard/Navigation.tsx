@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 
-import Logo from "@/assets/Revco.svg";
+import Logo from "@/assets/image_261.svg";
 
 import { useDashboardData } from "@/stores/dashboardStore";
 import { MdGroups2 } from "react-icons/md";
@@ -49,6 +49,7 @@ import {
   getPaymentChildActiveIndex,
   getUsersChildActiveIndex,
 } from "@/functions/navigationFunctions";
+import { capitalize } from "@/functions/stringFunctions";
 
 export interface iNavigationItem {
   name: string;
@@ -71,9 +72,10 @@ const DashboardNavigation = () => {
   const router = useRouter();
   const pathName = usePathname();
   const expanded = useDashboardData((state) => state.expanded);
+  const currentState = pathName.split("/")[1];
 
   const determineIndex = (isDashboardPresent: boolean) => {
-    const current = pathName.split("/")[2];
+    const current = pathName.split("/")[3];
     for (let i = 0; i < paths.length; ++i) {
       if (paths[i] === current) {
         return i + (isDashboardPresent ? 1 : 0);
@@ -81,9 +83,9 @@ const DashboardNavigation = () => {
     }
 
     if (
-      pathName === "/dashboard" ||
-      pathName === "/dashboard/informal-sector" ||
-      pathName === "/dashboard/formal-sector"
+      pathName === `/${currentState}/dashboard` ||
+      pathName === `/${currentState}/dashboard/informal-sector` ||
+      pathName === `/${currentState}/dashboard/formal-sector`
     ) {
       return 0;
     }
@@ -93,14 +95,14 @@ const DashboardNavigation = () => {
 
   const determineActiveChild = (role: string) => {
     const splits: string[] = pathName.split("/");
-    const parent: string | undefined = splits[2];
-    const child = splits[3];
+    const parent: string | undefined = splits[3];
+    const child = splits[4];
 
     if (parent === "payments") {
       return getPaymentChildActiveIndex(role, child);
     } else if (parent === "users") {
       return getUsersChildActiveIndex(role, child);
-    } else if (splits[1] === "dashboard") {
+    } else if (splits[2] === "dashboard") {
       return getDashboardActiveChildIndex(role, parent);
     }
 
@@ -120,7 +122,7 @@ const DashboardNavigation = () => {
       let dashboardData: iNavigationItem = {
         name: "Dashboard",
         icon: <Category2 size="24" variant="Bold" />,
-        link: "",
+        link: `/${currentState}`,
         children: [],
       };
 
@@ -128,7 +130,7 @@ const DashboardNavigation = () => {
         dashboardData.children.push({
           name: "Overview",
           icon: <MdOutlineBarChart size={20} />,
-          link: "/dashboard",
+          link: `/${currentState}/dashboard`,
         });
       }
 
@@ -136,7 +138,7 @@ const DashboardNavigation = () => {
         dashboardData.children.push({
           name: "Informal Sector",
           icon: <LuStore size={20} />,
-          link: "/dashboard/informal-sector",
+          link: `/${currentState}/dashboard/informal-sector`,
         });
       }
 
@@ -144,7 +146,7 @@ const DashboardNavigation = () => {
         dashboardData.children.push({
           name: "Formal Sector",
           icon: <PiBuildingOfficeDuotone size={20} />,
-          link: "/dashboard/formal-sector",
+          link: `/${currentState}/dashboard/formal-sector`,
         });
       }
 
@@ -155,7 +157,7 @@ const DashboardNavigation = () => {
       let paymentData: iNavigationItem = {
         name: "Payments",
         icon: <MdPayments size="24" />,
-        link: "/dashboard/payments",
+        link: `/${currentState}/dashboard/payments`,
         children: [],
       };
 
@@ -163,7 +165,7 @@ const DashboardNavigation = () => {
         paymentData.children.push({
           name: "Transactions",
           icon: <Card size="20" />,
-          link: "/dashboard/payments/transactions",
+          link: `/${currentState}/dashboard/payments/transactions`,
         });
       }
 
@@ -171,7 +173,7 @@ const DashboardNavigation = () => {
         paymentData.children.push({
           name: "Payment Channels",
           icon: <Bank size="20" variant="Bold" />,
-          link: "/dashboard/payments/payment-channels",
+          link: `/${currentState}/dashboard/payments/payment-channels`,
         });
       }
 
@@ -179,7 +181,7 @@ const DashboardNavigation = () => {
         paymentData.children.push({
           name: "Invoice Management",
           icon: <IoReceiptOutline size={20} />,
-          link: "/dashboard/payments/invoice-management",
+          link: `/${currentState}/dashboard/payments/invoice-management`,
         });
       }
 
@@ -187,7 +189,7 @@ const DashboardNavigation = () => {
         paymentData.children.push({
           name: "Refund Processing",
           icon: <HiOutlineReceiptRefund size="20" />,
-          link: "/dashboard/payments/refund-processing",
+          link: `/${currentState}/dashboard/payments/refund-processing`,
         });
       }
 
@@ -199,7 +201,7 @@ const DashboardNavigation = () => {
       newNavs.push({
         name: "Organizations",
         icon: <MdGroups2 size={26} />,
-        link: "/dashboard/organizations",
+        link: `/${currentState}/dashboard/organizations`,
         children: [],
       });
       newPaths.push("organizations");
@@ -209,7 +211,7 @@ const DashboardNavigation = () => {
       newNavs.push({
         name: "Objections",
         icon: <BiSolidMessageSquareError size={22} />,
-        link: "/dashboard/objections",
+        link: `/${currentState}/dashboard/objections`,
         children: [],
       });
       newPaths.push("objections");
@@ -227,7 +229,7 @@ const DashboardNavigation = () => {
         userData.children.push({
           name: "Tax Payers",
           icon: <Card size="24" />,
-          link: "/dashboard/users/tax-payers",
+          link: `/${currentState}/dashboard/users/tax-payers`,
         });
       }
 
@@ -235,7 +237,7 @@ const DashboardNavigation = () => {
         userData.children.push({
           name: "Admin Users",
           icon: <Bank size="24" />,
-          link: "/dashboard/users/admin-users",
+          link: `/${currentState}/dashboard/users/admin-users`,
         });
       }
 
@@ -243,7 +245,7 @@ const DashboardNavigation = () => {
         userData.children.push({
           name: "Users",
           icon: <Profile size="24" variant="Bold" />,
-          link: "/dashboard/users/mda-users",
+          link: `/${currentState}/dashboard/users/mda-users`,
         });
       }
 
@@ -255,7 +257,7 @@ const DashboardNavigation = () => {
       newNavs.push({
         name: "Reports",
         icon: <ClipboardText size="24" variant="Bold" />,
-        link: "/dashboard/reports",
+        link: `/${currentState}/dashboard/reports`,
         children: [],
       });
       newPaths.push("reports");
@@ -265,7 +267,7 @@ const DashboardNavigation = () => {
       newNavs.push({
         name: "Support",
         icon: <I24Support size="24" variant="Bold" />,
-        link: "/dashboard/support",
+        link: `/${currentState}/dashboard/support`,
         children: [],
       });
       newPaths.push("support");
@@ -275,7 +277,7 @@ const DashboardNavigation = () => {
       newNavs.push({
         name: "Settings",
         icon: <Setting size="24" variant="Bold" />,
-        link: "/dashboard/settings",
+        link: `/${currentState}/dashboard/settings`,
         children: [],
       });
       newPaths.push("settings");
@@ -288,7 +290,6 @@ const DashboardNavigation = () => {
   const role = useRevcoUserStore((state) => state.role);
   const firstName = useRevcoUserStore((state) => state.firstName);
   const lastName = useRevcoUserStore((state) => state.lastName);
-  const project = useRevcoUserStore((state) => state.project);
 
   const page = determineIndex(canViewDashboard(role));
   const activeChild = hasChildren(page) ? determineActiveChild(role) : -1;
@@ -303,7 +304,7 @@ const DashboardNavigation = () => {
     <div
       className={`${
         expanded ? "w-[17rem] pr-4" : "w-[5rem] pl-3 pr-4"
-      } h-[100vh] z-5 pt-6 duration-300 transition-all ease-in flex shadow-custom flex-col gap-10 items-center bg-white`}
+      } h-[100vh] overflow-y-auto scrollbar-thin scrollbar-webkit z-5 pt-6 duration-300 transition-all ease-in flex shadow-custom flex-col gap-10 items-center bg-white`}
     >
       <div className=" w-full flex justify-center ">
         <div
@@ -314,10 +315,10 @@ const DashboardNavigation = () => {
           <Image
             src={Logo}
             alt="logo"
-            className="w-[7rem] h-auto object-cover"
+            className="w-[5rem] h-auto object-cover"
           />
           <h1 className="text-dash-header text-[#333333] font-semibold">
-            {project}
+            {capitalize(currentState)} BIRS
           </h1>
           <p className="text-small text-[#555555]">
             {firstName} {lastName}

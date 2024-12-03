@@ -8,10 +8,10 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        primary: "#6500E0",
-        "primary-accent": "#F0E6FC",
-        secondary: "#425D8A",
-        "secondary-accent": "#ECEFF3",
+        primary: "var(--revco-primary)",
+        "primary-accent": "var(--revco-primary-accent)",
+        secondary: "var(--revco-secondary)",
+        "secondary-accent": "var(--revco-secondary-accent)",
         background: "#EEEEEE",
         "gray-1": "#8E8E93",
         "gray-2": "#4F4F4F",

@@ -30,7 +30,7 @@ const InformalSector = () => {
   ];
 
   return (
-    <div className="w-full flex flex-col gap-6">
+    <div className="w-full flex flex-col gap-6 py-5">
       <div className="w-full px-8">
         <div className="h-fit py-3 bg-white rounded-xl w-full flex flex-col gap-2 px-7">
           <div className="w-full flex items-center justify-between border-b border-[#D1D1D6] pb-2">

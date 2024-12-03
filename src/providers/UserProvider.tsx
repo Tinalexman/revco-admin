@@ -17,7 +17,9 @@ export default function AuthProvider({
 
   useEffect(() => {
     if (role) {
-      if (!canViewTargetPage(role, pathName)) {
+      const split = pathName.split("/");
+      const adjustedPathName = `/${split.slice(2).join("/")}`;
+      if (!canViewTargetPage(role, adjustedPathName)) {
         toast.error("You do not have permissions to view this page");
         router.back();
       }

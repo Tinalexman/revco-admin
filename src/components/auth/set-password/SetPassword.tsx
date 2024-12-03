@@ -177,7 +177,7 @@ const SetPasswordContent = () => {
               <button
                 disabled={isSubmitting}
                 type="submit"
-                className={`bg-primary rounded-lg w-full  h-10 flex justify-center items-center gap-2 text-med-button text-white `}
+                className={`bg-[#6500E0] rounded-lg w-full h-10 flex justify-center items-center gap-2 text-med-button text-white `}
               >
                 {loading ? (
                   <Loader color="white.6" size={24} />

@@ -46,7 +46,7 @@ const Dropdown: FC<{
             bare && bare
               ? ""
               : open
-              ? "ring-2 ring-purple-300"
+              ? "ring-2 ring-gray-300"
               : "border border-gray-4"
           } 
         rounded-lg p-2 w-full h-full cursor-pointer text-filter-select`}
@@ -63,7 +63,7 @@ const Dropdown: FC<{
               <IoMdArrowDropdown
                 size={16}
                 className={`${
-                  open ? "text-purple-300" : "text-gray-3"
+                  open ? "text-green-300" : "text-gray-3"
                 } absolute top-1/2 -translate-y-1/2 right-0`}
               />
             </>
