@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 
-import Logo from "@/assets/image_261.svg";
+import Logo from "@/assets/states/taraba.svg";
 
 import { useDashboardData } from "@/stores/dashboardStore";
 import { MdGroups2 } from "react-icons/md";
@@ -313,12 +313,12 @@ const DashboardNavigation = () => {
           } w-fit object-cover duration-300 transition-all ease-out flex flex-col gap-2 items-center`}
         >
           <Image
-            src={Logo}
+            src={`./../assets/states/${currentState}.svg`}
             alt="logo"
             className="w-[5rem] h-auto object-cover"
           />
           <h1 className="text-dash-header text-[#333333] font-semibold">
-            {capitalize(currentState)} BIRS
+            {capitalize(currentState)} IRS
           </h1>
           <p className="text-small text-[#555555]">
             {firstName} {lastName}
