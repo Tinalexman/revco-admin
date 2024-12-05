@@ -313,8 +313,10 @@ const DashboardNavigation = () => {
           } w-fit object-cover duration-300 transition-all ease-out flex flex-col gap-2 items-center`}
         >
           <Image
-            src={`./../assets/states/${currentState}.svg`}
+            src={`/${currentState}.svg`}
             alt="logo"
+            width={80}
+            height={80}
             className="w-[5rem] h-auto object-cover"
           />
           <h1 className="text-dash-header text-[#333333] font-semibold">

@@ -41,16 +41,16 @@ export const metadata: Metadata = {
 };
 
 const primary: MantineColorsTuple = [
-  "#ebfff3",
-  "#d5fee6",
-  "#a5fdca",
-  "#73fdac",
-  "#50fd92",
-  "#3ffd83",
-  "#36fe79",
-  "#2be267",
-  "#1ec85b",
-  "#00ad4b",
+  "#9ca3af",
+  "#9ca3af",
+  "#9ca3af",
+  "#9ca3af",
+  "#9ca3af",
+  "#9ca3af",
+  "#9ca3af",
+  "#9ca3af",
+  "#9ca3af",
+  "#9ca3af",
 ];
 
 const white: MantineColorsTuple = [
