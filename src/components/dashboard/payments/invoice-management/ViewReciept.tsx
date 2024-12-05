@@ -1,7 +1,7 @@
 "use client";
 
 import React, { ReactNode, Suspense, useEffect, useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import Paid, { iPaidReceiptData } from "@/components/reusable/receipts/Paid";
 import Pending, {
   iPendingReceiptData,
@@ -21,10 +21,13 @@ const ViewReceipt = () => {
 const ViewRecieptContent = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const pathname = usePathname();
   const status = searchParams.get("status");
   const data = searchParams.get("data");
   const invoiceNumber = searchParams.get("invoice");
   const [child, setChild] = useState<ReactNode | null>(null);
+
+  const currentState = pathname.split("/")[1];
 
   const {
     loading,
@@ -70,6 +73,7 @@ const ViewRecieptContent = () => {
             transactionDetail.transactionDetails.totalAmount
           ),
           paymentChannel: transactionDetail.transactionDetails.channel,
+          state: currentState,
         };
         setChild(<Paid receipt={payload} />);
       } else if (status! === "pending") {
@@ -84,6 +88,7 @@ const ViewRecieptContent = () => {
           amount: Number.parseFloat(
             transactionDetail.transactionDetails.totalAmount
           ),
+          state: currentState,
         };
         setChild(<Pending receipt={payload} />);
       }
