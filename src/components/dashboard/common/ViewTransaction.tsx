@@ -12,6 +12,7 @@ import { useGetRecentTransactionDetails } from "@/hooks/dashboardHooks";
 import { Loader } from "@mantine/core";
 import { iPendingReceiptData } from "@/components/reusable/receipts/Pending";
 import { iPaidReceiptData } from "@/components/reusable/receipts/Paid";
+import { usePathname } from "next/navigation";
 
 const ViewTransaction: FC<{
   txid: string;
@@ -21,6 +22,8 @@ const ViewTransaction: FC<{
 }> = ({ txid, onClose, shouldPrint, shouldRefund }) => {
   const { loading, data, success } = useGetRecentTransactionDetails(txid);
   const isPaid = data.payment.length > 0;
+  const pathname = usePathname();
+  const currentState = pathname.split("/")[1];
 
   const generateReceiptData = () => {
     let payload: string = "";
@@ -37,6 +40,7 @@ const ViewTransaction: FC<{
         payerPhone: data.userDetails.phone,
         revenueHead: data.organizationDetails.serviceDescription,
         billerItem: "Payment Bill",
+        state: currentState,
       };
       payload = Buffer.from(JSON.stringify(pendingData)).toString("base64");
     } else {
@@ -53,6 +57,7 @@ const ViewTransaction: FC<{
         transactionDate: data.payment[0].transactionDate,
         paymentRef: data.payment[0].transactionReference,
         paymentChannel: data.payment[0].channel,
+        state: currentState,
       };
 
       payload = Buffer.from(JSON.stringify(paidData)).toString("base64");
